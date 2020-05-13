@@ -34,7 +34,7 @@ public class TraceProcessor {
 	public static enum Algorithm {ValidatorSingle, ValidatorCallTypes, ValidatorIterations, GhabiValidator, Refiner, 
 		IncompletenessSeederT, IncompletenessSeederN, IncompletenessSeederTN, ErrorSeederT, ErrorSeederN, ErrorSeederTN, seedingTest1, seedingTest2, VSM,LSI};
     private static long startTime = System.currentTimeMillis();
-    public static Algorithm test = Algorithm.Refiner;
+    public static Algorithm test = Algorithm.GhabiValidator;
     public static List<JSONObject> jsonArray = new  ArrayList<JSONObject> (); 
 
 	static public void main(String[] args) throws Exception {
