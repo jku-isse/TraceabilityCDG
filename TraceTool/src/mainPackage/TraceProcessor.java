@@ -55,12 +55,6 @@ public class TraceProcessor {
 			programs.add("jhotdraw");
 			programs.add("vod");
 			
-			
-			
-			
-			
-			
-			
 	}
 		
 		
