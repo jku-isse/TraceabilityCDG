@@ -10,7 +10,6 @@ import model.RTMCell;
 import model.RTMCell.TraceValue;
 import model.Requirement;
 import traceRefiner.TraceRefiner;
-import traceRefiner.TraceRefiner2;
 import traceRefiner.TraceRefinerPredictionPattern;
 import traceValidator.TraceValidator;
 import traceValidator.TraceValidatorPredictionPattern;
