@@ -17,10 +17,17 @@ public class RTMCell {
 	private TraceValue subjectTraceValue = TraceValue.UndefinedTrace;
 	private int subjectT;
 	private int subjectN;
-	private TraceValue predictedTraceValue = TraceValue.UndefinedTrace;
+	private static TraceValue predictedTraceValue = TraceValue.UndefinedTrace;
 	private PredictionPattern predictionPattern = null;
 	private TraceValue LSITraceValue = TraceValue.UndefinedTrace; 
+	private String predictionList=""; 
 
+	public String getPredictionList() {
+		return predictionList;
+	}
+	public void setPredictionList(String predictionList) {
+		this.predictionList = predictionList;
+	}
 	public TraceValue getLSITraceValue() {
 		return LSITraceValue;
 	}
@@ -66,57 +73,59 @@ public class RTMCell {
 		subjectN = N;
 	}
 
-	public String logTPFPTNFN(String programName){
-		
-//		if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) return "U";
-//		if (getGoldTraceValue().equals(TraceValue.UndefinedTrace)) return "U";
-//		else if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.Trace)) return "TP";
-//		else if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) return "FP";
-//		else if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) && getGoldTraceValue().equals(TraceValue.Trace)) return "FN";
-//		else if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.NoTrace)) return "TN";
-//		else if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) return "U";	
-
-		String res=""; 
-
-		if (getGoldTraceValue().equals(TraceValue.UndefinedTrace)) res=res+"/"+"U";
-		 if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-				&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FN_T";
-		 if ((getPredictedTraceValue().equals(TraceValue.Trace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-				&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N";
-		 
-		 if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace)&& getGoldTraceValue().equals(TraceValue.Trace))  res=res+"/"+"FN_T_U";
-		 if (getPredictedTraceValue().equals(TraceValue.NoTrace)&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FN_T_N";
-		 
-		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N_T";
-		 if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N_U";
-
-
-		 if ((getPredictedTraceValue().equals(TraceValue.Trace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-					&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"TN_N";
-		 if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-					&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"TN_T";
-		 
-		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FP_T";
-		 if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FP_N";
-		 if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.NoTrace))res=res+"/"+"TP_N";
-		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"TP_T";
-		
-		return res;
-	}
-	
+//	public String logTPFPTNFN(String programName){
+//		
+////		if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) return "U";
+////		if (getGoldTraceValue().equals(TraceValue.UndefinedTrace)) return "U";
+////		else if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.Trace)) return "TP";
+////		else if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) return "FP";
+////		else if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) && getGoldTraceValue().equals(TraceValue.Trace)) return "FN";
+////		else if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.NoTrace)) return "TN";
+////		else if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) return "U";	
+//
+//		String res=""; 
+//
+//		if (getGoldTraceValue().equals(TraceValue.UndefinedTrace)) res=res+"/"+"U";
+//		 if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
+//				&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FN_T";
+//		 if ((getPredictedTraceValue().equals(TraceValue.Trace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
+//				&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N";
+//		 
+//		 if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace)&& getGoldTraceValue().equals(TraceValue.Trace))  res=res+"/"+"FN_T_U";
+//		 if (getPredictedTraceValue().equals(TraceValue.NoTrace)&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FN_T_N";
+//		 
+//		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N_T";
+//		 if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N_U";
+//
+//
+//		 if ((getPredictedTraceValue().equals(TraceValue.Trace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
+//					&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"TN_N";
+//		 if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
+//					&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"TN_T";
+//		 
+//		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FP_T";
+//		 if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FP_N";
+//		 if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.NoTrace))res=res+"/"+"TP_N";
+//		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"TP_T";
+//		
+//		return res;
+//	}
+//	
 	
 	public static void logTPTNFPFN2(String programName, String Step) {
-		int U=0; int FP_T=0; int FN_T=0; int TP_T=0; int TN_T=0; int FP_NT=0; int FN_NT=0; int TP_NT=0; int TN_NT=0; int FN_NT_undefinedPred=0; int FN_NT_tracePred=0;  
+//		String res=""; 
+		int U=0; int FP_T=0; int FN_T=0; int TP_T=0; int TN_T=0; int FP_N=0; int FN_N=0; int TP_N=0; int TN_N=0; int FN_N_undefinedPred=0; int FN_N_tracePred=0;  
 		int FN_T_undefinedPred=0; int FN_T_NoTracePred=0;   int TPred=0; int NPred=0; int UPred=0; 
-//		System.out.println("Program, TP_T, FP_T, FN_T, FN_T_undefined, FN_T_NoTraces, ,,TP_NT, FP_NT, FN_NT, FN_NT_undefined, FN_NT_trace, ,,");
+//		System.out.println("Program, TP_T, FP_T, FN_T, FN_T_undefined, FN_T_NoTraces, ,,TP_N, FP_N, FN_N, FN_N_undefined, FN_N_trace, ,,");
 		
-//		System.out.println("Program, Step, TP_T, TP_NT, FP_T, FP_NT, FN_T, FN_T_undefined, FN_T_NoTrace,  FN_NT,FN_NT_Trace, FN_NT_undefined, TN_NoTrace, TN_Trace");
+//		System.out.println("Program, Step, TP_T, TP_N, FP_T, FP_N, FN_T, FN_T_undefined, FN_T_NoTrace,  FN_N,FN_N_Trace, FN_N_undefined, TN_NoTrace, TN_Trace");
 
 		for (MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
+			String res=""; 
 			TraceValue predictedValue= null; 
-
+			
 			if(TraceProcessor.test.equals(Algorithm.Refiner)) {
-				 predictedValue= methodtrace.getPredictedTraceValue(); 
+				 predictedValue= predictedTraceValue; 
 
 			}else if(TraceProcessor.test.equals(Algorithm.VSM)) {
 				predictedValue= methodtrace.getVSMTraceValue(); 
@@ -130,34 +139,69 @@ public class RTMCell {
 			else if (predictedValue.equals(TraceValue.UndefinedTrace)) UPred++; 
 
 			if (methodtrace.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) U++; 
-			 if ((predictedValue.equals(TraceValue.NoTrace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-					&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T++; 
-			 if ((predictedValue.equals(TraceValue.Trace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-					&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT++; 
+			String reqID= methodtrace.getRequirement().ID+"-"+methodtrace.getMethod().getID(); 
+			if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) {
+				 FN_T++; 
+				 res=res+"/"+"FN_T";
+			 }
+			 if (predictedValue.equals(TraceValue.Trace)&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) {
+				 FN_N++; 
+				 res=res+"/"+"FN_N";
+
+			 }
 			 
-			 if (predictedValue.equals(TraceValue.UndefinedTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_undefinedPred++; 	 
-			 if (predictedValue.equals(TraceValue.NoTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_NoTracePred++; 
+//			 if (predictedValue.equals(TraceValue.UndefinedTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) {
+//				 FN_T_undefinedPred++; 	 
+//				 res=res+"/"+"FN_T_U";
+//			 }
+//			 if (predictedValue.equals(TraceValue.NoTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) {
+//				 FN_T_NoTracePred++; 
+//				 res=res+"/"+"FN_T_N";
+//			 }
+//			 
+//			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) {
+//				 FN_N_tracePred++;  
+//				 res=res+"/"+"FN_N_T";
+//			 }
+//			 if (predictedValue.equals(TraceValue.UndefinedTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) {
+//				 FN_N_undefinedPred++;  
+//				 res=res+"/"+"FN_N_U";
+//			 }
+
+
+			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) {
+				 TN_N++; 
+				 res=res+"/"+"TN_N";
+			 }
+			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) {
+				 TN_T++; 
+				 res=res+"/"+"TN_T";
+			 }
 			 
-			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT_tracePred++;  
-			 if (predictedValue.equals(TraceValue.UndefinedTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT_undefinedPred++;  
-
-
-			 if ((predictedValue.equals(TraceValue.Trace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-						&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) TN_NT++; 
-			 if ((predictedValue.equals(TraceValue.NoTrace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-						&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) TN_T++; 
+			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) {
+				 FP_T++; 
+				 res=res+"/"+"FP_T";
+			 }
+			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) {
+				 FP_N++;
+				 res=res+"/"+"FP_N";
+			 }
+			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) {
+				 TP_N++;
+				 res=res+"/"+"TP_N";
+			 }
+			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) {
+				 TP_T++;
+				 res=res+"/"+"TP_T";
+			 }
 			 
-			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FP_T++; 
-			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FP_NT++;
-			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) TP_NT++;
-			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) TP_T++;
 
-
+			 methodtrace.setPredictionList(res);
 		}
-//		System.out.println(programName+","+Step+","+TP_T+","+TP_NT+","+FP_T+","+FP_NT+","+FN_T+","+FN_T_undefinedPred+","+FN_T_NoTracePred+","+FN_NT+","+FN_NT_tracePred
-//				+","+FN_NT_undefinedPred+","+TN_NT+","+TN_T); 
-		System.out.println(programName+","+TPred+","+NPred+","+UPred+","+TP_T+","+FP_T+","+FN_T+","+FN_T_undefinedPred+","+FN_T_NoTracePred+","+""+","+""+","+TP_NT
-				+","+FP_NT+","+FN_NT+","+FN_NT_undefinedPred+","+FN_NT_tracePred); 
+//		System.out.println(programName+","+Step+","+TP_T+","+TP_N+","+FP_T+","+FP_N+","+FN_T+","+FN_T_undefinedPred+","+FN_T_NoTracePred+","+FN_N+","+FN_N_tracePred
+//				+","+FN_N_undefinedPred+","+TN_N+","+TN_T); 
+		System.out.println(programName+","+TPred+","+NPred+","+UPred+","+TP_T+","+FP_T+","+FN_T+","+FN_T_undefinedPred+","+FN_T_NoTracePred+","+""+","+""+","+TP_N
+				+","+FP_N+","+FN_N+","+FN_N_undefinedPred+","+FN_N_tracePred); 
 
 	}
 	public String logPredictionPattern(){

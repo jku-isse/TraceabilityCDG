@@ -50,7 +50,7 @@ public class Logger {
                                 //cell.getMethod().getCallees().logIDs() + ";" + cell.getCallees().logTraceValues() + ";" +
                                 //cell.getMethod().getCallees().getCallees().logIDs() + ";" + cell.getCallees().getCallees().logTraceValues() + ";" +
 
-                                cell.logPredictedTraceValueString() + ";" +cell.logGoldTraceValueString() + ";" + cell.logTPFPTNFN(programName) + ";" + cell.logPredictionPattern() + "\n"
+                                cell.logPredictedTraceValueString() + ";" +cell.logGoldTraceValueString() + ";" + cell.getPredictionList() + ";" + cell.logPredictionPattern() + "\n"
                 );
             }
             writer.close();
@@ -114,7 +114,7 @@ public class Logger {
                                 cell.getExecutedCallers().logMethodIDs() + ";" + cell.getExecutedCallers().logTraceValues() + ";" + cell.getExecutedCallers().getClazzes().logTraceValues() + ";" +
                                 cell.getExecutedCallees().logMethodIDs() + ";" + cell.getExecutedCallees().logTraceValues() + ";" + cell.getExecutedCallees().getClazzes().logTraceValues() + ";" +
 
-                                cell.logPredictedTraceValueString() + ";" + cell.logTPFPTNFN(programName) + ";" + cell.logPredictionPattern()+"\n"
+                                cell.logPredictedTraceValueString() + ";" + cell.getPredictionList() + ";" + cell.logPredictionPattern()+"\n"
                 );
             }
             writer.close();
