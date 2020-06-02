@@ -130,22 +130,18 @@ public class RTMCell {
 			else if (predictedValue.equals(TraceValue.UndefinedTrace)) UPred++; 
 
 			if (methodtrace.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) U++; 
-			 if ((predictedValue.equals(TraceValue.NoTrace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-					&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T++; 
-			 if ((predictedValue.equals(TraceValue.Trace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-					&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT++; 
+			 if (predictedValue.equals(TraceValue.NoTrace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T++; 
+			 if (predictedValue.equals(TraceValue.Trace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT++; 
 			 
-			 if (predictedValue.equals(TraceValue.UndefinedTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_undefinedPred++; 	 
-			 if (predictedValue.equals(TraceValue.NoTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_NoTracePred++; 
-			 
-			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT_tracePred++;  
-			 if (predictedValue.equals(TraceValue.UndefinedTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT_undefinedPred++;  
+//			 if (predictedValue.equals(TraceValue.UndefinedTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_undefinedPred++; 	 
+//			 if (predictedValue.equals(TraceValue.NoTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_NoTracePred++; 
+//			 
+//			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT_tracePred++;  
+//			 if (predictedValue.equals(TraceValue.UndefinedTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT_undefinedPred++;  
 
 
-			 if ((predictedValue.equals(TraceValue.Trace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-						&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) TN_NT++; 
-			 if ((predictedValue.equals(TraceValue.NoTrace)|| predictedValue.equals(TraceValue.UndefinedTrace)) 
-						&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) TN_T++; 
+			 if (predictedValue.equals(TraceValue.Trace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) TN_NT++; 
+			 if (predictedValue.equals(TraceValue.NoTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace))TN_T++; 
 			 
 			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FP_T++; 
 			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FP_NT++;
