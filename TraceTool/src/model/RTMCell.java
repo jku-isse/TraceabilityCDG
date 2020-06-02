@@ -106,7 +106,7 @@ public class RTMCell {
 	
 	
 	public static void logTPTNFPFN2(String programName, String Step) {
-		int U=0; int FP_T=0; int FN_T=0; int TP_T=0; int TN_T=0; int FP_NT=0; int FN_NT=0; int TP_NT=0; int TN_NT=0; int FN_NT_undefinedPred=0; int FN_NT_tracePred=0;  
+		int U=0; int FP_T=0; int FN_T=0; int TP_T=0; int TN_T=0; int FP_N=0; int FN_N=0; int TP_N=0; int TN_N=0; int FN_NT_undefinedPred=0; int FN_NT_tracePred=0;  
 		int FN_T_undefinedPred=0; int FN_T_NoTracePred=0;   int TPred=0; int NPred=0; int UPred=0; 
 //		System.out.println("Program, TP_T, FP_T, FN_T, FN_T_undefined, FN_T_NoTraces, ,,TP_NT, FP_NT, FN_NT, FN_NT_undefined, FN_NT_trace, ,,");
 		
@@ -131,7 +131,7 @@ public class RTMCell {
 
 			if (methodtrace.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) U++; 
 			 if (predictedValue.equals(TraceValue.NoTrace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T++; 
-			 if (predictedValue.equals(TraceValue.Trace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT++; 
+			 if (predictedValue.equals(TraceValue.Trace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_N++; 
 			 
 //			 if (predictedValue.equals(TraceValue.UndefinedTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_undefinedPred++; 	 
 //			 if (predictedValue.equals(TraceValue.NoTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FN_T_NoTracePred++; 
@@ -140,20 +140,20 @@ public class RTMCell {
 //			 if (predictedValue.equals(TraceValue.UndefinedTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FN_NT_undefinedPred++;  
 
 
-			 if (predictedValue.equals(TraceValue.Trace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) TN_NT++; 
+			 if (predictedValue.equals(TraceValue.Trace)	&& methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) TN_N++; 
 			 if (predictedValue.equals(TraceValue.NoTrace)&& methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace))TN_T++; 
 			 
 			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) FP_T++; 
-			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FP_NT++;
-			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) TP_NT++;
+			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) FP_N++;
+			 if (predictedValue.equals(TraceValue.NoTrace) && methodtrace.getGoldTraceValue().equals(TraceValue.NoTrace)) TP_N++;
 			 if (predictedValue.equals(TraceValue.Trace) && methodtrace.getGoldTraceValue().equals(TraceValue.Trace)) TP_T++;
 
 
 		}
 //		System.out.println(programName+","+Step+","+TP_T+","+TP_NT+","+FP_T+","+FP_NT+","+FN_T+","+FN_T_undefinedPred+","+FN_T_NoTracePred+","+FN_NT+","+FN_NT_tracePred
 //				+","+FN_NT_undefinedPred+","+TN_NT+","+TN_T); 
-		System.out.println(programName+","+TPred+","+NPred+","+UPred+","+TP_T+","+FP_T+","+FN_T+","+FN_T_undefinedPred+","+FN_T_NoTracePred+","+""+","+""+","+TP_NT
-				+","+FP_NT+","+FN_NT+","+FN_NT_undefinedPred+","+FN_NT_tracePred); 
+		System.out.println(programName+","+TPred+","+NPred+","+UPred+","+TP_T+","+FP_T+","+FN_T+","+FN_T_undefinedPred+","+FN_T_NoTracePred+","+""+","+""+","+TP_N
+				+","+FP_N+","+FN_N+","+FN_NT_undefinedPred+","+FN_NT_tracePred); 
 
 	}
 	public String logPredictionPattern(){
