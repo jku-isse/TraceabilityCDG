@@ -76,14 +76,13 @@ public class Logger {
                     + "ImplementationsCallees;ImplementationsCalleesTraceValues;ImplementationsCalleesOwnerValues;"
                     + "ParentsCallees;ParentsCalleesTraceValues;ParentsCalleesOwnerValues;"
                     + "ChildrenCallees;ChildrenCalleesTraceValues;ChildrenCalleesOwnerValues;"
-                    + "ExtendedCallers;ExtendedCallersTraceValues;ExtendedCallersOwnerValues;ExtendedCallersCallers;ExtendedCallersCallersTraceValues;ExtendedCallersCallersOwnerValues;"
-                    + "ExtendedCallees;ExtendedCalleesTraceValues;ExtendedCalleesOwnerValues;ExtendedCalleesCallees;ExtendedCalleesCalleesTraceValues;ExtendedCalleesCalleesOwnerValues;"
+                    + "ExtendedCallers;ExtendedCallersTraceValues;ExtendedCallersOwnerValues;ExtendedCallersGodClassValues;ExtendedCallersCallers;ExtendedCallersCallersTraceValues;ExtendedCallersCallersOwnerValues;"
+                    + "ExtendedCallees;ExtendedCalleesTraceValues;ExtendedCalleesOwnerValues;ExtendedCalleesGodClassValues;ExtendedCalleesCallees;ExtendedCalleesCalleesTraceValues;ExtendedCalleesCalleesOwnerValues;"
                     + "ExecutedCallers;ExecutedCallersTraceValues;ExecutedOwnerCallers;ExecutedCallees;ExecutedCalleesTraceValues;ExecutedOwnerCallees;"
                     + "Prediction;"
                     + "TPFPTNFN;pattern\n"
             );
             for ( MethodRTMCell cell : MethodRTMCell.methodtraces2HashMap.values()) {
-
                 writer.write(
                         cell.getMethod().getID() + ";" + cell.getMethod().getName() + ";" +
                                 cell.getRequirement().getID() + ";" + cell.getRequirement().getName() + ";" + cell.getClazzRTMCell().getClazz().getID() + ";" + cell.getClazzRTMCell().getClazz().getName() + ";" +
@@ -95,24 +94,26 @@ public class Logger {
                                 cell.getParents().logMethodIDs() + ";" + cell.getParents().logTraceValues() + ";" +
                                 cell.getChildren().logMethodIDs() + ";" + cell.getChildren().logTraceValues() + ";" +
 
-                                cell.getBasicCallers().logMethodIDs() + ";" + cell.getBasicCallers().logTraceValues() + ";" + cell.getBasicCallers().getClazzes().logTraceValues() + ";" +
-                                cell.getInterfaces().getBasicCallers().logMethodIDs() + ";" + cell.getInterfaces().getBasicCallers().logTraceValues() + ";" + cell.getInterfaces().getBasicCallers().getClazzes().logTraceValues() + ";" +
-                                cell.getImplementations().getBasicCallers().logMethodIDs() + ";" + cell.getImplementations().getBasicCallers().logTraceValues() + ";" + cell.getImplementations().getBasicCallers().getClazzes().logTraceValues() + ";" +
-                                cell.getParents().getBasicCallers().logMethodIDs() + ";" + cell.getParents().getBasicCallers().logTraceValues() + ";" + cell.getParents().getBasicCallers().getClazzes().logTraceValues() + ";" +
-                                cell.getChildren().getBasicCallers().logMethodIDs() + ";" + cell.getChildren().getBasicCallers().logTraceValues() + ";" + cell.getChildren().getBasicCallers().getClazzes().logTraceValues() + ";" +
+                                cell.getBasicCallers().logMethodIDs() + ";" + cell.getBasicCallers().logTraceValues() + ";" + cell.getBasicCallers().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getInterfaces().getBasicCallers().logMethodIDs() + ";" + cell.getInterfaces().getBasicCallers().logTraceValues() + ";" + cell.getInterfaces().getBasicCallers().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getImplementations().getBasicCallers().logMethodIDs() + ";" + cell.getImplementations().getBasicCallers().logTraceValues() + ";" + cell.getImplementations().getBasicCallers().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getParents().getBasicCallers().logMethodIDs() + ";" + cell.getParents().getBasicCallers().logTraceValues() + ";" + cell.getParents().getBasicCallers().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getChildren().getBasicCallers().logMethodIDs() + ";" + cell.getChildren().getBasicCallers().logTraceValues() + ";" + cell.getChildren().getBasicCallers().getClazzesRTMCellList().logTraceValues() + ";" +
 
-                                cell.getBasicCallees().logMethodIDs() + ";" + cell.getBasicCallees().logTraceValues() + ";" + cell.getBasicCallees().getClazzes().logTraceValues() + ";" +
-                                cell.getInterfaces().getBasicCallees().logMethodIDs() + ";" + cell.getInterfaces().getBasicCallees().logTraceValues() + ";" + cell.getInterfaces().getBasicCallees().getClazzes().logTraceValues() + ";" +
-                                cell.getImplementations().getBasicCallees().logMethodIDs() + ";" + cell.getImplementations().getBasicCallees().logTraceValues() + ";" + cell.getImplementations().getBasicCallees().getClazzes().logTraceValues() + ";" +
-                                cell.getParents().getBasicCallees().logMethodIDs() + ";" + cell.getParents().getBasicCallees().logTraceValues() + ";" + cell.getParents().getBasicCallees().getClazzes().logTraceValues() + ";" +
-                                cell.getChildren().getBasicCallees().logMethodIDs() + ";" + cell.getChildren().getBasicCallees().logTraceValues() + ";" + cell.getChildren().getBasicCallees().getClazzes().logTraceValues() + ";" +
+                                cell.getBasicCallees().logMethodIDs() + ";" + cell.getBasicCallees().logTraceValues() + ";" + cell.getBasicCallees().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getInterfaces().getBasicCallees().logMethodIDs() + ";" + cell.getInterfaces().getBasicCallees().logTraceValues() + ";" + cell.getInterfaces().getBasicCallees().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getImplementations().getBasicCallees().logMethodIDs() + ";" + cell.getImplementations().getBasicCallees().logTraceValues() + ";" + cell.getImplementations().getBasicCallees().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getParents().getBasicCallees().logMethodIDs() + ";" + cell.getParents().getBasicCallees().logTraceValues() + ";" + cell.getParents().getBasicCallees().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getChildren().getBasicCallees().logMethodIDs() + ";" + cell.getChildren().getBasicCallees().logTraceValues() + ";" + cell.getChildren().getBasicCallees().getClazzesRTMCellList().logTraceValues() + ";" +
 
-                                cell.getExtendedCallers().logMethodIDs() + ";" + cell.getExtendedCallers().logTraceValues() + ";" + cell.getExtendedCallers().getClazzes().logTraceValues() + ";" +
-                                cell.getExtendedCallers().getExtendedCallers().logMethodIDs() + ";" + cell.getExtendedCallers().getExtendedCallers().logTraceValues() + ";" + cell.getExtendedCallers().getExtendedCallers().getClazzes().logTraceValues() + ";" +
-                                cell.getExtendedCallees().logMethodIDs() + ";" + cell.getExtendedCallees().logTraceValues() + ";" + cell.getExtendedCallees().getClazzes().logTraceValues() + ";" +
-                                cell.getExtendedCallees().getExtendedCallees().logMethodIDs() + ";" + cell.getExtendedCallees().getExtendedCallees().logTraceValues() + ";" + cell.getExtendedCallees().getExtendedCallees().getClazzes().logTraceValues() + ";" +
-                                cell.getExecutedCallers().logMethodIDs() + ";" + cell.getExecutedCallers().logTraceValues() + ";" + cell.getExecutedCallers().getClazzes().logTraceValues() + ";" +
-                                cell.getExecutedCallees().logMethodIDs() + ";" + cell.getExecutedCallees().logTraceValues() + ";" + cell.getExecutedCallees().getClazzes().logTraceValues() + ";" +
+                                cell.getExtendedCallers().logMethodIDs() + ";" + cell.getExtendedCallers().logTraceValues() + ";" + cell.getExtendedCallers().getClazzesRTMCellList().logTraceValues() + ";" + cell.getExtendedCallers().getClazzes().logGodValues() + ";" +
+                                cell.getExtendedCallers().getExtendedCallers().logMethodIDs() + ";" + cell.getExtendedCallers().getExtendedCallers().logTraceValues() + ";" + cell.getExtendedCallers().getExtendedCallers().getClazzesRTMCellList().logTraceValues() + ";" +
+                                
+                                cell.getExtendedCallees().logMethodIDs() + ";" + cell.getExtendedCallees().logTraceValues() + ";" + cell.getExtendedCallees().getClazzesRTMCellList().logTraceValues() + ";" + cell.getExtendedCallees().getClazzes().logGodValues() + ";" +
+                                
+                                cell.getExtendedCallees().getExtendedCallees().logMethodIDs() + ";" + cell.getExtendedCallees().getExtendedCallees().logTraceValues() + ";" + cell.getExtendedCallees().getExtendedCallees().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getExecutedCallers().logMethodIDs() + ";" + cell.getExecutedCallers().logTraceValues() + ";" + cell.getExecutedCallers().getClazzesRTMCellList().logTraceValues() + ";" +
+                                cell.getExecutedCallees().logMethodIDs() + ";" + cell.getExecutedCallees().logTraceValues() + ";" + cell.getExecutedCallees().getClazzesRTMCellList().logTraceValues() + ";" +
 
                                 cell.logPredictedTraceValueString() + ";" + cell.logTPFPTNFN(programName) + ";" + cell.logPredictionPattern()+"\n"
                 );

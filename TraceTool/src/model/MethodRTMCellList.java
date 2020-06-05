@@ -35,10 +35,16 @@ public class MethodRTMCellList extends RTMCellList {
         return methodRTMCellList;
     }
 
-    public ClazzRTMCellList getClazzes() {
+    public ClazzRTMCellList getClazzesRTMCellList() {
         ClazzRTMCellList list = new ClazzRTMCellList();
         for (RTMCell cell : this)
             list.add(((MethodRTMCell) cell).getClazzRTMCell());
+        return list;
+    }
+    public ClazzList getClazzes() {
+        ClazzList list = new ClazzList(); 
+        for (RTMCell cell : this)
+            list.add(((MethodRTMCell) cell).getClazzRTMCell().clazz);
         return list;
     }
 

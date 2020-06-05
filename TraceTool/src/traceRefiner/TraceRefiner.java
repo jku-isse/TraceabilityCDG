@@ -92,21 +92,21 @@ public class TraceRefiner {
 
 			
 					//XXX getclasses from first condition missing
-					if (methodtrace.getCallers().getClazzes().atLeast1T() &&
-							methodtrace.getCallees().getClazzes().atLeast1T() &&
+					if (methodtrace.getCallers().getClazzesRTMCellList().atLeast1T() &&
+							methodtrace.getCallees().getClazzesRTMCellList().atLeast1T() &&
 							methodtrace.getCallers().noPredictedNs() &&     //supposed to be noNs
 							methodtrace.getCallees().noPredictedNs() 
 							) {
 						methodtrace.setPrediction(TraceRefinerPredictionPattern.Step3CallerAndCalleeClassTracesImpliesMethodTracePattern);
 					} else if (methodtrace.getCallees().isEmpty() &&
-							methodtrace.getCallers().getClazzes().atLeast1T() &&
+							methodtrace.getCallers().getClazzesRTMCellList().atLeast1T() &&
 							methodtrace.getCallers().noPredictedNs()) {
 						methodtrace.setPrediction(TraceRefinerPredictionPattern.Step3LeafCallerClassTracesImpliesMethodTracePattern);
-					} else if (methodtrace.getCallers().getClazzes().atLeast1T() &&
+					} else if (methodtrace.getCallers().getClazzesRTMCellList().atLeast1T() &&
 							methodtrace.getCallers().noPredictedNs() &&
 							methodtrace.getCallees().noPredictedNs()) {
 						methodtrace.setPrediction(TraceRefinerPredictionPattern.Step3CallerClassOnlyTracesImpliesMethodTracePattern);
-					} else if (methodtrace.getCallees().getClazzes().atLeast1T() &&
+					} else if (methodtrace.getCallees().getClazzesRTMCellList().atLeast1T() &&
 							methodtrace.getCallers().noPredictedNs() &&
 							methodtrace.getCallees().noPredictedNs()) {
 						methodtrace.setPrediction(TraceRefinerPredictionPattern.Step3CalleeClassOnlyTracesImpliesMethodTracePattern);

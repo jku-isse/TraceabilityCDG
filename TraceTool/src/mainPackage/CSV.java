@@ -3,40 +3,66 @@ package mainPackage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 import model.MethodRTMCell;
 import model.RTMCell;
 import model.VariableList;
 
 public class CSV {
+    static File file = new File("log\\data.txt");
 
-	public static void generateCSVFile(String programName) {
+
+     static String  headers="gold, callersAtLeast1T, "
+     		+ "CalleesAtLeast1T, callersAllT, "
+     		+ "calleesAllT, CallersAtLeast1N, "
+     		+ "CalleesAtLeast1N, CallersAllN, "
+     		+ "CalleesAllN, "
+//     		+ "InterfacesAtLeast1T, "
+//     		+ "ImplememntationsAtleast1T, "
+     		+ "childrenAtLeast1T, parentsAtLeast1T, "
+//     		+ "InterfacesAtLeast1N, ImplementationsAtLeast1N, "
+     		+ "childrenAtLeast1N, parentsAtLeast1N, "
+//     		+ "InterfacesAllT, ImplementationsAllT, "
+     		+ "childrenAllT, parentsAllT, "
+//     		+ "InterfacesAllN, ImplementationsAllN,"
+     		+ " childrenAllN, ParentsAllN, "
+     		+ "ParametersatLeast1T, FieldMethodsAtLeast1T, "
+     		+ "ReturnTypeAtLeast1T, ParametersAtLeast1N, "
+     		+ "FieldMethodsAtLeast1N, ReturnTypeN, "
+     		+ "ParametersAllT, FieldMethodsAllT,"
+     		+ " ParametersAllN, FieldMethodsAllN"; 
+	
+	public static void main (String [] args) throws Exception {
+		ArrayList<String> programs = new ArrayList<String>();
+		
+		 FileWriter writer = new FileWriter(file, true);
+
+        writer.write(headers+"\n");
+			programs.add("chess");
+			programs.add("gantt");
+			programs.add("itrust");
+			programs.add("jhotdraw");
+			
+
+			
+	
+	for(String programName: programs) {
+		DatabaseInput.read(programName);
+		generateCSVFile(programName, writer);
+
+
+	}
+    writer.close();
+
+	}
+	public static void generateCSVFile(String programName,  FileWriter writer) {
 		// TODO Auto-generated method stub
         try {
-            File file = new File("log\\" + programName + "\\data.txt");
-            FileOutputStream stream = new FileOutputStream(file);
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream));
-            String  headers="gold, callersAtLeast1T, "
-            		+ "CalleesAtLeast1T, callersAllT, "
-            		+ "calleesAllT, CallersAtLeast1N, "
-            		+ "CalleesAtLeast1N, CallersAllN, "
-            		+ "CalleesAllN, "
-//            		+ "InterfacesAtLeast1T, "
-//            		+ "ImplememntationsAtleast1T, "
-            		+ "childrenAtLeast1T, parentsAtLeast1T, "
-//            		+ "InterfacesAtLeast1N, ImplementationsAtLeast1N, "
-            		+ "childrenAtLeast1N, parentsAtLeast1N, "
-//            		+ "InterfacesAllT, ImplementationsAllT, "
-            		+ "childrenAllT, parentsAllT, "
-//            		+ "InterfacesAllN, ImplementationsAllN,"
-            		+ " childrenAllN, ParentsAllN, "
-            		+ "ParametersatLeast1T, FieldMethodsAtLeast1T, "
-            		+ "ReturnTypeAtLeast1T, ParametersAtLeast1N, "
-            		+ "FieldMethodsAtLeast1N, ReturnTypeN, "
-            		+ "ParametersAllT, FieldMethodsAllT,"
-            		+ " ParametersAllN, FieldMethodsAllN"; 
-            writer.write(headers+"\n");
+        
             for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
             		  String s=
@@ -73,6 +99,8 @@ public class CSV {
             	                s=s.replaceAll("false", "0"); 
             	                s=s.replaceAll("true", "1"); 
             	                writer.write(s+"\n");
+                      		  System.out.println(s);
+
             	}
             	
             	if(methodtrace.getImplementations().atLeast1GoldT()) {
@@ -81,7 +109,7 @@ public class CSV {
               
 
             }
-            writer.close();
+            System.out.println("over");
         } catch (Exception ex) {
         }
 	}

@@ -393,7 +393,14 @@ public class DatabaseInput {
 
 			String value = traceClass.get("goldfinal").toString();
 			String SubjectGold = traceClass.get("SubjectGold").toString();
-			if (value.equals("T")) myclasstrace.setGoldTraceValue(RTMCell.TraceValue.Trace);
+			if (value.equals("T")) {
+				myclasstrace.setGoldTraceValue(RTMCell.TraceValue.Trace);
+				// Added these 3 lines for how many requirements does a class implement?
+				int Tcount=Integer.parseInt(clazz.getTcount()); 
+				Tcount=Tcount+1; 
+				clazz.setTcount(String.valueOf(Tcount));
+//				Clazz.clazzesHashMap.put(classid, clazz); 
+			}
 			if (value.equals("N")) myclasstrace.setGoldTraceValue(RTMCell.TraceValue.NoTrace);
 			if (value.equals("E")) myclasstrace.setGoldTraceValue(RTMCell.TraceValue.UndefinedTrace);
 			

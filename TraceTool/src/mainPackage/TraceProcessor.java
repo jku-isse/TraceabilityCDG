@@ -2,6 +2,7 @@ package mainPackage;
 
 import evaluation.Logger;
 import evaluation.Seeder;
+import model.Clazz;
 import model.Definitions;
 import model.MethodRTMCell;
 import model.MethodRTMCellList;
@@ -350,7 +351,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			patterns.addAll(TraceValidatorPredictionPattern.patterns);
 			Logger.logPatternsReset(patterns);
 			Definitions.callerType = Definitions.CallerType.extended;
-
+			
+			for(Clazz clazz: Clazz.clazzesHashMap.values()) {
+				System.out.println(clazz.ID+"   "+clazz.getTcount());
+			}
+			
 			for (String program : programs) {
 
 				DatabaseInput.read(program);
@@ -460,21 +465,6 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	}
 
 
-	static public void refine2(String programName, String logParameter, ArrayList patterns) throws Exception {
-		PredictionPattern.reset();
-
-		Seeder.seedInputClazzTraceValuesWithDeveloperGold();
-//
-//		TraceRefiner2.step1_classNs2MethodNs();
-//		TraceRefiner2.step2_propagateMethodNs();
-//		TraceRefiner2.step3_classTs2MethodTs();
-//		TraceRefiner2.step4_propagateMethodTs();
-//		TraceRefiner2.step5_variablePredictions();
-		CSV.generateCSVFile(programName); 
-		
-		Logger.logBasics(programName, logParameter);
-		Logger.logDetailed(programName, logParameter);
-		Logger.logPatternsEntry(programName, logParameter, patterns);	}
 
 }
 

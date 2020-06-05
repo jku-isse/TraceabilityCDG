@@ -17,6 +17,16 @@ public class Clazz {
 	private ClazzList implementations = new ClazzList();
 	private MethodList methods = new MethodList();
 	private VariableList fieldClasses= new VariableList(); 
+	//how many requirements does a class implement 
+	private String Tcount="0"; 
+
+	public String getTcount() {
+		return Tcount;
+	}
+
+	public void setTcount(String tcount) {
+		Tcount = tcount;
+	}
 
 	public Clazz(String classid, String name) {
 		super();

@@ -20,4 +20,8 @@ public class ClazzList extends ArrayList<Clazz>{
 	public String logIDs() {
 		return stream().map(Clazz::getID).collect(Collectors.joining(", "));
 	}
+	
+	public String logGodValues() {
+		return stream().map(Clazz::getTcount).collect(Collectors.joining(", "));
+	}
 }
