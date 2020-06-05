@@ -88,7 +88,7 @@ public class Logger {
                         cell.getMethod().getID() + ";" + cell.getMethod().getName() + ";" +
                                 cell.getRequirement().getID() + ";" + cell.getRequirement().getName() + ";" + cell.getClazzRTMCell().getClazz().getID() + ";" + cell.getClazzRTMCell().getClazz().getName() + ";" +
 
-                                cell.logTraceValueString() + ";" + cell.getClazzRTMCell().logTraceValueString() + ";" +
+                                cell.logGoldTraceValueString() + ";" + cell.getClazzRTMCell().logTraceValueString() + ";" +
 
                                 cell.getInterfaces().logMethodIDs() + ";" + cell.getInterfaces().logTraceValues() + ";" +
                                 cell.getImplementations().logMethodIDs() + ";" + cell.getImplementations().logTraceValues() + ";" +

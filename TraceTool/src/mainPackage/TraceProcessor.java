@@ -48,10 +48,10 @@ public class TraceProcessor {
 		boolean runAllTests = false;
 		ArrayList<String> programs = new ArrayList<String>();
 		for(int i=0; i<1; i++) {
-//			programs.add("chess");
-//			programs.add("gantt");
-//			programs.add("itrust");
-//			programs.add("jhotdraw");
+			programs.add("chess");
+			programs.add("gantt");
+			programs.add("itrust");
+			programs.add("jhotdraw");
 			programs.add("vod");
 			
 	}
