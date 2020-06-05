@@ -79,27 +79,22 @@ public class RTMCell {
 		String res=""; 
 
 		if (getGoldTraceValue().equals(TraceValue.UndefinedTrace)) res=res+"/"+"U";
-		 if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-				&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FN_T";
-		 if ((getPredictedTraceValue().equals(TraceValue.Trace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-				&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N";
+		 if (getPredictedTraceValue().equals(TraceValue.NoTrace)	&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FN_T";
+		 if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FP_N";
+
+		 if (getPredictedTraceValue().equals(TraceValue.Trace)&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N";	 
 		 
-		 if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace)&& getGoldTraceValue().equals(TraceValue.Trace))  res=res+"/"+"FN_T_U";
-		 if (getPredictedTraceValue().equals(TraceValue.NoTrace)&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FN_T_N";
-		 
-		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N_T";
-		 if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N_U";
+//		 if (getPredictedTraceValue().equals(TraceValue.UndefinedTrace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FN_N_U";
 
 
-		 if ((getPredictedTraceValue().equals(TraceValue.Trace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-					&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"TN_N";
-		 if ((getPredictedTraceValue().equals(TraceValue.NoTrace)|| getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) 
-					&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"TN_T";
+		 if (getPredictedTraceValue().equals(TraceValue.Trace)&& getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"TN_N";
 		 
 		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"FP_T";
-		 if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"FP_N";
 		 if (getPredictedTraceValue().equals(TraceValue.NoTrace) && getGoldTraceValue().equals(TraceValue.NoTrace))res=res+"/"+"TP_N";
+		 
 		 if (getPredictedTraceValue().equals(TraceValue.Trace) && getGoldTraceValue().equals(TraceValue.Trace)) res=res+"/"+"TP_T";
+		 if (getPredictedTraceValue().equals(TraceValue.NoTrace)&& getGoldTraceValue().equals(TraceValue.NoTrace)) res=res+"/"+"TN_T";
+
 		
 		return res;
 	}
@@ -114,7 +109,7 @@ public class RTMCell {
 
 		for (MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
 			TraceValue predictedValue= null; 
-
+			
 			if(TraceProcessor.test.equals(Algorithm.Refiner)) {
 				 predictedValue= methodtrace.getPredictedTraceValue(); 
 

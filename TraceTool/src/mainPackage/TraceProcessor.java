@@ -10,6 +10,7 @@ import model.RTMCell;
 import model.RTMCell.TraceValue;
 import model.Requirement;
 import traceRefiner.TraceRefiner;
+import traceRefiner.TraceRefiner2;
 import traceRefiner.TraceRefinerPredictionPattern;
 import traceValidator.TraceValidator;
 import traceValidator.TraceValidatorPredictionPattern;
@@ -48,10 +49,10 @@ public class TraceProcessor {
 		boolean runAllTests = false;
 		ArrayList<String> programs = new ArrayList<String>();
 		for(int i=0; i<1; i++) {
-			programs.add("chess");
-			programs.add("gantt");
-			programs.add("itrust");
-			programs.add("jhotdraw");
+//			programs.add("chess");
+//			programs.add("gantt");
+//			programs.add("itrust");
+//			programs.add("jhotdraw");
 			programs.add("vod");
 			
 	}
@@ -407,22 +408,57 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 		Seeder.seedInputClazzTraceValuesWithDeveloperGold();
 
-		TraceRefiner.step1_classNs2MethodNs();
+		TraceRefiner2.step1_classNs2MethodNs();
 		RTMCell.logTPTNFPFN2(programName, "step 1");
-		TraceRefiner.step2_propagateMethodNs(1);
+		
+		TraceRefiner2.step2_propagateMethodNs(1);
 		RTMCell.logTPTNFPFN2(programName, "step 2");
 
-		TraceRefiner.step3_classTs2MethodTs();
+		TraceRefiner2.step3_classTs2MethodTs();
 		RTMCell.logTPTNFPFN2(programName, "step 3");
 
-		TraceRefiner.step4_propagateMethodTs(1);
+		TraceRefiner2.step4_propagateMethodTs(1);
 		RTMCell.logTPTNFPFN2(programName, "step 4");
 
 		TraceRefiner.checkGoldPred(programName); 
 		
 		Logger.logBasics(programName, logParameter);
 		Logger.logDetailed(programName, logParameter);
-		Logger.logPatternsEntry(programName, logParameter, patterns);	}
+		Logger.logPatternsEntry(programName, logParameter, patterns);	
+		
+//		System.out.println("Type, reqMethod, CalleesSize, CallersSize, CallersCallersSize");
+//		for (MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
+//			String reqMethod= methodtrace.getRequirement().ID+"_"+methodtrace.getMethod().ID; 
+//			if(methodtrace.logTPFPTNFN(programName).contains("FP_T")) {
+//				//inner 
+//				if (!methodtrace.getCallees().isEmpty() && !methodtrace.getCallers().isEmpty()) {
+//				 System.out.println("Inner,"+reqMethod+","+methodtrace.getCallees().size()+","+methodtrace.getCallers().size()+",,");
+//				}
+//				//leaf 
+//				else if (methodtrace.getCallees().isEmpty() && !methodtrace.getCallers().isEmpty()) {
+//					 System.out.println("Leaf,"+reqMethod+",,"+methodtrace.getCallers().size()+","+methodtrace.getCallers().getCallers().size());
+//
+//				}
+//			}
+//			System.out.println("*******************************************************");
+//			if(methodtrace.logTPFPTNFN(programName).contains("TP_T")) {
+//				//inner 
+//				if (!methodtrace.getCallees().isEmpty() && !methodtrace.getCallers().isEmpty()) {
+//				 System.out.println(methodtrace.getCallees().size()+"   "+methodtrace.getCallers().size());
+//				}
+//				//inner 
+//				else if (methodtrace.getCallees().isEmpty() && !methodtrace.getCallers().isEmpty()) {
+//					 System.out.println(methodtrace.getCallees().size()+"   "+methodtrace.getCallers().size());
+//
+//				}
+//			}
+//			
+//		}
+	
+	
+	
+	
+	}
 
 
 	static public void refine2(String programName, String logParameter, ArrayList patterns) throws Exception {
