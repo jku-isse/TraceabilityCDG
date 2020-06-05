@@ -10,7 +10,6 @@ import model.RTMCell;
 import model.RTMCell.TraceValue;
 import model.Requirement;
 import traceRefiner.TraceRefiner;
-import traceRefiner.TraceRefiner2;
 import traceRefiner.TraceRefinerPredictionPattern;
 import traceValidator.TraceValidator;
 import traceValidator.TraceValidatorPredictionPattern;
@@ -408,16 +407,16 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 		Seeder.seedInputClazzTraceValuesWithDeveloperGold();
 
-		TraceRefiner2.step1_classNs2MethodNs();
+		TraceRefiner.step1_classNs2MethodNs();
 		RTMCell.logTPTNFPFN2(programName, "step 1");
 		
-		TraceRefiner2.step2_propagateMethodNs(1);
+		TraceRefiner.step2_propagateMethodNs(1);
 		RTMCell.logTPTNFPFN2(programName, "step 2");
 
-		TraceRefiner2.step3_classTs2MethodTs();
+		TraceRefiner.step3_classTs2MethodTs();
 		RTMCell.logTPTNFPFN2(programName, "step 3");
 
-		TraceRefiner2.step4_propagateMethodTs(1);
+		TraceRefiner.step4_propagateMethodTs(1);
 		RTMCell.logTPTNFPFN2(programName, "step 4");
 
 		TraceRefiner.checkGoldPred(programName); 
