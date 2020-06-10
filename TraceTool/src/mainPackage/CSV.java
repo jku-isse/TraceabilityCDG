@@ -16,30 +16,31 @@ public class CSV {
     static File file = new File("log\\data.txt");
 
 
-     static String  headers="gold, callersAtLeast1T, "
-     		+ "CalleesAtLeast1T, callersAllT, "
-     		+ "calleesAllT, CallersAtLeast1N, "
-     		+ "CalleesAtLeast1N, CallersAllN, "
-     		+ "CalleesAllN, "
-//     		+ "InterfacesAtLeast1T, "
-//     		+ "ImplememntationsAtleast1T, "
-     		+ "childrenAtLeast1T, parentsAtLeast1T, "
-//     		+ "InterfacesAtLeast1N, ImplementationsAtLeast1N, "
-     		+ "childrenAtLeast1N, parentsAtLeast1N, "
-//     		+ "InterfacesAllT, ImplementationsAllT, "
-     		+ "childrenAllT, parentsAllT, "
-//     		+ "InterfacesAllN, ImplementationsAllN,"
-     		+ " childrenAllN, ParentsAllN, "
-     		+ "ParametersatLeast1T, FieldMethodsAtLeast1T, "
-     		+ "ReturnTypeAtLeast1T, ParametersAtLeast1N, "
-     		+ "FieldMethodsAtLeast1N, ReturnTypeN, "
-     		+ "ParametersAllT, FieldMethodsAllT,"
-     		+ " ParametersAllN, FieldMethodsAllN"; 
+     static String  headers="gold,callersAtLeast1T,"
+     		+ "CalleesAtLeast1T,callersAllT,"
+     		+ "calleesAllT,CallersAtLeast1N,"
+     		+ "CalleesAtLeast1N,CallersAllN,"
+     		+ "CalleesAllN,"
+//     		+ "InterfacesAtLeast1T,"
+//     		+ "ImplememntationsAtleast1T,"
+     		+ "childrenAtLeast1T,parentsAtLeast1T,"
+//     		+ "InterfacesAtLeast1N,ImplementationsAtLeast1N,"
+     		+ "childrenAtLeast1N,parentsAtLeast1N,"
+//     		+ "InterfacesAllT,ImplementationsAllT,"
+     		+ "childrenAllT,parentsAllT,"
+//     		+ "InterfacesAllN,ImplementationsAllN,"
+     		+ "childrenAllN,ParentsAllN,"
+     		+ "ParametersatLeast1T,FieldMethodsAtLeast1T,"
+     		+ "ReturnTypeAtLeast1T,ParametersAtLeast1N,"
+     		+ "FieldMethodsAtLeast1N,ReturnTypeN,"
+     		+ "ParametersAllT,FieldMethodsAllT,"
+     		+ "ParametersAllN,FieldMethodsAllN"
+     		+ ",Program,Requirement,MethodID"; 
 	
 	public static void main (String [] args) throws Exception {
 		ArrayList<String> programs = new ArrayList<String>();
 		
-		 FileWriter writer = new FileWriter(file, true);
+		 FileWriter writer = new FileWriter(file,true);
 
         writer.write(headers+"\n");
 			programs.add("chess");
@@ -49,17 +50,17 @@ public class CSV {
 			
 
 			
-	
+	int i=0; 
 	for(String programName: programs) {
 		DatabaseInput.read(programName);
-		generateCSVFile(programName, writer);
+		generateCSVFile(programName,writer);
 
 
 	}
     writer.close();
 
 	}
-	public static void generateCSVFile(String programName,  FileWriter writer) {
+	public static void generateCSVFile(String programName, FileWriter writer) {
 		// TODO Auto-generated method stub
         try {
         
@@ -96,8 +97,9 @@ public class CSV {
             	              + ","+ methodtrace.getFieldMethods().allTs() + ","+ methodtrace.getParameters().allNs()
             	                +    ","+ methodtrace.getFieldMethods().allNs() 
             	                ; 
-            	                s=s.replaceAll("false", "0"); 
-            	                s=s.replaceAll("true", "1"); 
+            	                s=s.replaceAll("false","0"); 
+            	                s=s.replaceAll("true","1"); 
+            	                s=s+","+programName+","+methodtrace.getRequirement().getID()+","+methodtrace.getMethod().getID(); 
             	                writer.write(s+"\n");
                       		  System.out.println(s);
 
