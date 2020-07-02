@@ -1,8 +1,33 @@
 package BoxPlots;
 
+import model.MethodRTMCellList;
+import model.RTMCell;
+
 public class counts {
-	int T=0; 
-	int N=0; 
-	int U=0; 
+	public int T=0; 
+	public int N=0; 
+	public int U=0; 
+	public String amountT="-1"; 
+	public String amountN="-1"; 
+	public String amountU="-1"; 
+
+	
+	public static counts countMethods(MethodRTMCellList methodsRTMs){
+		counts counts= new counts(); 
+		for(RTMCell methodRTM: methodsRTMs) {
+			if(methodRTM.getGoldTraceValue().equals(RTMCell.TraceValue.Trace)) {
+				counts.T++; 
+			}else if(methodRTM.getGoldTraceValue().equals(RTMCell.TraceValue.NoTrace)) {
+				counts.N++; 
+			}else if(methodRTM.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
+				counts.U++; 
+
+			}
+		}
+		
+		
+		return counts;
+		
+	}
 	
 }

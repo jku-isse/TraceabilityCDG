@@ -131,7 +131,13 @@ public class RTMCellList extends ArrayList<RTMCell>{
 		}
 		return true;
 	}
-
+	public boolean allUs() {
+		if (size()==0) return false;
+		for (RTMCell cell : this) {
+			if (!cell.getTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) return false;
+		}
+		return true;
+	}
 	public boolean allPredictedNs() {
 		if (size()==0) return false;
 		for (RTMCell cell : this) {
