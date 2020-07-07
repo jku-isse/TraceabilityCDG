@@ -77,13 +77,13 @@ public class CSV {
 //     		+ "Program,Requirement,MethodID"; 
    
     
-    static String headers="gold,classGold,Program,Requirement,MethodType,Top,Side,"
+    static String headers="gold,Program,Requirement,MethodType,Top,Side,"
     		+"FieldMethods,Parameters,ReturnType,Parents,Children,"
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
     		+ "CalleesT,CalleesN,CalleesU,"
     		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,CompleteCallersCallees,"
-    		+ "CompleteCallersCalleesCallersCallersCalleesCallees"; 
+    		+ "CompleteCallersCalleesCallersCallersCalleesCallees,classGold"; 
     
     
 	public static void main (String [] args) throws Exception {
@@ -97,6 +97,7 @@ public class CSV {
 			programs.add("itrust");
 			programs.add("jhotdraw");
 			
+//			programs.add("vod");
 
 			
 	int i=0; 
@@ -119,7 +120,7 @@ public class CSV {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
 
        		 		String s= methodtrace.logGoldTraceValueString()
-       		 				+","+methodtrace.getClazzRTMCell().getTraceValue()
+       		 			
        		 				+","+programName+","+methodtrace.getRequirement().getID()+","; 
        		 		
        		 		if(!methodtrace.getCallers().isEmpty() && !methodtrace.getCallees().isEmpty()) {
@@ -198,7 +199,7 @@ public class CSV {
 					 			}else {
 					 				s=s+"0,"; 
 					 			}
-			 			s=s+"\n"; 
+			 			s=s+methodtrace.getClazzRTMCell().getTraceValue()+",\n"; 
 			 			writer.write(s);
             	}
 
