@@ -100,7 +100,8 @@ public class CSV {
 			programs.add("jhotdraw");
 			
 //			programs.add("vod");
-
+			System.out.println("countNoCalleesU,countLowCalleesU,countMediumCalleesU,countHighCalleesU,countNoCallersU,countLowCallersU,countMediumCallersU,"
+					+ "countHighCallersU,NoCallersUAndNoCalleesU,LowCallersUAndLoworNoCalleesU,MediumCallersAndMediumorLoworNoCallees,HighCallersAndHighorMediumorLoworNoCallees"); 
 			
 	int i=0; 
 	for(String programName: programs) {
@@ -117,7 +118,10 @@ public class CSV {
 
 			int i=1; 
 			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
-
+			int countNoCallersU=0; int countLowCallersU=0; int countMediumCallersU=0; int countHighCallersU=0; 
+			int countNoCalleesU=0; int countLowCalleesU=0; int countMediumCalleesU=0; int countHighCalleesU=0; 
+			int NoCallersUAndNoCalleesU=0; int LowCallersUAndLoworNoCalleesU=0; int MediumCallersAndMediumorLoworNoCallees=0; int HighCallersAndHighorMediumorLoworNoCallees=0; 
+			
             for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
 
@@ -143,11 +147,29 @@ public class CSV {
        		 			counts c=generateCountsTNU(methodtrace.getCallers());
        		 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
        		 		
+			 			if(c.amountU.equals("-1")) countNoCallersU++; 
+			 			else if(c.amountU.equals("Low")) countLowCallersU++;
+			 			else if(c.amountU.equals("Medium")) countMediumCallersU++;
+			 			else if(c.amountU.equals("High")) countHighCallersU++; 
+			 			
+			 			
 	   		 			c=generateCountsTNU(methodtrace.getCallers().getCallers());
 	   		 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
 	   		 		
-			 			c=generateCountsTNU(methodtrace.getCallees());
-			 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
+			 			counts c2=generateCountsTNU(methodtrace.getCallees());
+			 			s=s+c2.amountT+","+c2.amountN+","+c2.amountU+","; 
+			 			
+			 			if(c2.amountU.equals("-1")) countNoCalleesU++; 
+			 			else if(c2.amountU.equals("Low")) countLowCalleesU++;
+			 			else if(c2.amountU.equals("Medium")) countMediumCalleesU++;
+			 			else if(c2.amountU.equals("High")) countHighCalleesU++; 
+			 			
+			 			
+			 			if(c.amountU.equals("-1") && c2.amountU.equals("-1"))  NoCallersUAndNoCalleesU++; 
+			 			else if (c.amountU.equals("Low") && (c2.amountU.equals("Low") || c2.amountU.equals("-1"))) LowCallersUAndLoworNoCalleesU++; 
+			 			else if (c.amountU.equals("Medium") && (c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) MediumCallersAndMediumorLoworNoCallees++; 
+			 			else if (c.amountU.equals("High") && (c2.amountU.equals("High") || c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) HighCallersAndHighorMediumorLoworNoCallees++; 
+
 			 			
 			 			c=generateCountsTNU(methodtrace.getCallees().getCallees());
 			 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
@@ -167,10 +189,14 @@ public class CSV {
 //					 				s=s+"0,"; 
 //					 			}
 			 			s=s+methodtrace.getClazzRTMCell().getTraceValue()+",\n"; 
+			 			
 			 			writer.write(s);
             	}
 
             }
+            
+            System.out.println(countNoCalleesU+","+countLowCalleesU+","+countMediumCalleesU+","+countHighCalleesU+","+countNoCallersU+","+countLowCallersU+","+countMediumCallersU+","+countHighCallersU+","+
+		 			NoCallersUAndNoCalleesU+","+LowCallersUAndLoworNoCalleesU+","+MediumCallersAndMediumorLoworNoCallees+","+HighCallersAndHighorMediumorLoworNoCallees); 
             
 	}
 	
