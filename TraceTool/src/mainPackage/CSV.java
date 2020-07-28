@@ -101,7 +101,8 @@ public class CSV {
 			
 //			programs.add("vod");
 			System.out.println("countNoCalleesU,countLowCalleesU,countMediumCalleesU,countHighCalleesU,countNoCallersU,countLowCallersU,countMediumCallersU,"
-					+ "countHighCallersU,NoCallersUAndNoCalleesU,LowCallersUAndLoworNoCalleesU,MediumCallersAndMediumorLoworNoCallees,HighCallersAndHighorMediumorLoworNoCallees"); 
+					+ "countHighCallersU,NoCallersUAndNoCalleesU,LowCallersUAndLoworNoCalleesU,MediumCallersAndMediumorLoworNoCallees,HighCallersAndHighorMediumorLoworNoCallees,"
+					+ "LowCalleesUAndNoCallersU,MediumCalleesUAndLowCallersUOrNoCallersU,HighCalleesUAndMediumCallersUOrLowCallersU"); 
 			
 	int i=0; 
 	for(String programName: programs) {
@@ -121,7 +122,7 @@ public class CSV {
 			int countNoCallersU=0; int countLowCallersU=0; int countMediumCallersU=0; int countHighCallersU=0; 
 			int countNoCalleesU=0; int countLowCalleesU=0; int countMediumCalleesU=0; int countHighCalleesU=0; 
 			int NoCallersUAndNoCalleesU=0; int LowCallersUAndLoworNoCalleesU=0; int MediumCallersAndMediumorLoworNoCallees=0; int HighCallersAndHighorMediumorLoworNoCallees=0; 
-			
+			int LowCalleesUAndNoCallersU=0; int MediumCalleesUAndLowCallersUOrNoCallersU=0; int HighCalleesUAndMediumCallersUOrLowCallersU=0; 
             for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
 
@@ -165,12 +166,31 @@ public class CSV {
 			 			else if(c2.amountU.equals("High")) countHighCalleesU++; 
 			 			
 			 			
-			 			if(c.amountU.equals("-1") && c2.amountU.equals("-1"))  NoCallersUAndNoCalleesU++; 
-			 			else if (c.amountU.equals("Low") && (c2.amountU.equals("Low") || c2.amountU.equals("-1"))) LowCallersUAndLoworNoCalleesU++; 
-			 			else if (c.amountU.equals("Medium") && (c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) MediumCallersAndMediumorLoworNoCallees++; 
-			 			else if (c.amountU.equals("High") && (c2.amountU.equals("High") || c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) HighCallersAndHighorMediumorLoworNoCallees++; 
-
-			 			
+			 			if(c.amountU.equals("-1") && c2.amountU.equals("-1"))  {
+			 				NoCallersUAndNoCalleesU++; 
+			 			}
+			 			else if (c.amountU.equals("Low") && (c2.amountU.equals("Low") || c2.amountU.equals("-1"))) {
+			 				LowCallersUAndLoworNoCalleesU++; 
+			 			}
+			 			else if (c.amountU.equals("Medium") && (c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) {
+			 				MediumCallersAndMediumorLoworNoCallees++; 
+			 			}
+			 			else if (c.amountU.equals("High") && (c2.amountU.equals("High") || c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) {
+			 				HighCallersAndHighorMediumorLoworNoCallees++; 
+			 			}
+			 			else if (c2.amountU.equals("Low") && (c.amountU.equals("-1"))) {
+			 				LowCalleesUAndNoCallersU++; 
+			 			}
+			 			else if (c2.amountU.equals("Medium") && (c.amountU.equals("Low") || c.amountU.equals("-1"))) {
+			 				MediumCalleesUAndLowCallersUOrNoCallersU++; 
+			 			}
+			 			else if (c2.amountU.equals("High") && (c.amountU.equals("Medium") ||c.amountU.equals("Low") || c.amountU.equals("-1"))) {
+			 				HighCalleesUAndMediumCallersUOrLowCallersU++; 
+			 			}else {
+			 				System.out.println("here");
+			 				System.out.println();
+			 			}
+			 		
 			 			c=generateCountsTNU(methodtrace.getCallees().getCallees());
 			 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
 		 		
@@ -194,10 +214,77 @@ public class CSV {
             	}
 
             }
+            int size=MethodRTMCell.methodtraces2HashMap.size(); 
+            double countNoCalleesUdouble=(double)countNoCalleesU/size*100; 
+            int countNoCalleesUperc= (int) Math.round(countNoCalleesUdouble); 
+            
+            
+            double countLowCalleesUdouble=(double)countLowCalleesU/size*100; 
+            int countLowCalleesUperc= (int) Math.round(countLowCalleesUdouble); 
+
+            
+            double countMediumCalleesUdouble=(double)countMediumCalleesU/size*100; 
+            int countMediumCalleesUperc= (int) Math.round(countMediumCalleesUdouble); 
+            
+            
+            double countHighCalleesUdouble =(double)countHighCalleesU/size*100; 
+            int countHighCalleesUperc= (int) Math.round(countHighCalleesUdouble); 
+
+            double countNoCallersUdouble=(double)countNoCallersU/size*100; 
+            int countNoCallersUperc=(int) Math.round(countNoCallersUdouble); 
+            
+            
+            double countLowCallersUdouble=(double)countLowCallersU/size*100; 
+            int countLowCallersUperc= (int) Math.round(countLowCallersUdouble); 
+            
+            
+            double countMediumCallersUdouble=(double)countMediumCallersU/size*100;
+            int countMediumCallersUperc=(int)Math.round(countMediumCallersUdouble); 
+            
+            double countHighCallersUdouble=(double)countHighCallersU/size*100;
+            int countHighCallersUperc=(int)Math.round(countHighCallersUdouble); 
+            
+            double NoCallersUAndNoCalleesUdouble=(double)NoCallersUAndNoCalleesU/size*100;
+            int NoCallersUAndNoCalleesUperc=(int)Math.round(NoCallersUAndNoCalleesUdouble); 
+            
+            double LowCallersUAndLoworNoCalleesUdouble=(double)LowCallersUAndLoworNoCalleesU/size*100;
+            int LowCallersUAndLoworNoCalleesUperc=(int)Math.round(LowCallersUAndLoworNoCalleesUdouble); 
+            
+            double MediumCallersAndMediumorLoworNoCalleesdouble=(double)MediumCallersAndMediumorLoworNoCallees/size*100;
+            int MediumCallersAndMediumorLoworNoCalleesperc=(int)Math.round(MediumCallersAndMediumorLoworNoCalleesdouble);
+            
+            double HighCallersAndHighorMediumorLoworNoCalleesdouble=(double)HighCallersAndHighorMediumorLoworNoCallees/size*100;
+            int HighCallersAndHighorMediumorLoworNoCalleesperc=(int)Math.round(HighCallersAndHighorMediumorLoworNoCalleesdouble);
+            
+            double LowCalleesUAndNoCallersUdouble=(double)LowCalleesUAndNoCallersU/size*100;
+            int LowCalleesUAndNoCallersUperc=(int)Math.round(LowCalleesUAndNoCallersUdouble);
+            
+            
+            double MediumCalleesUAndLowCallersUOrNoCallersUdouble=(double)MediumCalleesUAndLowCallersUOrNoCallersU/size*100;
+            int MediumCalleesUAndLowCallersUOrNoCallersUperc=(int)Math.round(MediumCalleesUAndLowCallersUOrNoCallersUdouble);
+            
+            
+            double HighCalleesUAndMediumCallersUOrLowCallersUdouble=(double)HighCalleesUAndMediumCallersUOrLowCallersU/size*100;
+            int HighCalleesUAndMediumCallersUOrLowCallersUperc=(int)Math.round(HighCalleesUAndMediumCallersUOrLowCallersUdouble);
+            
+            System.out.println(countNoCalleesUperc+","+countLowCalleesUperc+","+countMediumCalleesUperc+","+countHighCalleesUperc+","+countNoCallersUperc+","+countLowCallersUperc+","+countMediumCallersUperc+","+countHighCallersUperc+","+
+		 			NoCallersUAndNoCalleesUperc+","+LowCallersUAndLoworNoCalleesUperc+","+MediumCallersAndMediumorLoworNoCalleesperc+","+HighCallersAndHighorMediumorLoworNoCalleesperc+","+
+		 			LowCalleesUAndNoCallersUperc+","+MediumCalleesUAndLowCallersUOrNoCallersUperc+","+HighCalleesUAndMediumCallersUOrLowCallersUperc);
+            
             
             System.out.println(countNoCalleesU+","+countLowCalleesU+","+countMediumCalleesU+","+countHighCalleesU+","+countNoCallersU+","+countLowCallersU+","+countMediumCallersU+","+countHighCallersU+","+
-		 			NoCallersUAndNoCalleesU+","+LowCallersUAndLoworNoCalleesU+","+MediumCallersAndMediumorLoworNoCallees+","+HighCallersAndHighorMediumorLoworNoCallees); 
+		 			NoCallersUAndNoCalleesU+","+LowCallersUAndLoworNoCalleesU+","+MediumCallersAndMediumorLoworNoCallees+","+HighCallersAndHighorMediumorLoworNoCallees+","+
+		 			LowCalleesUAndNoCallersU+","+MediumCalleesUAndLowCallersUOrNoCallersU+","+HighCalleesUAndMediumCallersUOrLowCallersU); 
+	
             
+            
+//            int total=NoCallersUAndNoCalleesU+ 
+// 			LowCallersUAndLoworNoCalleesU+ MediumCallersAndMediumorLoworNoCallees+HighCallersAndHighorMediumorLoworNoCallees
+// 			+ LowCalleesUAndNoCallersU
+// 			+ MediumCalleesUAndLowCallersUOrNoCallersU
+// 			+ HighCalleesUAndMediumCallersUOrLowCallersU; 
+//            System.out.println(total);
+//			System.out.println();
 	}
 	
 	
