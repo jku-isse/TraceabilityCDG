@@ -101,8 +101,7 @@ public class CSV {
 			
 //			programs.add("vod");
 			System.out.println("countNoCalleesU,countLowCalleesU,countMediumCalleesU,countHighCalleesU,countNoCallersU,countLowCallersU,countMediumCallersU,"
-					+ "countHighCallersU,NoCallersUAndNoCalleesU,LowCallersUAndLoworNoCalleesU,MediumCallersAndMediumorLoworNoCallees,HighCallersAndHighorMediumorLoworNoCallees,"
-					+ "LowCalleesUAndNoCallersU,MediumCalleesUAndLowCallersUOrNoCallersU,HighCalleesUAndMediumCallersUOrLowCallersU"); 
+					+ "countHighCallersU,NoCallersUAndNoCalleesU,LowCombination,MediumCombination,HighCombination"); 
 			
 	int i=0; 
 	for(String programName: programs) {
@@ -121,8 +120,8 @@ public class CSV {
 			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
 			int countNoCallersU=0; int countLowCallersU=0; int countMediumCallersU=0; int countHighCallersU=0; 
 			int countNoCalleesU=0; int countLowCalleesU=0; int countMediumCalleesU=0; int countHighCalleesU=0; 
-			int NoCallersUAndNoCalleesU=0; int LowCallersUAndLoworNoCalleesU=0; int MediumCallersAndMediumorLoworNoCallees=0; int HighCallersAndHighorMediumorLoworNoCallees=0; 
-			int LowCalleesUAndNoCallersU=0; int MediumCalleesUAndLowCallersUOrNoCallersU=0; int HighCalleesUAndMediumCallersUOrLowCallersU=0; 
+			int NoCallersUAndNoCalleesU=0; int LowCombination=0; int MediumCombination=0;int HighCombination=0;
+			int size=0; 
             for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
 
@@ -145,76 +144,72 @@ public class CSV {
        		 	
        		 		
        		 		
-       		 			counts c=generateCountsTNU(methodtrace.getCallers());
-       		 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
        		 		
-			 			if(c.amountU.equals("-1")) countNoCallersU++; 
-			 			else if(c.amountU.equals("Low")) countLowCallersU++;
-			 			else if(c.amountU.equals("Medium")) countMediumCallersU++;
-			 			else if(c.amountU.equals("High")) countHighCallersU++; 
+       		 		
 			 			
+		       		 	counts callers=generateCountsTNU(methodtrace.getCallers());
+			 			s=s+callers.amountT+","+callers.amountN+","+callers.amountU+","; 
 			 			
-	   		 			c=generateCountsTNU(methodtrace.getCallers().getCallers());
-	   		 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
+	   		 			counts callersCallers=generateCountsTNU(methodtrace.getCallers().getCallers());
+	   		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
 	   		 		
-			 			counts c2=generateCountsTNU(methodtrace.getCallees());
-			 			s=s+c2.amountT+","+c2.amountN+","+c2.amountU+","; 
+			 			counts callees=generateCountsTNU(methodtrace.getCallees());
+			 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
 			 			
-			 			if(c2.amountU.equals("-1")) countNoCalleesU++; 
-			 			else if(c2.amountU.equals("Low")) countLowCalleesU++;
-			 			else if(c2.amountU.equals("Medium")) countMediumCalleesU++;
-			 			else if(c2.amountU.equals("High")) countHighCalleesU++; 
+			 			counts calleesCallees=generateCountsTNU(methodtrace.getCallees().getCallees());
+			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU+","; 
 			 			
-			 			
-			 			if(c.amountU.equals("-1") && c2.amountU.equals("-1"))  {
-			 				NoCallersUAndNoCalleesU++; 
-			 			}
-			 			else if (c.amountU.equals("Low") && (c2.amountU.equals("Low") || c2.amountU.equals("-1"))) {
-			 				LowCallersUAndLoworNoCalleesU++; 
-			 			}
-			 			else if (c.amountU.equals("Medium") && (c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) {
-			 				MediumCallersAndMediumorLoworNoCallees++; 
-			 			}
-			 			else if (c.amountU.equals("High") && (c2.amountU.equals("High") || c2.amountU.equals("Medium") ||c2.amountU.equals("Low") || c2.amountU.equals("-1"))) {
-			 				HighCallersAndHighorMediumorLoworNoCallees++; 
-			 			}
-			 			else if (c2.amountU.equals("Low") && (c.amountU.equals("-1"))) {
-			 				LowCalleesUAndNoCallersU++; 
-			 			}
-			 			else if (c2.amountU.equals("Medium") && (c.amountU.equals("Low") || c.amountU.equals("-1"))) {
-			 				MediumCalleesUAndLowCallersUOrNoCallersU++; 
-			 			}
-			 			else if (c2.amountU.equals("High") && (c.amountU.equals("Medium") ||c.amountU.equals("Low") || c.amountU.equals("-1"))) {
-			 				HighCalleesUAndMediumCallersUOrLowCallersU++; 
-			 			}else {
-			 				System.out.println("here");
-			 				System.out.println();
-			 			}
-			 		
-			 			c=generateCountsTNU(methodtrace.getCallees().getCallees());
-			 			s=s+c.amountT+","+c.amountN+","+c.amountU+","; 
-		 		
-			 			if(!methodtrace.getCallees().isEmpty() && !methodtrace.getCallers().isEmpty()
-			 			&& !methodtrace.getCallees().atLeast1GoldU() && !methodtrace.getCallers().atLeast1GoldU()) {
+			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1")) {
 			 				s=s+"1,"; 
 			 			}else {
 			 				s=s+"0,"; 
 			 			}
-//			 			if(!methodtrace.getCallees().isEmpty() && !methodtrace.getCallers().isEmpty()
-//			 			    && !methodtrace.getCallees().getCallees().isEmpty() && !methodtrace.getCallers().getCallers().isEmpty()
-//					 		&& !methodtrace.getCallees().atLeast1GoldU() && !methodtrace.getCallers().atLeast1GoldU()
-//					 		 && !methodtrace.getCallees().getCallees().atLeast1GoldU() && !methodtrace.getCallers().getCallers().atLeast1GoldU()) {
-//					 				s=s+"1,"; 
-//					 			}else {
-//					 				s=s+"0,"; 
-//					 			}
+
 			 			s=s+methodtrace.getClazzRTMCell().getTraceValue()+",\n"; 
 			 			
 			 			writer.write(s);
-            	}
-
+			 			
+			 			
+			 			//SEPARATE CALLERS AND CALLEES 
+			 			
+			 			if(callers.amountU.equals("-1")) countNoCallersU++; 
+			 			else if(callers.amountU.equals("Low")) countLowCallersU++;
+			 			else if(callers.amountU.equals("Medium")) countMediumCallersU++;
+			 			else if(callers.amountU.equals("High")) countHighCallersU++; 
+			 			
+			 			
+			 			if(callees.amountU.equals("-1")) countNoCalleesU++; 
+			 			else if(callees.amountU.equals("Low")) countLowCalleesU++;
+			 			else if(callees.amountU.equals("Medium")) countMediumCalleesU++;
+			 			else if(callees.amountU.equals("High")) countHighCalleesU++; 
+			 			
+			 			
+			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1"))  {
+			 				NoCallersUAndNoCalleesU++; 
+			 			}
+			 			else if ((callers.amountU.equals("Low") && (callees.amountU.equals("Low") || callees.amountU.equals("-1")))
+			 					|| (callees.amountU.equals("Low") && callers.amountU.equals("-1"))
+			 					) {
+			 				LowCombination++; 
+			 			}
+			 			else if ((callers.amountU.equals("Medium") && (callees.amountU.equals("Medium") || callees.amountU.equals("Low")|| callees.amountU.equals("-1")))
+			 					|| (callees.amountU.equals("Medium") && (callers.amountU.equals("Low")||callers.amountU.equals("-1")))
+			 					) {
+			 				MediumCombination++; 
+			 			}
+			 			else if ((callers.amountU.equals("High") && (callees.amountU.equals("High") ||callees.amountU.equals("Medium") || callees.amountU.equals("Low")|| callees.amountU.equals("-1")))
+			 					|| (callees.amountU.equals("High") && (callers.amountU.equals("Medium")||callers.amountU.equals("Low")||callers.amountU.equals("-1")))
+			 					) {
+			 				HighCombination++; 
+			 			}
+			 			
+			 		
+			 			
+		 		
+			 	
+			 			size++; }
+            	
             }
-            int size=MethodRTMCell.methodtraces2HashMap.size(); 
             double countNoCalleesUdouble=(double)countNoCalleesU/size*100; 
             int countNoCalleesUperc= (int) Math.round(countNoCalleesUdouble); 
             
@@ -243,48 +238,26 @@ public class CSV {
             
             double countHighCallersUdouble=(double)countHighCallersU/size*100;
             int countHighCallersUperc=(int)Math.round(countHighCallersUdouble); 
-            
+            /******/
             double NoCallersUAndNoCalleesUdouble=(double)NoCallersUAndNoCalleesU/size*100;
             int NoCallersUAndNoCalleesUperc=(int)Math.round(NoCallersUAndNoCalleesUdouble); 
             
-            double LowCallersUAndLoworNoCalleesUdouble=(double)LowCallersUAndLoworNoCalleesU/size*100;
-            int LowCallersUAndLoworNoCalleesUperc=(int)Math.round(LowCallersUAndLoworNoCalleesUdouble); 
+            double LowCombinationdouble=(double)LowCombination/size*100;
+            int LowCombinationperc=(int)Math.round(LowCombinationdouble); 
             
-            double MediumCallersAndMediumorLoworNoCalleesdouble=(double)MediumCallersAndMediumorLoworNoCallees/size*100;
-            int MediumCallersAndMediumorLoworNoCalleesperc=(int)Math.round(MediumCallersAndMediumorLoworNoCalleesdouble);
+            double MediumCombinationdouble=(double)MediumCombination/size*100;
+            int MediumCombinationperc=(int)Math.round(MediumCombinationdouble);
             
-            double HighCallersAndHighorMediumorLoworNoCalleesdouble=(double)HighCallersAndHighorMediumorLoworNoCallees/size*100;
-            int HighCallersAndHighorMediumorLoworNoCalleesperc=(int)Math.round(HighCallersAndHighorMediumorLoworNoCalleesdouble);
+            double HighCombinationdouble=(double)HighCombination/size*100;
+            int HighCombinationperc=(int)Math.round(HighCombinationdouble);
             
-            double LowCalleesUAndNoCallersUdouble=(double)LowCalleesUAndNoCallersU/size*100;
-            int LowCalleesUAndNoCallersUperc=(int)Math.round(LowCalleesUAndNoCallersUdouble);
-            
-            
-            double MediumCalleesUAndLowCallersUOrNoCallersUdouble=(double)MediumCalleesUAndLowCallersUOrNoCallersU/size*100;
-            int MediumCalleesUAndLowCallersUOrNoCallersUperc=(int)Math.round(MediumCalleesUAndLowCallersUOrNoCallersUdouble);
-            
-            
-            double HighCalleesUAndMediumCallersUOrLowCallersUdouble=(double)HighCalleesUAndMediumCallersUOrLowCallersU/size*100;
-            int HighCalleesUAndMediumCallersUOrLowCallersUperc=(int)Math.round(HighCalleesUAndMediumCallersUOrLowCallersUdouble);
+           
             
             System.out.println(countNoCalleesUperc+","+countLowCalleesUperc+","+countMediumCalleesUperc+","+countHighCalleesUperc+","+countNoCallersUperc+","+countLowCallersUperc+","+countMediumCallersUperc+","+countHighCallersUperc+","+
-		 			NoCallersUAndNoCalleesUperc+","+LowCallersUAndLoworNoCalleesUperc+","+MediumCallersAndMediumorLoworNoCalleesperc+","+HighCallersAndHighorMediumorLoworNoCalleesperc+","+
-		 			LowCalleesUAndNoCallersUperc+","+MediumCalleesUAndLowCallersUOrNoCallersUperc+","+HighCalleesUAndMediumCallersUOrLowCallersUperc);
+		 			NoCallersUAndNoCalleesUperc+","+LowCombinationperc+","+MediumCombinationperc+","+HighCombinationperc);
             
             
-            System.out.println(countNoCalleesU+","+countLowCalleesU+","+countMediumCalleesU+","+countHighCalleesU+","+countNoCallersU+","+countLowCallersU+","+countMediumCallersU+","+countHighCallersU+","+
-		 			NoCallersUAndNoCalleesU+","+LowCallersUAndLoworNoCalleesU+","+MediumCallersAndMediumorLoworNoCallees+","+HighCallersAndHighorMediumorLoworNoCallees+","+
-		 			LowCalleesUAndNoCallersU+","+MediumCalleesUAndLowCallersUOrNoCallersU+","+HighCalleesUAndMediumCallersUOrLowCallersU); 
-	
-            
-            
-//            int total=NoCallersUAndNoCalleesU+ 
-// 			LowCallersUAndLoworNoCalleesU+ MediumCallersAndMediumorLoworNoCallees+HighCallersAndHighorMediumorLoworNoCallees
-// 			+ LowCalleesUAndNoCallersU
-// 			+ MediumCalleesUAndLowCallersUOrNoCallersU
-// 			+ HighCalleesUAndMediumCallersUOrLowCallersU; 
-//            System.out.println(total);
-//			System.out.println();
+
 	}
 	
 	
@@ -312,9 +285,7 @@ public class CSV {
 	}
 	private static counts generateCountsTNU(MethodRTMCellList callers) {
 		counts c = counts.countMethods(callers); 
-//		String amountT="0"; 
-//		String amountN="0"; 
-//		String amountU="0"; 
+
 
 		if(c.T>=4) c.amountT="High"; 
 		else if(c.T>1 && c.T<=3) c.amountT="Medium"; 
@@ -326,9 +297,17 @@ public class CSV {
 		else if(c.N==1) c.amountN="Low"; 
 		
 		
-		if(c.U>=6) c.amountU="High"; 
-		else if(c.U>1 && c.U<=5) c.amountU="Medium"; 
-		else if(c.U==1) c.amountU="Low"; 
+		if(c.U>=6) {
+			c.amountU="High"; 
+		}
+		else if(c.U>1 && c.U<=5) {
+			c.amountU="Medium"; 
+		}
+		else if(c.U==1) {
+			c.amountU="Low"; 
+		}else {
+			
+		}
 		
 		return c; 
 		

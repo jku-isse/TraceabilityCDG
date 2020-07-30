@@ -77,6 +77,13 @@ public class RTMCellList extends ArrayList<RTMCell>{
 		}
 		return false;
 	}
+	
+	public boolean NoUs() {
+		for (RTMCell cell : this) {
+			if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) return false;
+		}
+		return true;
+	}
 
 	public boolean atLeast1PredictedU() {
 		for (RTMCell cell : this) {
