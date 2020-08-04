@@ -124,6 +124,7 @@ public class CSV {
 			int size=0; 
             for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
+//            	if(methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
 
        		 		String s= methodtrace.logGoldTraceValueString()
        		 			
