@@ -381,6 +381,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 				RTMCell.logTPTNFPFN2(program, "");
 
 			}
+			//test
 			
 			 long endTime = System.currentTimeMillis();
 		     System.out.println("It took " + (endTime - startTime) + " milliseconds");
