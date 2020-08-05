@@ -1,0 +1,5 @@
+[{"id":1, "interfaceclassid":29, "interfacename":"edu.ncsu.csc.itrust.action.AddDrugListAction$DrugStrategy", "ownerclassid":30, "classname":"edu.ncsu.csc.itrust.action.AddDrugListAction$OverwriteDuplicateDrugStrategy"},
+ {"id":2, "interfaceclassid":29, "interfacename":"edu.ncsu.csc.itrust.action.AddDrugListAction$DrugStrategy", "ownerclassid":31, "classname":"edu.ncsu.csc.itrust.action.AddDrugListAction$SkipDuplicateDrugStrategy"},
+ {"id":3, "interfaceclassid":339, "interfacename":"edu.ncsu.csc.itrust.dao.IConnectionDriver", "ownerclassid":340, "classname":"edu.ncsu.csc.itrust.dao.ProductionConnectionDriver"},
+ {"id":4, "interfaceclassid":339, "interfacename":"edu.ncsu.csc.itrust.dao.IConnectionDriver", "ownerclassid":645, "classname":"edu.ncsu.csc.itrust.testutils.EvilDAOFactory"},
+ {"id":5, "interfaceclassid":339, "interfacename":"edu.ncsu.csc.itrust.dao.IConnectionDriver", "ownerclassid":650, "classname":"edu.ncsu.csc.itrust.testutils.TestDAOFactory"}]
