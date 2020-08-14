@@ -11,6 +11,10 @@ public class counts {
 	public String amountN="-1"; 
 	public String amountU="-1"; 
 
+	public int amountTperc=0; 
+	public int amountNperc=0; 
+	public int amountUperc=0; 
+	
 	
 	public static counts countMethods(MethodRTMCellList methodsRTMs){
 		counts counts= new counts(); 
