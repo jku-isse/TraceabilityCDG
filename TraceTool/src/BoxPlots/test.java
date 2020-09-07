@@ -11,32 +11,43 @@ class test {
     // Driver code
 	public static void main (String[] args) {
 		
-		boolean res=solution ("50", "??48"); 
-		System.out.println(res);
+		solution (); 
 	}
-	private static boolean solution(String s1, String s2) {
-		// TODO Auto-generated method stub
-		char[] s1chars = s1.toCharArray(); 
-		char[] s2chars = s2.toCharArray(); 
-		
-		
-		String s1String=func(s1); 
-		String s2String=func(s2); 
-		System.out.println(s1String+"-");
-		System.out.println(s2String);
+	private static void solution() {
+		int right=5; int left=5; 
+		int pointer=0; 
+		int iterations=0; 
+		int it2=0; 
+		while (iterations<=10) {
+			it2=0; 
+			pointer=0; 
+				while(it2<=10) {
+					if(pointer>=left && pointer <=right) {
+						System.out.print("*");
+					}else {
+						System.out.print(" ");
+					}
+					it2++; 
+					pointer++; 
 
-		if(s1String.length()!=s2String.length()) return false; 
-		else {
-			for(int i=0; i<s1String.length(); i++) {
-				if((s1String.charAt(i)==s2String.charAt(i))  || (s1String.charAt(i)==' ' && s2String.charAt(i)!=' ') || (s1String.charAt(i)!=' ' && s2String.charAt(i)==' ')) {
-					
-				}else {
-					return false; 
 				}
-			}
+				
+				System.out.println();
+				if(iterations<5) {
+					left--; 
+					right++; 
+				}else {
+					left++; 
+					right--; 
+				}
+				
+				
+			
+			
+			iterations++; 
 		}
-
-		return true; 
+		
+		
 	}
 
 			private static String func(String s1) {

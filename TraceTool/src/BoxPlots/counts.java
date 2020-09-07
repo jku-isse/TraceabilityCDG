@@ -15,6 +15,10 @@ public class counts {
 	public int amountNperc=0; 
 	public int amountUperc=0; 
 	
+	public String amountTQuantity=""; 
+	public String amountNQuantity=""; 
+	public String amountUQuantity=""; 
+	
 	
 	public static counts countMethods(MethodRTMCellList methodsRTMs){
 		counts counts= new counts(); 
