@@ -95,7 +95,7 @@ public class MethodList extends ArrayList<Method>{
     public MethodRTMCellList getMethodRTMCellList(Requirement requirement) {
 		MethodRTMCellList cellList = new MethodRTMCellList();
 		for (Method method : this) {
-			cellList.add (MethodRTMCell.getMethodRTMCell(requirement, method));
+			cellList.add(MethodRTMCell.getMethodRTMCell(requirement, method));
 		}
 		return cellList;
 	}

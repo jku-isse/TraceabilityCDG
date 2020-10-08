@@ -20,32 +20,40 @@ import model.VariableList;
 import traceValidator.TraceValidatorPredictionPattern;
 
 public class CSV {
+	
+	public static boolean AtLeastOneInstance=true; 
+
     static File file = new File("log\\data.txt");
 
 
-
+    CSV csv=new CSV();  
    
-    
     static String headers="gold,Program,MethodType,"
 
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
     		+ "CalleesT,CalleesN,CalleesU,"
     		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,CompleteCallersCallees,"
-    		+ "classGold,"
+    		+ "classGold"
     		
-    		+ "CallersTPercentage,CallersNPercentage,CallersUPercentage,"
-    		+ "CallersCallersTPercentage,CallersCallersNPercentage,CallersCallersUPercentage,"
-    		+ "CalleesTPercentage,CalleesNPercentage,CalleesUPercentage,"
-    		+ "CalleesCalleesTPercentage,CalleesCalleesNPercentage,CalleesCalleesUPercentage"; 
+    		; 
     
-    
+    static String headersAtLeastOneInstance="gold,MethodType,"
+
+    		+ "CallersT,CallersN,CallersU,"
+    		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
+    		+ "CalleesT,CalleesN,CalleesU,"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
+    		
+    		; 
 	public static void main (String [] args) throws Exception {
 		ArrayList<String> programs = new ArrayList<String>();
-		
 		 FileWriter writer = new FileWriter(file,true);
+		 if(!AtLeastOneInstance)
+			 writer.write(headers+"\n");
+		 else 
+			 writer.write(headersAtLeastOneInstance+"\n");
 
-        writer.write(headers+"\n");
 			programs.add("chess");
 			programs.add("gantt");
 			programs.add("itrust");
@@ -58,29 +66,33 @@ public class CSV {
 	int i=0; 
 	for(String programName: programs) {
 		DatabaseInput.read(programName);
-		generateCSVFileNew(programName,writer);
-
-
+		generateCSVFile("",writer);
 	}
     writer.close();
 
 	}
-	private static void generateCSVFileNew(String programName, FileWriter writer) throws IOException {
+	private static void generateCSVFile(String programName, FileWriter writer) throws IOException {
 		// TODO Auto-generated method stub
+			counts callers = new counts(); 
+			counts callersCallers= new counts(); 
+			counts callees= new counts(); 
+			counts calleesCallees= new counts(); 
+			ArrayList<String> programs = new ArrayList<String>();
 
+	
 			int i=1; 
 			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
 			int countNoCallersU=0; int countLowCallersU=0; int countMediumCallersU=0; int countHighCallersU=0; 
 			int countNoCalleesU=0; int countLowCalleesU=0; int countMediumCalleesU=0; int countHighCalleesU=0; 
 			int NoCallersUAndNoCalleesU=0; int LowCombination=0; int MediumCombination=0;int HighCombination=0;
 			int size=0; 
+			int k=0; 
             for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
-//            	if(methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
 
-       		 		String s= methodtrace.logGoldTraceValueString()
-       		 			
-       		 				+","+programName+","; 
+       		 		String s= methodtrace.logGoldTraceValueString()+","; 
+       		 		if(!AtLeastOneInstance)	
+       		 			s=s+programName+","; 
        		 		
        		 		if(!methodtrace.getCallers().isEmpty() && !methodtrace.getCallees().isEmpty()) {
        		 			s=s+"Inner,"; 
@@ -98,32 +110,35 @@ public class CSV {
        		 		
        		 		
        		 		
-       		 		
+       		 		if(!AtLeastOneInstance) {
+	       		 		 callers=generateCountsTNU(methodtrace.getCallers());
+	   		 			 callersCallers=generateCountsTNU(methodtrace.getCallers().getCallers());
+	   		 			 callees=generateCountsTNU(methodtrace.getCallees());
+			 			 calleesCallees=generateCountsTNU(methodtrace.getCallees().getCallees());
+       		 		}else if(AtLeastOneInstance) {
+       		 			 
+	       		 		 callers=generateCountsTNUAtLeastOneInstance(methodtrace.getCallers());
+	   		 			 callersCallers=generateCountsTNUAtLeastOneInstance(methodtrace.getCallers().getCallers());
+	   		 			 callees=generateCountsTNUAtLeastOneInstance(methodtrace.getCallees());
+			 			 calleesCallees=generateCountsTNUAtLeastOneInstance(methodtrace.getCallees().getCallees());
+       		 		}
 			 			
-		       		 	counts callers=generateCountsTNU(methodtrace.getCallers());
+		       		 	
+			 			
 			 			s=s+callers.amountT+","+callers.amountN+","+callers.amountU+","; 
-			 			
-	   		 			counts callersCallers=generateCountsTNU(methodtrace.getCallers().getCallers());
 	   		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
-	   		 		
-			 			counts callees=generateCountsTNU(methodtrace.getCallees());
 			 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
+			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU; 
 			 			
-			 			counts calleesCallees=generateCountsTNU(methodtrace.getCallees().getCallees());
-			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU+","; 
-			 			
-			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1")) {
+			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1") && !AtLeastOneInstance) {
 			 				s=s+"1,"; 
-			 			}else {
+			 			}else if(!AtLeastOneInstance) {
 			 				s=s+"0,"; 
 			 			}
-
-			 			s=s+methodtrace.getClazzRTMCell().getTraceValue()+","; 
+			 			if(!AtLeastOneInstance)
+			 				s=s+","+methodtrace.getClazzRTMCell().getTraceValue(); 
 			 			
-			 			s=s+callers.amountTQuantity+","+callers.amountNQuantity+","+callers.amountUQuantity+","+
-			 			callersCallers.amountTQuantity+","+callersCallers.amountNQuantity+","+callersCallers.amountUQuantity+","+
-			 			callees.amountTQuantity+","+callees.amountNQuantity+","+callees.amountUQuantity+","+
-						calleesCallees.amountTQuantity+","+calleesCallees.amountNQuantity+","+calleesCallees.amountUQuantity+","+"\n"; 
+			 			s=s+"\n"; 
 						writer.write(s);
 			 			
 			 			
@@ -164,7 +179,9 @@ public class CSV {
 			 			
 		 		
 			 	
-			 			size++; }
+			 			size++; 
+			 			}
+            	k++; 
             	
             }
             double countNoCalleesUdouble=(double)countNoCalleesU/size*100; 
@@ -217,29 +234,20 @@ public class CSV {
 
 	}
 	
-	//////////////////////////////////////////////////////////////////////
 
-	public static String calculateTNU(RTMCellList methodTraces) {
-		boolean hasT = false;
-		boolean hasN = false;
-		boolean hasU = false;
-		for(RTMCell cell: methodTraces) {
-			
-				if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.Trace)) {
-					hasT = true;
-				}
-				if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.NoTrace)) {
-					hasN = true;
-				}
-				if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
-					hasU = true;
-				}
-			
-		}
-		String returnValue=(hasT ? "T":"")+(hasN ? "N":"")+(hasU ? "U":""); 
+	private static counts generateCountsTNUAtLeastOneInstance(MethodRTMCellList callees) {
+		// TODO Auto-generated method stub
+		counts c = counts.countMethods(callees); 
+		if(c.T>=1) c.amountT="1"; 
+		else if(c.T==0) c.amountT="0"; 
 		
-		if(!returnValue.equals(""))return returnValue; 
-		else return "-1"; 
+		if(c.N>=1) c.amountN="1"; 
+		else if(c.N==0) c.amountN="0"; 
+		
+		if(c.U>=1) c.amountU="1"; 
+		else if(c.U==0)  c.amountU="0"; 
+		
+		return c; 
 	}
 	//////////////////////////////////////////////////////////////////////
 	private static counts generateCountsTNU(MethodRTMCellList callers) {
@@ -275,28 +283,13 @@ public class CSV {
 		c.amountUperc=amountUperc; 
 		
 		
-		String Tquantity =assignQuantities(c.amountTperc); 
-		c.amountTQuantity=Tquantity; 
-		String Nquantity =assignQuantities(c.amountNperc); 
-		c.amountNQuantity=Nquantity; 
-		String Uquantity =assignQuantities(c.amountUperc); 
-		c.amountUQuantity=Uquantity; 
+		
 		
 		
 		return c; 
 		
 		
 	}
-	//////////////////////////////////////////////////////////////////////
-
-	private static String assignQuantities(int amountperc) {
-		// TODO Auto-generated method stub
-		String quantity=""; 
-		if(amountperc>=0 && amountperc<=10) quantity="None"; 
-		else if (amountperc>10 && amountperc<=40) quantity="Low"; 
-		else if(amountperc>40 && amountperc<=90) quantity="Medium"; 
-		else if (amountperc>90 && amountperc<=100) quantity="High"; 
-		return quantity; 
-	}
+	
 
 }

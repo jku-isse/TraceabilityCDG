@@ -56,7 +56,11 @@ public class DatabaseInput {
     				methodTrace.setVSMTraceValue(RTMCell.TraceValue.Trace);
     			else if(obj.get(key).toString().equals("N"))
     				methodTrace.setVSMTraceValue(RTMCell.TraceValue.NoTrace);
+    			
+    			
             }
+            
+            
 		}
 		
 	}
