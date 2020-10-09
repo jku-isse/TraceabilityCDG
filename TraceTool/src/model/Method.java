@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Method {
 
-	static public LinkedHashMap<String, Method> methodsHashMap= new LinkedHashMap<String, Method>();
+	 public static LinkedHashMap<String, Method> methodsHashMap= new LinkedHashMap<String, Method>();
 
 	public String ID;
 	public String name;

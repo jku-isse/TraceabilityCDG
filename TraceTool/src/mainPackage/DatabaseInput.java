@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.acl.Owner;
+import java.util.LinkedHashMap;
 
 public class DatabaseInput {
 
@@ -36,6 +37,16 @@ public class DatabaseInput {
 		createAssignments(ProgramName); 
 //		addVSMTraces(ProgramName); 
 //		addLSITraces(ProgramName);
+		if(ProgramName.equals("Gantt")) {
+			System.out.println("yes");
+		}
+		MethodRTMCell.Totalmethodtraces2HashMap.put(ProgramName, (LinkedHashMap<String, MethodRTMCell>) MethodRTMCell.methodtraces2HashMap.clone()); 
+		if(MethodRTMCell.Totalmethodtraces2HashMap.get("chess")!=null)
+				System.out.println(MethodRTMCell.Totalmethodtraces2HashMap.get("chess").get("1-1"));
+		if(MethodRTMCell.Totalmethodtraces2HashMap.get("gantt")!=null)
+		System.out.println(MethodRTMCell.Totalmethodtraces2HashMap.get("gantt").get("1-1"));
+
+		System.out.println();
 	}
 
 	private static void addVSMTraces(String programName) throws FileNotFoundException, IOException, ParseException {

@@ -1,7 +1,9 @@
 package BoxPlots;
 
+import mainPackage.CSV;
 import model.MethodRTMCellList;
 import model.RTMCell;
+import model.RTMCell.TraceValue;
 
 public class counts {
 	public int T=0; 
@@ -21,11 +23,15 @@ public class counts {
 	public static counts countMethods(MethodRTMCellList methodsRTMs){
 		counts counts= new counts(); 
 		for(RTMCell methodRTM: methodsRTMs) {
-			if(methodRTM.getGoldTraceValue().equals(RTMCell.TraceValue.Trace)) {
+			TraceValue val=null;
+			if(CSV.Seeding)  val=methodRTM.getTraceValue(); 
+			else val=methodRTM.getGoldTraceValue(); 
+			
+			if(val.equals(RTMCell.TraceValue.Trace)) {
 				counts.T++; 
-			}else if(methodRTM.getGoldTraceValue().equals(RTMCell.TraceValue.NoTrace)) {
+			}else if(val.equals(RTMCell.TraceValue.NoTrace)) {
 				counts.N++; 
-			}else if(methodRTM.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
+			}else if(val.equals(RTMCell.TraceValue.UndefinedTrace)) {
 				counts.U++; 
 
 			}

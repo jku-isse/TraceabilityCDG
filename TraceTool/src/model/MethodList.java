@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import mainPackage.CSV;
+
 public class MethodList extends ArrayList<Method>{
 
 
@@ -95,7 +97,15 @@ public class MethodList extends ArrayList<Method>{
     public MethodRTMCellList getMethodRTMCellList(Requirement requirement) {
 		MethodRTMCellList cellList = new MethodRTMCellList();
 		for (Method method : this) {
-			cellList.add(MethodRTMCell.getMethodRTMCell(requirement, method));
+			 cellList.add(MethodRTMCell.getMethodRTMCell(requirement, method));
+		}
+		return cellList;
+	}
+    
+    public MethodRTMCellList getMethodRTMCellList(Requirement requirement, String ProgramName) {
+		MethodRTMCellList cellList = new MethodRTMCellList();
+		for (Method method : this) {
+			 cellList.add(MethodRTMCell.getMethodRTMCell(requirement, method, ProgramName));
 		}
 		return cellList;
 	}

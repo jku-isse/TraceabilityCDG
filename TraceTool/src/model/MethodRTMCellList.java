@@ -54,6 +54,20 @@ public class MethodRTMCellList extends RTMCellList {
             list.addAll(((MethodRTMCell) cell).getCallers());
         return list;
     }
+    
+    public MethodRTMCellList getCallers(String ProgramName) {
+        MethodRTMCellList list = new MethodRTMCellList();
+        for (RTMCell cell : this)
+            list.addAll(((MethodRTMCell) cell).getCallers(ProgramName));
+        return list;
+    }
+    
+    public MethodRTMCellList getCallees(String ProgramName) {
+        MethodRTMCellList list = new MethodRTMCellList();
+        for (RTMCell cell : this)
+            list.addAll(((MethodRTMCell) cell).getCallees(ProgramName));
+        return list;
+    }
 
     public MethodRTMCellList getCallees() {
         MethodRTMCellList list = new MethodRTMCellList();
