@@ -71,8 +71,9 @@ public class CSV {
 			 writer.write(headersAtLeastOneInstance+"\n");
 			programs.add("gantt");
 			programs.add("chess");
-//			programs.add("itrust");
-//			programs.add("jhotdraw");
+			programs.add("itrust");
+			programs.add("jhotdraw");
+			programs.add("vod"); 
 			
 //			programs.add("vod");
 			System.out.println("countNoCalleesU,countLowCalleesU,countMediumCalleesU,countHighCalleesU,countNoCallersU,countLowCallersU,countMediumCallersU,"

@@ -24,6 +24,7 @@ public class counts {
 		counts counts= new counts(); 
 		for(RTMCell methodRTM: methodsRTMs) {
 			TraceValue val=null;
+			
 			if(CSV.Seeding)  val=methodRTM.getTraceValue(); 
 			else val=methodRTM.getGoldTraceValue(); 
 			

@@ -41,10 +41,7 @@ public class DatabaseInput {
 			System.out.println("yes");
 		}
 		MethodRTMCell.Totalmethodtraces2HashMap.put(ProgramName, (LinkedHashMap<String, MethodRTMCell>) MethodRTMCell.methodtraces2HashMap.clone()); 
-		if(MethodRTMCell.Totalmethodtraces2HashMap.get("chess")!=null)
-				System.out.println(MethodRTMCell.Totalmethodtraces2HashMap.get("chess").get("1-1"));
-		if(MethodRTMCell.Totalmethodtraces2HashMap.get("gantt")!=null)
-		System.out.println(MethodRTMCell.Totalmethodtraces2HashMap.get("gantt").get("1-1"));
+		
 
 		System.out.println();
 	}
