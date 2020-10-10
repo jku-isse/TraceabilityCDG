@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.annotation.Generated;
+
 import BoxPlots.counts;
 import evaluation.Seeder;
 import model.MethodRTMCell;
@@ -32,8 +34,8 @@ public class CSV {
     public static boolean Seeding=true; 
 
     CSV csv=new CSV();  
-    static double[] TSeeds = new double[]{5,10,15,20,25}; 
-    static double[] NSeeds = new double[]{0.5,1,1.5,2,2.5}; 
+    static double[] TSeeds = new double[]{0.5,1.0,1.5,2.0,2.5}; 
+    static double[] NSeeds = new double[]{5,10,15,20,25}; 
     static HashMap<String, List<MethodRTMCell>> mergedHashMap = new HashMap<>(); 
 
     static String headers="gold,Program,MethodType,"
@@ -46,7 +48,16 @@ public class CSV {
     		
     		; 
     
-    static String headersAtLeastOneInstance="gold,MethodType,"
+    static String headersAtLeastOneInstance="gold,Program,MethodType,"
+
+    		+ "CallersT,CallersN,CallersU,"
+    		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
+    		+ "CalleesT,CalleesN,CalleesU,"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
+    		
+    		; 
+    
+    static String headersAtLeastOneInstanceNoProgram="gold,MethodType,"
 
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
@@ -67,10 +78,12 @@ public class CSV {
 		 FileWriter writer = new FileWriter(file,true);
 		 if(!AtLeastOneInstance)
 			 writer.write(headers+"\n");
-		 else 
+		 else if(AtLeastOneInstance && !Seeding)
 			 writer.write(headersAtLeastOneInstance+"\n");
-			programs.add("gantt");
+		 
+
 			programs.add("chess");
+			programs.add("gantt");
 			programs.add("itrust");
 			programs.add("jhotdraw");
 			programs.add("vod"); 
@@ -133,6 +146,12 @@ public class CSV {
 				}
 				
 				
+		}else {
+			for(String programName: programs) {
+				DatabaseInput.read(programName);
+				System.out.println(programName);
+				generateCSVFile(programName, writer);
+			}
 		}
 		  
 		
@@ -179,7 +198,7 @@ public class CSV {
 	/*/****************************************************************************/
 
 	private static List<MethodRTMCell> SeedNtoT(List<MethodRTMCell> Ts, List<MethodRTMCell> Ns, double perc) throws IOException {
-		int numberOfNs= (int)perc*Ts.size()/100; 
+		int numberOfNs= (int)perc*Ns.size()/100; 
 		
 		Random random = new Random();
 		int i=0; 
@@ -210,7 +229,7 @@ public class CSV {
 		 File myFile = new File("log\\"+fileName+".txt");
 		 System.out.println(fileName);
 		 FileWriter writer = new FileWriter(myFile);
-
+		 writer.write(headersAtLeastOneInstanceNoProgram+"\n");
 		 if(AtLeastOneInstance) {
 	 			for(MethodRTMCell methodtrace: tsNs) {
 	 				String s=""; 
@@ -270,16 +289,15 @@ public class CSV {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
             		String ProgramName=methodtrace.ProgramName; 
        		 		String s= methodtrace.logGoldTraceValueString()+","; 
-       		 		if(!AtLeastOneInstance)	
-       		 			s=s+programName+","; 
+       		 		s=s+programName+","; 
        		 		
-       		 		if(!methodtrace.getCallers(ProgramName).isEmpty() && !methodtrace.getCallees(ProgramName).isEmpty()) {
+       		 		if(!methodtrace.getCallers().isEmpty() && !methodtrace.getCallees().isEmpty()) {
        		 			s=s+"Inner,"; 
-       		 		}else if( methodtrace.getCallees(ProgramName).isEmpty() ) {
+       		 		}else if( methodtrace.getCallees().isEmpty() ) {
        		 			s=s+"Leaf,"; 
-       		 		}else if( methodtrace.getCallers(ProgramName).isEmpty() ) {
+       		 		}else if( methodtrace.getCallers().isEmpty() ) {
        		 			s=s+"Root,"; 
-       		 		}else if( methodtrace.getCallers(ProgramName).isEmpty() && methodtrace.getCallees(ProgramName).isEmpty()) {
+       		 		}else if( methodtrace.getCallers().isEmpty() && methodtrace.getCallees().isEmpty()) {
        		 			s=s+"Isolated,"; 
        		 		}
        		 		
@@ -290,16 +308,16 @@ public class CSV {
        		 		
        		 		
        		 		if(!AtLeastOneInstance) {
-	       		 		 callers=generateCountsTNU(methodtrace.getCallers(ProgramName));
-	   		 			 callersCallers=generateCountsTNU(methodtrace.getCallers(ProgramName).getCallers());
-	   		 			 callees=generateCountsTNU(methodtrace.getCallees(ProgramName));
-			 			 calleesCallees=generateCountsTNU(methodtrace.getCallees(ProgramName).getCallees());
+	       		 		 callers=generateCountsTNU(methodtrace.getCallers());
+	   		 			 callersCallers=generateCountsTNU(methodtrace.getCallers().getCallers());
+	   		 			 callees=generateCountsTNU(methodtrace.getCallees());
+			 			 calleesCallees=generateCountsTNU(methodtrace.getCallees().getCallees());
        		 		}else if(AtLeastOneInstance) {
        		 			 
-	       		 		 callers=generateCountsTNUAtLeastOneInstance(methodtrace.getCallers(ProgramName));
-	   		 			 callersCallers=generateCountsTNUAtLeastOneInstance(methodtrace.getCallers(ProgramName).getCallers());
-	   		 			 callees=generateCountsTNUAtLeastOneInstance(methodtrace.getCallees(ProgramName));
-			 			 calleesCallees=generateCountsTNUAtLeastOneInstance(methodtrace.getCallees(ProgramName).getCallees());
+	       		 		 callers=generateCountsTNUAtLeastOneInstance(methodtrace.getCallers());
+	   		 			 callersCallers=generateCountsTNUAtLeastOneInstance(methodtrace.getCallers().getCallers());
+	   		 			 callees=generateCountsTNUAtLeastOneInstance(methodtrace.getCallees());
+			 			 calleesCallees=generateCountsTNUAtLeastOneInstance(methodtrace.getCallees().getCallees());
        		 		}
 			 			
 		       		 	
