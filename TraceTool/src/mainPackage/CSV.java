@@ -327,13 +327,13 @@ public class CSV {
 			 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
 			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU; 
 			 			
-			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1") && !AtLeastOneInstance) {
-			 				s=s+"1,"; 
-			 			}else if(!AtLeastOneInstance) {
-			 				s=s+"0,"; 
-			 			}
-			 			if(!AtLeastOneInstance)
-			 				s=s+","+methodtrace.getClazzRTMCell().getTraceValue(); 
+//			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1") && !AtLeastOneInstance) {
+//			 				s=s+"1,"; 
+//			 			}else if(!AtLeastOneInstance) {
+//			 				s=s+"0,"; 
+//			 			}
+//			 			if(!AtLeastOneInstance)
+//			 				s=s+","+methodtrace.getClazzRTMCell().getTraceValue(); 
 			 			
 			 			s=s+"\n"; 
 						writer.write(s);

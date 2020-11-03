@@ -22,6 +22,14 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+    <groupId>org.antlr</groupId>
+    <artifactId>antlr4-maven-plugin</artifactId>
+    <version>4.7.1</version>
+    <executions>
+        
+    </executions>
+</plugin>
     </plugins>
   </build>
       <dependencies>
@@ -35,6 +43,11 @@
   		<artifactId>mysql-connector-java</artifactId>
   		<version>8.0.11</version>
   	</dependency>
+  <dependency>
+    <groupId>org.soot-oss</groupId>
+    <artifactId>soot</artifactId>
+    <version>4.2.1</version>
+  </dependency>
   	<dependency>
   		<groupId>org.junit.jupiter</groupId>
   		<artifactId>junit-jupiter-engine</artifactId>
@@ -46,6 +59,10 @@
 	    <artifactId>weka-stable</artifactId>
 	    <version>3.8.0</version>
 	</dependency>
-  	
-    </dependencies>
+	<dependency>
+    <groupId>org.antlr</groupId>
+    <artifactId>antlr4-runtime</artifactId>
+    <version>4.7.1</version>
+	</dependency>
+    </dependencies>  
 </project>
