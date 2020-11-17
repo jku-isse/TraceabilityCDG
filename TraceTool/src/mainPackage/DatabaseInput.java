@@ -21,7 +21,12 @@ public class DatabaseInput {
 		Method.methodsHashMap.clear();
 		MethodRTMCell.methodtraces2HashMap.clear();
 		Requirement.requirementsHashMap.clear();
-
+		Variable.variablesHashMap.clear();
+		
+	
+		
+		
+		
 		createClassHashMap(ProgramName);
 		createSuperclassesChildrenHashMap(ProgramName);
 		createInterfacesImplementations(ProgramName);
@@ -32,8 +37,8 @@ public class DatabaseInput {
 		createClassTraces(ProgramName);
 		createMethodTraces(ProgramName);
 		createParametersHashMap(ProgramName);
-		createFieldClassesHashMap(ProgramName);
 		createFieldMethodsHashMap(ProgramName);
+		createFieldClassesHashMap(ProgramName);
 		createAssignments(ProgramName); 
 //		addVSMTraces(ProgramName); 
 //		addLSITraces(ProgramName);
@@ -161,11 +166,13 @@ public class DatabaseInput {
 //		}
 	}
 
-	private static void createFieldMethodsHashMap(String programName) {
+	private static void createFieldClassesHashMap(String programName) {
 		JSONArray fieldMethodList = parse("database/"+programName+"/fieldclasses.json");
 		for (Object o : fieldMethodList)
 		{
 			JSONObject mymethod = (JSONObject) o;
+			String fieldid = mymethod.get("id").toString();
+
 			String fieldname = mymethod.get("fieldname").toString();
 			String fieldtypeclassid = mymethod.get("fieldtypeclassid").toString();
 			String fieldtype = mymethod.get("fieldtype").toString();
@@ -179,30 +186,31 @@ public class DatabaseInput {
 			Variable var = new Variable(ownerClass, fieldname, fieldTypeDataType); 
 			Clazz.clazzesHashMap.get(ownerclassid).getFieldClasses().add(var); 
 			
+			Variable.variablesHashMap.put(fieldid, var); 
 //			System.out.println();
 
 			
 		}
 	}
 
-	private static void createFieldClassesHashMap(String programName) {
-		JSONArray fieldMethodList = parse("database/"+programName+"/fieldmethods.json");
+	private static void createFieldMethodsHashMap(String programName) {
+		JSONArray fieldMethodList = parse("database/"+programName+"/sootfieldmethods.json");
 		for (Object o : fieldMethodList)
 		{
 			JSONObject mymethod = (JSONObject) o;
-			String flieldaccess = mymethod.get("fieldaccess").toString();
-			String fieldtypeclassid = mymethod.get("fieldtypeclassid").toString();
-			String fieldtypeclassname = mymethod.get("fieldtypeclassname").toString();
+			String fieldName = mymethod.get("fieldname").toString();
+			String classFieldid = mymethod.get("fieldclassid").toString();
+	
 			String ownerclassname = mymethod.get("ownerclassname").toString();
 			String ownerclassid = mymethod.get("ownerclassid").toString();
 			String ownermethodname = mymethod.get("ownermethodname").toString();
 			String ownermethodid = mymethod.get("ownermethodid").toString();
 			
 			model.Clazz ownerClass= Clazz.clazzesHashMap.get(ownerclassid);
-			model.Clazz fieldTypeDataType= Clazz.clazzesHashMap.get(fieldtypeclassid);
+			model.Clazz fieldTypeDataType= Clazz.clazzesHashMap.get(classFieldid);
 			model.Method method= Method.methodsHashMap.get(ownermethodid); 
 			
-			Variable var = new Variable(ownerClass, flieldaccess, fieldTypeDataType, method); 
+			Variable var = new Variable(ownerClass, fieldName, fieldTypeDataType, method); 
 			Method.methodsHashMap.get(method.ID).getFieldMethods().add(var); 
 			
 //			System.out.println();

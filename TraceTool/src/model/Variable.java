@@ -12,6 +12,7 @@ public class Variable {
 	
 	public static  LinkedHashMap<String, VariableList> variablesReadHashMap = new LinkedHashMap<>(); 
 	public static  LinkedHashMap<String, VariableList> variablesWrittenHashMap = new LinkedHashMap<>(); 
+	public static  LinkedHashMap<String, Variable> variablesHashMap = new LinkedHashMap<>(); 
 
 	public Variable(Clazz ownerclazz, String variableName, Clazz dataType, Method method) {
 		super();
