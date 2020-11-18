@@ -37,8 +37,9 @@ public class DatabaseInput {
 		createClassTraces(ProgramName);
 		createMethodTraces(ProgramName);
 		createParametersHashMap(ProgramName);
-		createFieldMethodsHashMap(ProgramName);
 		createFieldClassesHashMap(ProgramName);
+		createFieldMethodsHashMap(ProgramName);
+
 		createAssignments(ProgramName); 
 //		addVSMTraces(ProgramName); 
 //		addLSITraces(ProgramName);
@@ -168,6 +169,7 @@ public class DatabaseInput {
 
 	private static void createFieldClassesHashMap(String programName) {
 		JSONArray fieldMethodList = parse("database/"+programName+"/fieldclasses.json");
+		LinkedHashMap<String, Variable> variableHashMapLocal = new  LinkedHashMap<>(); 
 		for (Object o : fieldMethodList)
 		{
 			JSONObject mymethod = (JSONObject) o;
@@ -187,10 +189,12 @@ public class DatabaseInput {
 			Clazz.clazzesHashMap.get(ownerclassid).getFieldClasses().add(var); 
 			
 			Variable.variablesHashMap.put(fieldid, var); 
+			variableHashMapLocal.put(fieldid, var); 
 //			System.out.println();
 
 			
 		}
+		Variable.totalVariablesHashMap.put(programName, variableHashMapLocal); 
 	}
 
 	private static void createFieldMethodsHashMap(String programName) {
@@ -212,7 +216,12 @@ public class DatabaseInput {
 			
 			Variable var = new Variable(ownerClass, fieldName, fieldTypeDataType, method); 
 			Method.methodsHashMap.get(method.ID).getFieldMethods().add(var); 
+
+			var.getMethodList().add(method); 
+			Variable.variablesHashMap.get(classFieldid).getMethodList().add(method); 
+
 			
+			System.out.println();
 //			System.out.println();
 
 			
@@ -333,6 +342,7 @@ public class DatabaseInput {
 
 	public static void createMethodHashMap(String ProgramName) throws Exception {
 		JSONArray methodList = parse("database/"+ProgramName+"/methods.json");
+		LinkedHashMap<String, Method> methodHashMapLocal = new LinkedHashMap<String, Method>();
 		for (Object o : methodList)
 		{
 			JSONObject mymethod = (JSONObject) o;
@@ -344,8 +354,11 @@ public class DatabaseInput {
 			Method method = new Method(methodid, methodName, clazz);
 			clazz.getMethods().add(method);
 			Method.methodsHashMap.put(methodid, method);
+			methodHashMapLocal.put(methodid, method); 
 
 		}
+		Method.totalMethodsHashMap.put(ProgramName, methodHashMapLocal); 
+
 		for (Method method : Method.methodsHashMap.values()) {
 			Clazz clazz = method.getClazz();
 
@@ -370,6 +383,7 @@ public class DatabaseInput {
 				}
 			}
 		}
+		System.out.println();
 	}
 
 	public static void createClassHashMap(String ProgramName) throws Exception {
@@ -388,6 +402,7 @@ public class DatabaseInput {
 
 	public static void createRequirementsHashMap(String ProgramName) throws Exception {
 		JSONArray requirementsList = parse("database/"+ProgramName+"/requirements.json");
+		LinkedHashMap<String, Requirement> requirementsHashMap= new LinkedHashMap<String, Requirement>();
 		for (Object o : requirementsList)
 		{
 			JSONObject req = (JSONObject) o;
@@ -396,7 +411,10 @@ public class DatabaseInput {
 
 			Requirement requirement= new Requirement(requirementid, requirementname);
 			Requirement.requirementsHashMap.put(requirementid, requirement);
+			requirementsHashMap.put(requirementid, requirement);
 		}
+		Requirement.totalRequirementsHashMap.put(ProgramName, requirementsHashMap); 
+		System.out.println("over");
 	}
 
 	public static void createClassTraces(String ProgramName) throws Exception {

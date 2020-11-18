@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 public class Requirement {
 
 	static public LinkedHashMap<String, Requirement> requirementsHashMap= new LinkedHashMap<String, Requirement>();
+	static public LinkedHashMap<String, LinkedHashMap<String, Requirement>> totalRequirementsHashMap= new LinkedHashMap<>();
 
 	public String ID;
 	public String name;

@@ -58,7 +58,7 @@ public class MethodRTMCell extends RTMCell {
 	
 	public MethodRTMCellList getCallees() {
 		String reqID= requirement.ID+"-"+method.getID(); 
-		System.out.println(reqID);
+//		System.out.println(reqID);
 		return method.getCallees().getMethodRTMCellList(requirement);
 	}
 	

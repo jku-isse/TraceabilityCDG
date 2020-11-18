@@ -4,12 +4,14 @@ import evaluation.Logger;
 import evaluation.Seeder;
 import model.Clazz;
 import model.Definitions;
+import model.Method;
 import model.MethodRTMCell;
 import model.MethodRTMCellList;
 import model.PredictionPattern;
 import model.RTMCell;
 import model.RTMCell.TraceValue;
 import model.Requirement;
+import model.Variable;
 import traceRefiner.TraceRefiner;
 import traceRefiner.TraceRefinerPredictionPattern;
 import traceValidator.TraceValidator;
@@ -18,9 +20,13 @@ import traceValidatorGhabi.TraceValidatorGhabi;
 import traceValidatorGhabi.TraceValidatorGhabiPredictionPattern;
 
 import java.io.FileWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -34,7 +40,7 @@ public class TraceProcessor {
 	public static enum Algorithm {ValidatorSingle, ValidatorCallTypes, ValidatorIterations, GhabiValidator, Refiner, 
 		IncompletenessSeederT, IncompletenessSeederN, IncompletenessSeederTN, ErrorSeederT, ErrorSeederN, ErrorSeederTN, seedingTest1, seedingTest2, VSM,LSI};
     private static long startTime = System.currentTimeMillis();
-    public static Algorithm test = Algorithm.Refiner;
+    public static Algorithm test = Algorithm.ValidatorSingle;
     public static List<JSONObject> jsonArray = new  ArrayList<JSONObject> (); 
 
 	static public void main(String[] args) throws Exception {
@@ -53,7 +59,7 @@ public class TraceProcessor {
 			programs.add("gantt");
 			programs.add("itrust");
 			programs.add("jhotdraw");
-			programs.add("vod");
+//			programs.add("vod");
 			
 	}
 		
@@ -64,6 +70,10 @@ public class TraceProcessor {
 			
 		
 		DatabaseInput.read(programs.get(1));
+		
+	
+	
+		
 		System.out.println("Requirement; x; y; z; percentageZ z/(x+y+z)");
 		for(Requirement req: Requirement.requirementsHashMap.values()) {
 			MethodRTMCellList mylist = req.getRTMMethodCellList(); 
@@ -249,6 +259,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		}
 		if (test==Algorithm.ValidatorSingle) {
 			// validator test single
+			
+			
+			
 		for(String program: programs) {
 			int version = 2;
 			Definitions.callerType = Definitions.CallerType.extended;
@@ -257,7 +270,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			Logger.logPatternsReset(TraceValidatorPredictionPattern.patterns);
 
 			DatabaseInput.read(program);
-
+		
 			Seeder.seedInputMethodTraceValuesWithDeveloperGold();
 			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
 			Seeder.seedPredictedMethodTraceValuesWithUndefinedTraces();
@@ -352,9 +365,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			Logger.logPatternsReset(patterns);
 			Definitions.callerType = Definitions.CallerType.extended;
 			
-			for(Clazz clazz: Clazz.clazzesHashMap.values()) {
-				System.out.println(clazz.ID+"   "+clazz.getTcount());
-			}
+//			for(Clazz clazz: Clazz.clazzesHashMap.values()) {
+//				System.out.println(clazz.ID+"   "+clazz.getTcount());
+//			}
 			
 			for (String program : programs) {
 
@@ -386,8 +399,85 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			 long endTime = System.currentTimeMillis();
 		     System.out.println("It took " + (endTime - startTime) + " milliseconds");
 		}
+		
+		
+	/////////////////////////////////////			
+	dataAnalysisVariables(); 
+	
+	/////////////////////////////////////	
+		
+		
+		
 	}
 
+	private static void dataAnalysisVariables() {
+		HashMap<Integer, Integer> countHashmap = new HashMap<>(); 
+		for(String programName: Method.totalMethodsHashMap.keySet()) {
+		LinkedHashMap<String, Method> methodhashmap = Method.totalMethodsHashMap.get(programName); 
+		for( Method method: methodhashmap.values()) {
+			int size= method.getFieldMethods().size(); 
+			if(countHashmap.get(size)==null) {
+				countHashmap.put(size,1); 
+			}
+			else {
+				int amount=countHashmap.get(size); 
+				amount++; 
+				countHashmap.put(size, amount); 
+			}
+			
+		}
+		
+	}
+		
+		for (Integer variableSize: countHashmap.keySet()){
+			Integer amount=countHashmap.get(variableSize); 
+            System.out.println(variableSize + " " + amount);  
+	} 
+		/****************************/
+		for(  String programName: Variable.totalVariablesHashMap.keySet()) {
+			LinkedHashMap<String, Variable> varHashMap = Variable.totalVariablesHashMap.get(programName); 
+			for(  Variable var: varHashMap.values()) {
+				int countT=0; int countN=0; int countU=0; 
+				for(  Method meth: var.getMethodList()) {
+					for(   Requirement req: Requirement.totalRequirementsHashMap.get(programName).values()) {
+							 	TraceValue gold = MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(req.ID+"-"+meth.ID).getGoldTraceValue(); 
+								if(gold.equals(TraceValue.Trace)) countT++; 
+								else if(gold.equals(TraceValue.NoTrace)) countN++; 
+								else if(gold.equals(TraceValue.UndefinedTrace)) countU++; 
+								
+//								System.out.println();
+						 
+					}
+				}
+				int totalCount = countT+countN+countU; 
+				double Tperc=(double)countT/totalCount*100; 
+				double Nperc=(double)countN/totalCount*100; 
+				double Uperc=(double)countU/totalCount*100; 
+				
+				if(totalCount!=0) {
+					Tperc=round(Tperc,2); 
+					Nperc=round(Nperc,2); 
+					Uperc=round(Uperc,2); 
+				}
+				
+
+				
+				if(totalCount!=0)
+					System.out.println(Tperc+","+Nperc+","+Uperc);
+			}
+			
+
+		}
+	System.out.println();
+	System.out.println("OVER");
+	}
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = BigDecimal.valueOf(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
+	}
 	static public void validate(String programName, String logParameter) throws Exception {
 		PredictionPattern.reset();
 		TraceValidator.makePredictions();

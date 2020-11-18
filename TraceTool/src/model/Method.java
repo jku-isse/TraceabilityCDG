@@ -8,10 +8,13 @@ import java.util.List;
 public class Method {
 
 	 public static LinkedHashMap<String, Method> methodsHashMap= new LinkedHashMap<String, Method>();
+	 public static LinkedHashMap<String, LinkedHashMap<String, Method>> totalMethodsHashMap= new LinkedHashMap<>();
 
 	public String ID;
 	public String name;
 	public String fullMethodName;
+	
+	private MethodRTMCellList methodRTMList = null;
 
 	private Clazz clazz = null;
 	private MethodList basicCallees = new MethodList();
@@ -203,9 +206,8 @@ public class Method {
 		return Extendedcallees;
 	}
 
-	public MethodRTMCellList getMethodRTMCellList() {
-		return null;
-	}
+	
+	
 
 	
 

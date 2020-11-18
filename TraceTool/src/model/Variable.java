@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,10 +11,22 @@ public class Variable {
 	public Clazz dataType; 
 	public Method method;
 	
+	public static  LinkedHashMap<String, Variable> variablesHashMap = new LinkedHashMap<>(); 
+	public static  LinkedHashMap<String, LinkedHashMap<String, Variable>> totalVariablesHashMap = new LinkedHashMap<>(); 
+
+	
 	public static  LinkedHashMap<String, VariableList> variablesReadHashMap = new LinkedHashMap<>(); 
 	public static  LinkedHashMap<String, VariableList> variablesWrittenHashMap = new LinkedHashMap<>(); 
-	public static  LinkedHashMap<String, Variable> variablesHashMap = new LinkedHashMap<>(); 
 
+	public   List<Method> methodList = new ArrayList<>(); 
+
+	
+	public  List<Method> getMethodList() {
+		return methodList;
+	}
+	public  void setMethodList(List<Method> MethodList) {
+		methodList = MethodList;
+	}
 	public Variable(Clazz ownerclazz, String variableName, Clazz dataType, Method method) {
 		super();
 		this.ownerclazz = ownerclazz;

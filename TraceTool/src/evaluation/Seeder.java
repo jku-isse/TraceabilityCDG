@@ -120,7 +120,7 @@ public class Seeder {
 			 howMany = (int)(randomperc * list.size());
 			 howManyPercentageDouble = (double)howMany / (list.size())*100;
 			 howManyPercentage= (int) Math.round(howManyPercentageDouble); 
-			 System.out.println(howManyPercentage+"  "+list.size());
+//			 System.out.println(howManyPercentage+"  "+list.size());
 		}
 
 		
@@ -129,7 +129,7 @@ public class Seeder {
 			cell.setTraceValue(value);
 			list.remove(cell);
 		}
-		System.out.println(howManyPercentage);
+//		System.out.println(howManyPercentage);
 		return howManyPercentage;
 	}
 
