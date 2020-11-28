@@ -435,41 +435,55 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	} 
 		/****************************/
 		for(  String programName: Variable.totalVariablesHashMap.keySet()) {
-			LinkedHashMap<String, Variable> varHashMap = Variable.totalVariablesHashMap.get(programName); 
+			int empty=0; 
+			LinkedHashMap<String, Variable> varHashMap = Variable.totalVariablesHashMap.get(programName); 	
 			for(  Variable var: varHashMap.values()) {
-				int countT=0; int countN=0; int countU=0; 
-				for(  Method meth: var.getMethodList()) {
-					for(   Requirement req: Requirement.totalRequirementsHashMap.get(programName).values()) {
-							 	TraceValue gold = MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(req.ID+"-"+meth.ID).getGoldTraceValue(); 
-								if(gold.equals(TraceValue.Trace)) countT++; 
-								else if(gold.equals(TraceValue.NoTrace)) countN++; 
-								else if(gold.equals(TraceValue.UndefinedTrace)) countU++; 
-								
-//								System.out.println();
-						 
-					}
-				}
-				int totalCount = countT+countN+countU; 
-				double Tperc=(double)countT/totalCount*100; 
-				double Nperc=(double)countN/totalCount*100; 
-				double Uperc=(double)countU/totalCount*100; 
-				
-				if(totalCount!=0) {
-					Tperc=round(Tperc,2); 
-					Nperc=round(Nperc,2); 
-					Uperc=round(Uperc,2); 
-				}
-				
+				for(   Requirement req: Requirement.totalRequirementsHashMap.get(programName).values()) {
+					int countT=0; int countN=0; int countU=0; 
 
+					if(!var.getMethodList().isEmpty()) {
+						for(  Method meth: var.getMethodList()) {
+
+							TraceValue gold =MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(req.ID+"-"+meth.ID).getGoldTraceValue(); 
+							
+					 
+						
+					
+					
+							if(gold.equals(TraceValue.Trace)) countT++; 
+							else if(gold.equals(TraceValue.NoTrace)) countN++; 
+							else if(gold.equals(TraceValue.UndefinedTrace)) countU++; 
+						}
+						
+						int totalCount = countT+countN+countU; 
+						double Tperc=(double)countT/totalCount*100; 
+						double Nperc=(double)countN/totalCount*100; 
+						double Uperc=(double)countU/totalCount*100; 
+						
+						if(totalCount!=0) {
+							Tperc=round(Tperc,2); 
+							Nperc=round(Nperc,2); 
+							Uperc=round(Uperc,2); 
+						}
+						
+
+						
+						if(totalCount!=0)
+							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
+					
+					}else if(var.getMethodList().isEmpty()){
+						System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+0+","+0+","+0+","+0);
+						empty++; 
+					}
+			
+				}
 				
-				if(totalCount!=0)
-					System.out.println(Tperc+","+Nperc+","+Uperc);
 			}
 			
-
+			System.out.println("=====>EMPTY  "+programName+ "  "+empty);
 		}
-	System.out.println();
-	System.out.println("OVER");
+//	System.out.println();
+//	System.out.println("OVER");
 	}
 	public static double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();

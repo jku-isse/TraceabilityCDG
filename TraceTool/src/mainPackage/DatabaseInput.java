@@ -253,6 +253,8 @@ public class DatabaseInput {
 				Method.methodsHashMap.get(methodid).setReturnType(var);
 
 			}
+			
+
 //			System.out.println();
 
 			
