@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -28,6 +29,19 @@ public class Method {
 	private VariableList parameters= new VariableList(); 
 	private Variable returnType= new Variable(); 
 	private VariableList fieldMethods= new VariableList(); 
+	private HashSet<Variable> methodVars= new HashSet<Variable>(); 
+	
+	
+	public HashSet<Variable> getMethodVars() {
+		return methodVars;
+	}
+
+	public void setMethodVars(HashSet<Variable> methodVars) {
+		this.methodVars = methodVars;
+	}
+	
+	
+
 	private VariableList variableReads=new VariableList();
 	private VariableList variableWrites=new VariableList(); 
 

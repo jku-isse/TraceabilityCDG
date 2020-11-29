@@ -6,6 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Variable {
+	public String id; 
+	
+
 	public Clazz ownerclazz; 
 	public String variableName; 
 	public Clazz dataType; 
@@ -53,4 +56,15 @@ public class Variable {
 			
 			return cellList;
 		}
+	  public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+
+	
+	  
+	  
+	  
 }

@@ -173,7 +173,7 @@ public class DatabaseInput {
 		for (Object o : fieldMethodList)
 		{
 			JSONObject mymethod = (JSONObject) o;
-			String fieldid = mymethod.get("id").toString();
+			String id = mymethod.get("id").toString();
 
 			String fieldname = mymethod.get("fieldname").toString();
 			String fieldtypeclassid = mymethod.get("fieldtypeclassid").toString();
@@ -185,11 +185,12 @@ public class DatabaseInput {
 			model.Clazz ownerClass= Clazz.clazzesHashMap.get(ownerclassid);
 			model.Clazz fieldTypeDataType= Clazz.clazzesHashMap.get(fieldtypeclassid);
 			
-			Variable var = new Variable(ownerClass, fieldname, fieldTypeDataType); 
+			Variable var = new Variable( ownerClass, fieldname, fieldTypeDataType); 
+			var.setId(id);
 			Clazz.clazzesHashMap.get(ownerclassid).getFieldClasses().add(var); 
 			
-			Variable.variablesHashMap.put(fieldid, var); 
-			variableHashMapLocal.put(fieldid, var); 
+			Variable.variablesHashMap.put(id, var); 
+			variableHashMapLocal.put(id, var); 
 //			System.out.println();
 
 			
@@ -215,7 +216,9 @@ public class DatabaseInput {
 			model.Method method= Method.methodsHashMap.get(ownermethodid); 
 			
 			Variable var = new Variable(ownerClass, fieldName, fieldTypeDataType, method); 
+			var.setId(classFieldid); 
 			Method.methodsHashMap.get(method.ID).getFieldMethods().add(var); 
+			Method.methodsHashMap.get(method.ID).getMethodVars().add(var); 
 
 			var.getMethodList().add(method); 
 			Variable.variablesHashMap.get(classFieldid).getMethodList().add(method); 

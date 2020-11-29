@@ -30,10 +30,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 public class TraceProcessor {
 
@@ -266,17 +269,17 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			int version = 2;
 			Definitions.callerType = Definitions.CallerType.extended;
 
-			TraceValidatorPredictionPattern.define(version);
-			Logger.logPatternsReset(TraceValidatorPredictionPattern.patterns);
+//			TraceValidatorPredictionPattern.define(version);
+//			Logger.logPatternsReset(TraceValidatorPredictionPattern.patterns);
 
 			DatabaseInput.read(program);
 		
-			Seeder.seedInputMethodTraceValuesWithDeveloperGold();
-			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
-			Seeder.seedPredictedMethodTraceValuesWithUndefinedTraces();
-			validate(program, "val-v" + version + "-" + Definitions.callerType.toString());
-			Logger.logPatterns(program, TraceValidatorPredictionPattern.patterns, "val-v" + version);
-			Logger.logPatternsSeeding(program, TraceValidatorPredictionPattern.patterns, "NoSeeding"+program);
+//			Seeder.seedInputMethodTraceValuesWithDeveloperGold();
+//			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
+//			Seeder.seedPredictedMethodTraceValuesWithUndefinedTraces();
+//			validate(program, "val-v" + version + "-" + Definitions.callerType.toString());
+//			Logger.logPatterns(program, TraceValidatorPredictionPattern.patterns, "val-v" + version);
+//			Logger.logPatternsSeeding(program, TraceValidatorPredictionPattern.patterns, "NoSeeding"+program);
 
 		}
 			
@@ -412,6 +415,39 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 	private static void dataAnalysisVariables() {
 		HashMap<Integer, Integer> countHashmap = new HashMap<>(); 
+		HashMap<Integer, Integer> MethVarsHashmap = new HashMap<>(); 
+
+		for(String programName: Method.totalMethodsHashMap.keySet()) {
+			LinkedHashMap<String, Method> methodhashmap = Method.totalMethodsHashMap.get(programName); 
+			for( Method method: methodhashmap.values()) {
+				HashSet<Variable> vars = method.getMethodVars(); 
+				int size = vars.size(); 
+				
+				
+				HashSet<Object> seen=new HashSet<>();
+				vars.removeIf(e->!seen.add(e.getId()));
+				
+				int size2=seen.size(); 
+				
+				if(MethVarsHashmap.get(size2)==null) MethVarsHashmap.put(size2, 1); 
+				else {
+					int newcount=MethVarsHashmap.get(size2)+1; 
+					MethVarsHashmap.put(size2, newcount); 
+				}
+				
+				
+			}
+			
+		}
+		
+		for (Integer numberOfVars: MethVarsHashmap.keySet()){
+			Integer numberOfMeth=MethVarsHashmap.get(numberOfVars); 
+            System.out.println(numberOfVars + " " + numberOfMeth);  
+	} 
+		
+		
+		System.out.println("---------------------");
+
 		for(String programName: Method.totalMethodsHashMap.keySet()) {
 		LinkedHashMap<String, Method> methodhashmap = Method.totalMethodsHashMap.get(programName); 
 		for( Method method: methodhashmap.values()) {
@@ -428,7 +464,6 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		}
 		
 	}
-		
 		for (Integer variableSize: countHashmap.keySet()){
 			Integer amount=countHashmap.get(variableSize); 
             System.out.println(variableSize + " " + amount);  
@@ -446,9 +481,8 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 							TraceValue gold =MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(req.ID+"-"+meth.ID).getGoldTraceValue(); 
 							
-					 
+							
 						
-					
 					
 							if(gold.equals(TraceValue.Trace)) countT++; 
 							else if(gold.equals(TraceValue.NoTrace)) countN++; 
@@ -472,7 +506,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
 					
 					}else if(var.getMethodList().isEmpty()){
-						System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+0+","+0+","+0+","+0);
+//						System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+0+","+0+","+0+","+0);
 						empty++; 
 					}
 			
@@ -480,7 +514,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 				
 			}
 			
-			System.out.println("=====>EMPTY  "+programName+ "  "+empty);
+//			System.out.println("=====>EMPTY  "+programName+ "  "+empty);
 		}
 //	System.out.println();
 //	System.out.println("OVER");
