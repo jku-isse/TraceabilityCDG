@@ -1691,146 +1691,146 @@ public class DBDemo3iTrust2 {
 ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
  //TRACES TABLE 
-
-HashMap<String, String> RequirementIDNameHashMap=new HashMap<String, String> (); 
-RequirementIDNameHashMap.put("1", "UC1"); 
-RequirementIDNameHashMap.put("2", "UC2"); 
-RequirementIDNameHashMap.put("3", "UC3"); 
-RequirementIDNameHashMap.put("4", "UC4"); 
-RequirementIDNameHashMap.put("5", "UC5"); 
-RequirementIDNameHashMap.put("6", "UC6"); 
-RequirementIDNameHashMap.put("7", "UC8"); 
-RequirementIDNameHashMap.put("8", "UC9"); 
-RequirementIDNameHashMap.put("9", "UC10"); 
-RequirementIDNameHashMap.put("10", "UC11"); 
-RequirementIDNameHashMap.put("11", "UC12"); 
-RequirementIDNameHashMap.put("12", "UC13"); 
-RequirementIDNameHashMap.put("13", "UC15"); 
-RequirementIDNameHashMap.put("14", "UC16"); 
-RequirementIDNameHashMap.put("15", "UC17"); 
-RequirementIDNameHashMap.put("16", "UC18"); 
-RequirementIDNameHashMap.put("17", "UC19"); 
-RequirementIDNameHashMap.put("18", "UC21"); 
-RequirementIDNameHashMap.put("19", "UC23"); 
-RequirementIDNameHashMap.put("20", "UC24"); 
-RequirementIDNameHashMap.put("21", "UC25"); 
-RequirementIDNameHashMap.put("22", "UC26"); 
-RequirementIDNameHashMap.put("23", "UC27"); 
-RequirementIDNameHashMap.put("24", "UC28"); 
-RequirementIDNameHashMap.put("25", "UC29"); 
-RequirementIDNameHashMap.put("26", "UC30"); 
-RequirementIDNameHashMap.put("27", "UC31"); 
-RequirementIDNameHashMap.put("28", "UC32"); 
-RequirementIDNameHashMap.put("29", "UC33"); 
-RequirementIDNameHashMap.put("30", "UC34"); 
-RequirementIDNameHashMap.put("31", "UC35"); 
-RequirementIDNameHashMap.put("32", "UC36"); 
-RequirementIDNameHashMap.put("33", "UC37"); 
-RequirementIDNameHashMap.put("34", "UC38"); 
-List<String> mylistTrace = new ArrayList<String>();
-
-try {
-	File file = new File("C:\\Users\\mouna\\new_workspace\\TracePredictor\\src\\iTrustFiles\\itrust_vote_dev.txt");
-	FileReader fileReader = new FileReader(file);
-	BufferedReader bufferedReader = new BufferedReader(fileReader);
-	
-	String line;
-	line = bufferedReader.readLine(); 
-	HashMap<String,SubjectTSubjectNObject> mylist= new HashMap<String,SubjectTSubjectNObject>(); 
-
-	while ((line = bufferedReader.readLine()) != null) {
-		String[] splittedline = line.split(",", -1); 
-		int counter = 1; 
-		for(int t=1; t<splittedline.length; t++) {
-			SubjectTSubjectNObject SubjectTSubjectNObj = new SubjectTSubjectNObject(); 
-			String methodname= splittedline[0]; 
-			methodname=methodname.replaceAll("::", "."); 
-//			System.out.println(methodname);
-			//methodname=methodname.replaceAll("constructor", "-init-"); 
-			//methodname=PredictionPattern.compile("[{}<>]").matcher(methodname).replaceAll("");
-		
-			String RequirementID= ""+counter;
-			String val=splittedline[t];
-			if(splittedline[t].equals("")) {
-				SubjectTSubjectNObj.setGoldfinal("N");
-			}
-			else {
-				SubjectTSubjectNObj.setGoldfinal("T");
-			}
-			SubjectTSubjectNObj.setMethodName(methodname);
-			SubjectTSubjectNObj.setRequirementID(RequirementID);
-			
-			String mykey=RequirementID+"-"+methodname; 
-			mylist.put(mykey, SubjectTSubjectNObj); 
-			counter++; 
-			mylistTrace.add(mykey); 
-		}
-	
-	}
-ResultSet mymeths = st2.executeQuery("SELECT methods.* from methods"); 
- i=1; 
-while(mymeths.next()){
-	String methodid = mymeths.getString("id"); 
-	String method = mymeths.getString("methodabbreviation"); 
-	String methodname = mymeths.getString("methodname"); 
-	String fullmethod = mymeths.getString("fullmethod"); 
-	
-	String classname = mymeths.getString("classname"); 
-	String classid = mymeths.getString("classid"); 
-	
-	 List<tracesmethods> TraceListMethods= new ArrayList<tracesmethods>();
-
-	
-	for(String key: RequirementIDNameHashMap.keySet()) {
-		System.out.println("here");
-		tracesmethods tr= new tracesmethods(key, methodid,  classid); 
-		System.out.println("here 2");
-
-		if(!tr.contains(TraceListMethods, tr)) {
-			System.out.println("here 3");
-			String shortmethod=classname.substring(classname.lastIndexOf(".")+1, classname.length())+method.substring(method.lastIndexOf(".")); 
-			System.out.println("here 4");
-
-			SubjectTSubjectNObject obj = mylist.get(tr.getRequirementid()+"-"+shortmethod); 
-			System.out.println("here 5");
-
-			System.out.println(tr.getRequirementid()+"-"+shortmethod);
-			System.out.println("here 6");
-
-			if(obj!=null) {
-				String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`, `shortmethodname`,`goldfinal`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid+"','"+ shortmethod+"','"+ obj.getGoldfinal() +"')";
-				st.executeUpdate(statement);
-				mylistTrace.remove(tr.getRequirementid()+"-"+shortmethod); 
-				System.out.println("here 7");
-
-			}
-			else {
-				String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`, `shortmethodname`,`goldfinal`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid+"','"+ shortmethod+"','"+ "E" +"')";
-				System.out.println(statement);
-				try {
-					st.executeUpdate(statement);
-
-				}catch(Exception e) {
-					System.out.println(e);
-				}
-				System.out.println(statement);
-				System.out.println("here 8");
-
-			}
-			
-		}
-	}
-	
-i++; 
-System.out.println(i);
-System.out.println("here 9");
-
-}
-}
-
-catch(Exception ex) {
-	
-}
+//
+//HashMap<String, String> RequirementIDNameHashMap=new HashMap<String, String> (); 
+//RequirementIDNameHashMap.put("1", "UC1"); 
+//RequirementIDNameHashMap.put("2", "UC2"); 
+//RequirementIDNameHashMap.put("3", "UC3"); 
+//RequirementIDNameHashMap.put("4", "UC4"); 
+//RequirementIDNameHashMap.put("5", "UC5"); 
+//RequirementIDNameHashMap.put("6", "UC6"); 
+//RequirementIDNameHashMap.put("7", "UC8"); 
+//RequirementIDNameHashMap.put("8", "UC9"); 
+//RequirementIDNameHashMap.put("9", "UC10"); 
+//RequirementIDNameHashMap.put("10", "UC11"); 
+//RequirementIDNameHashMap.put("11", "UC12"); 
+//RequirementIDNameHashMap.put("12", "UC13"); 
+//RequirementIDNameHashMap.put("13", "UC15"); 
+//RequirementIDNameHashMap.put("14", "UC16"); 
+//RequirementIDNameHashMap.put("15", "UC17"); 
+//RequirementIDNameHashMap.put("16", "UC18"); 
+//RequirementIDNameHashMap.put("17", "UC19"); 
+//RequirementIDNameHashMap.put("18", "UC21"); 
+//RequirementIDNameHashMap.put("19", "UC23"); 
+//RequirementIDNameHashMap.put("20", "UC24"); 
+//RequirementIDNameHashMap.put("21", "UC25"); 
+//RequirementIDNameHashMap.put("22", "UC26"); 
+//RequirementIDNameHashMap.put("23", "UC27"); 
+//RequirementIDNameHashMap.put("24", "UC28"); 
+//RequirementIDNameHashMap.put("25", "UC29"); 
+//RequirementIDNameHashMap.put("26", "UC30"); 
+//RequirementIDNameHashMap.put("27", "UC31"); 
+//RequirementIDNameHashMap.put("28", "UC32"); 
+//RequirementIDNameHashMap.put("29", "UC33"); 
+//RequirementIDNameHashMap.put("30", "UC34"); 
+//RequirementIDNameHashMap.put("31", "UC35"); 
+//RequirementIDNameHashMap.put("32", "UC36"); 
+//RequirementIDNameHashMap.put("33", "UC37"); 
+//RequirementIDNameHashMap.put("34", "UC38"); 
+//List<String> mylistTrace = new ArrayList<String>();
+//
+//try {
+//	File file = new File("C:\\Users\\mouna\\new_workspace\\TracePredictor\\src\\iTrustFiles\\itrust_vote_dev.txt");
+//	FileReader fileReader = new FileReader(file);
+//	BufferedReader bufferedReader = new BufferedReader(fileReader);
+//	
+//	String line;
+//	line = bufferedReader.readLine(); 
+//	HashMap<String,SubjectTSubjectNObject> mylist= new HashMap<String,SubjectTSubjectNObject>(); 
+//
+//	while ((line = bufferedReader.readLine()) != null) {
+//		String[] splittedline = line.split(",", -1); 
+//		int counter = 1; 
+//		for(int t=1; t<splittedline.length; t++) {
+//			SubjectTSubjectNObject SubjectTSubjectNObj = new SubjectTSubjectNObject(); 
+//			String methodname= splittedline[0]; 
+//			methodname=methodname.replaceAll("::", "."); 
+////			System.out.println(methodname);
+//			//methodname=methodname.replaceAll("constructor", "-init-"); 
+//			//methodname=PredictionPattern.compile("[{}<>]").matcher(methodname).replaceAll("");
+//		
+//			String RequirementID= ""+counter;
+//			String val=splittedline[t];
+//			if(splittedline[t].equals("")) {
+//				SubjectTSubjectNObj.setGoldfinal("N");
+//			}
+//			else {
+//				SubjectTSubjectNObj.setGoldfinal("T");
+//			}
+//			SubjectTSubjectNObj.setMethodName(methodname);
+//			SubjectTSubjectNObj.setRequirementID(RequirementID);
+//			
+//			String mykey=RequirementID+"-"+methodname; 
+//			mylist.put(mykey, SubjectTSubjectNObj); 
+//			counter++; 
+//			mylistTrace.add(mykey); 
+//		}
+//	
+//	}
+//ResultSet mymeths = st2.executeQuery("SELECT methods.* from methods"); 
+// i=1; 
+//while(mymeths.next()){
+//	String methodid = mymeths.getString("id"); 
+//	String method = mymeths.getString("methodabbreviation"); 
+//	String methodname = mymeths.getString("methodname"); 
+//	String fullmethod = mymeths.getString("fullmethod"); 
+//	
+//	String classname = mymeths.getString("classname"); 
+//	String classid = mymeths.getString("classid"); 
+//	
+//	 List<tracesmethods> TraceListMethods= new ArrayList<tracesmethods>();
+//
+//	
+//	for(String key: RequirementIDNameHashMap.keySet()) {
+//		System.out.println("here");
+//		tracesmethods tr= new tracesmethods(key, methodid,  classid); 
+//		System.out.println("here 2");
+//
+//		if(!tr.contains(TraceListMethods, tr)) {
+//			System.out.println("here 3");
+//			String shortmethod=classname.substring(classname.lastIndexOf(".")+1, classname.length())+method.substring(method.lastIndexOf(".")); 
+//			System.out.println("here 4");
+//
+//			SubjectTSubjectNObject obj = mylist.get(tr.getRequirementid()+"-"+shortmethod); 
+//			System.out.println("here 5");
+//
+//			System.out.println(tr.getRequirementid()+"-"+shortmethod);
+//			System.out.println("here 6");
+//
+//			if(obj!=null) {
+//				String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`, `shortmethodname`,`goldfinal`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid+"','"+ shortmethod+"','"+ obj.getGoldfinal() +"')";
+//				st.executeUpdate(statement);
+//				mylistTrace.remove(tr.getRequirementid()+"-"+shortmethod); 
+//				System.out.println("here 7");
+//
+//			}
+//			else {
+//				String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`, `shortmethodname`,`goldfinal`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid+"','"+ shortmethod+"','"+ "E" +"')";
+//				System.out.println(statement);
+//				try {
+//					st.executeUpdate(statement);
+//
+//				}catch(Exception e) {
+//					System.out.println(e);
+//				}
+//				System.out.println(statement);
+//				System.out.println("here 8");
+//
+//			}
+//			
+//		}
+//	}
+//	
+//i++; 
+//System.out.println(i);
+//System.out.println("here 9");
+//
+//}
+//}
+//
+//catch(Exception ex) {
+//	
+//}
 
 
 //for(String entry: mylistTrace) {
@@ -1933,20 +1933,20 @@ catch(Exception ex) {
          /////////////*********************************************************************************************************************************************************************************/	
          /////////////*********************************************************************************************************************************************************************************/ 
      	// FIELD CLASSES 
-//     		List<String> fieldClasses = new ArrayList<>(); 
-//     		 for(CtType<?> clazz : classFactory.getAll()) {
-//     	 			List<CtField> fields = clazz.getElements(new TypeFilter<CtField>(CtField.class));
-//     	 		   retrieveFieldClasses(fields, st, fieldClasses, st2); 
-//     	 		  Set<CtType<?>> nested = clazz.getNestedTypes();
-//     		
-//     	 		// FIELD CLASSES IN NESTED CLASSES  
-//    				for(CtType<?> mynested: nested) {
-//    					List<CtField> fields2 = mynested.getElements(new TypeFilter<CtField>(CtField.class));
-//      	 		   retrieveFieldClasses(fields2, st, fieldClasses, st2); 
-//    						
- //  
-//    				}
-//     		 }
+     		List<String> fieldClasses = new ArrayList<>(); 
+     		 for(CtType<?> clazz : classFactory.getAll()) {
+     	 			List<CtField> fields = clazz.getElements(new TypeFilter<CtField>(CtField.class));
+     	 		   retrieveFieldClasses(fields, st, fieldClasses, st2); 
+     	 		  Set<CtType<?>> nested = clazz.getNestedTypes();
+     		
+     	 		// FIELD CLASSES IN NESTED CLASSES  
+    				for(CtType<?> mynested: nested) {
+    					List<CtField> fields2 = mynested.getElements(new TypeFilter<CtField>(CtField.class));
+      	 		   retrieveFieldClasses(fields2, st, fieldClasses, st2); 
+    						
+   
+    				}
+     		 }
  	
      		 //  /////////////*********************************************************************************************************************************************************************************/	
      	        /////////////*********************************************************************************************************************************************************************************/	
@@ -2244,368 +2244,537 @@ catch(Exception ex) {
 //     
 //        	
 //        	
- //  /////////////*********************************************************************************************************************************************************************************/	
-     /////////////*********************************************************************************************************************************************************************************/	
-     /////////////*********************************************************************************************************************************************************************************/   
- 		// PARAMETERS TABLE 
-//     	List<String> mylist = new ArrayList<>(); 
-// 		 for(CtType<?> clazz : classFactory.getAll()) {
-//      		
- //
-//      		
-//  			//NON NESTED CONSTRUCTORS 
-//  			List<CtConstructor> constructors = clazz.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
-// 			retrieveConstructorParams(constructors, st, st2, mylist); 	
-//  			
-//  				// CONSTRUCTORS IN NESTED CLASSES  
-// 		    Set<CtType<?>> nested = clazz.getNestedTypes();
- //
-//  				for(CtType<?> mynested: nested) {
-// 			 
-//  						constructors = mynested.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
-//  						retrieveConstructorParams(constructors, st, st2, mylist); 	
- //
-//  				}
-//  				
-//  				//NON NESTED METHODS
-//  	 			List<CtMethod> methods = clazz.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-//  				retrieveMethodParams(methods, st, st2, mylist); 	
-//  	 			
-//  	 				// METHODS  IN NESTED CLASSES 
-//  	 				for(CtType<?> mynested: nested) {
-//  				 
-//  	 						List<CtMethod> methodscalled = mynested.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-//  	 		 				retrieveMethodParams(methods, st, st2, mylist); 	
- //
-//  	 				}
-//  	 			
-//  				
-// 	 
- //	
-// 		 }
- 	 }
- 	private void retrieveConstructorFields(List<CtFieldAccess> methodFields, CtConstructor myconstructor, CtType<?> clazz,
- 			Statement st, Statement st2, List<String> fieldMethods) throws SQLException {
- 		for(CtFieldAccess methodField : methodFields) {
- 		 	System.out.println(methodField.getShortRepresentation()+"   "+myconstructor.getSignature()+"  "+myconstructor.getDeclaringType().getQualifiedName());
- 		 	String methodID=null; 
- 		 	String ownerMethodName=null; 
- 			String formattedCons=myconstructor.getSignature().substring(0, myconstructor.getSignature().indexOf("("))+".-init-"+myconstructor.getSignature().substring(myconstructor.getSignature().indexOf("("), myconstructor.getSignature().length()); 
- 			System.out.println(formattedCons);
- 		 	ResultSet rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+formattedCons+"'"); 
- 			 while(rs.next()) {
- 				 methodID= rs.getString("id");
- 				 ownerMethodName=rs.getString("fullmethod"); 
- 			 }
- 			 
- 			 
- 			 String ownerclassID=null; 
- 			  rs= st.executeQuery("SELECT * from classes where classes.classname='"+clazz.getQualifiedName()+"'"); 
- 			 while(rs.next()) {
- 				  ownerclassID = rs.getString("id"); 
- 			 }
- 			 
- 			 
- 			 String fieldTypeclassid=null; 
- 			try {
 
- 			  rs= st.executeQuery("SELECT * from classes where classes.classname='"+methodField.getType().getQualifiedName()+"'"); 
- 			 while(rs.next()) {
- 				 fieldTypeclassid = rs.getString("id"); 
- 			 }
- 			 }catch(Exception e) {
- 				 
- 			 }
- 			 String s= methodField.getShortRepresentation()+","+methodID+","+ownerclassID; 
- 			 if(ownerclassID!=null && methodID!=null && fieldTypeclassid!=null&& !fieldMethods.contains(s)) {
- 				 String statement8= "INSERT INTO `fieldmethods`(`fieldaccess`, `fieldtypeclassid`,  `fieldtypeclassname`,"
- 				 		+ " `ownerclassname`,`ownerclassid`,"
- 				 		+ " `ownermethodname`, "
- 				 		+ "`ownermethodid`"
- 				 		+ ") VALUES"
- 				 		+ " ('"+	 methodField+"','" +fieldTypeclassid+"','"  +methodField.getType().getQualifiedName()
- 				 		+"','" +clazz.getQualifiedName()+"','"+ ownerclassID
- 				 		+"','"+ownerMethodName+"','"+
- 				 		methodID
- 						 +"')";
- 				   	   	 st2.executeUpdate(statement8); 
- 				 
- 				   	     fieldMethods.add(s); 
- 			 }
- 		}
- 		
- 			
- 		
- 		// TODO Auto-generated method stub
- 		
- 	}
+///////////////*********************************************************************************************************************************************************************************/	
+/////////////*********************************************************************************************************************************************************************************/	
+/////////////*********************************************************************************************************************************************************************************/   
+// PARAMETERS TABLE 
+List<String> mylist = new ArrayList<>(); 
+for(CtType<?> clazz : classFactory.getAll()) {
 
- 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 	///////////////////////////////////////////////////////////////////////////////////////////////////////////
- 	///////////////////////////////////////////////////////////////////////////////////////////////////////////
- private void retrieveMethodFields(List<CtFieldAccess> methodFields, CtMethod myMethod, CtType<?> clazz, Statement st, Statement st2,
- 			List<String> fieldMethods) throws SQLException {
- 	for(CtFieldAccess methodField : methodFields) {
- 	 	System.out.println(methodField+"   "+myMethod.getSignature()+"  "+myMethod.getDeclaringType().getQualifiedName());
- 	 	String methodID=null; 
- 	 	String ownerMethodName=null; 
- 	 	ResultSet rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+myMethod.getDeclaringType().getQualifiedName()+"."+myMethod.getSignature()+"'"); 
- 		 while(rs.next()) {
- 			 methodID= rs.getString("id");
- 			 ownerMethodName=rs.getString("fullmethod"); 
- 		 }
- 		 
- 		 
- 		 String ownerclassID=null; 
- 		  rs= st.executeQuery("SELECT * from classes where classes.classname='"+clazz.getQualifiedName()+"'"); 
- 		 while(rs.next()) {
- 			  ownerclassID = rs.getString("id"); 
- 		 }
- 		 
- 		 
- 		 String fieldTypeclassid=null; 
- 		 try {
- 			 rs= st.executeQuery("SELECT * from classes where classes.classname='"+methodField.getType().getQualifiedName()+"'"); 
- 			 while(rs.next()) {
- 				 fieldTypeclassid = rs.getString("id"); 
- 			 }
- 		 }catch(Exception e) {
- 			 
- 		 }
- 		  
- 		 String s= methodField.getShortRepresentation()+","+methodID+","+ownerclassID; 
- 		 if(ownerclassID!=null && methodID!=null && fieldTypeclassid!=null&& !fieldMethods.contains(s)) {
- 			 String statement8= "INSERT INTO `fieldmethods`(`fieldaccess`, `fieldtypeclassid`,  `fieldtypeclassname`,"
- 			 		+ " `ownerclassname`,`ownerclassid`,"
- 			 		+ " `ownermethodname`, "
- 			 		+ "`ownermethodid`"
- 			 		+ ") VALUES"
- 			 		+ " ('"+	 methodField+"','" +fieldTypeclassid+"','"  +methodField.getType().getQualifiedName()
- 			 		+"','" +clazz.getQualifiedName()+"','"+ ownerclassID
- 			 		+"','"+ownerMethodName+"','"+
- 			 		methodID
- 					 +"')";
- 			   	   	 st2.executeUpdate(statement8); 
- 			 
- 			   	     fieldMethods.add(s); 
- 		 }
- 	}
- 	
- 		
- 	}
- ///////////////////////////////////////////////////////////////////////////////////////////////////
 
- private void retrieveFieldClasses(List<CtField> fields, Statement st, List<String> fieldClasses, Statement st2) throws SQLException { 
- 	for(CtField myField : fields) {
-  	System.out.println(myField.getSimpleName()+"   "+myField.getDeclaringType().getQualifiedName()+"  "+myField.getType().getQualifiedName());
-  	String fieldTypeClassID=null; 
-  	 ResultSet rs= st.executeQuery("SELECT * from classes where classes.classname='"+myField.getType().getQualifiedName()+"'"); 
- 		 while(rs.next()) {
- 			fieldTypeClassID= rs.getString("id"); 
- 		 }
- 		String declaringTypeClassID=null; 
- 	  rs= st.executeQuery("SELECT * from classes where classes.classname='"+myField.getDeclaringType().getQualifiedName()+"'"); 
- 	 while(rs.next()) {
- 		declaringTypeClassID= rs.getString("id"); 
- 	 }
- 	 
- 	 String fieldClass= myField.getSimpleName()+","+fieldTypeClassID+","+declaringTypeClassID; 
- 	 
- 	 if(fieldTypeClassID!=null && declaringTypeClassID!=null && myField.getSimpleName()!=null && !fieldClasses.contains(fieldClass)) {
- 		 
- 	  String statement8= "INSERT INTO `fieldclasses`(`fieldname`, `fieldtypeclassid`,  `fieldtype`, `ownerclassid`,`classname`) VALUES ('"+
- 			myField.getSimpleName()+"','" +fieldTypeClassID+"','"  +myField.getType().getQualifiedName()+"','" +declaringTypeClassID+"','"+myField.getDeclaringType().getQualifiedName()+"')";
-    	   st2.executeUpdate(statement8); 
-    	fieldClasses.add(fieldClass); 
- 		 
- 		 
- 		 
- 	 }
- 	 
- 	 
-  	
-  	
-  }}
 
- ////////////////////////////////////////////////
+//NON NESTED CONSTRUCTORS 
+List<CtConstructor> constructors = clazz.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
+retrieveConstructorParams(constructors, st, st2, mylist); 	
 
- private void retrieveConstructorParams(List<CtConstructor> constructors, Statement st, Statement st2, List<String> mylist) throws SQLException {
- 		// TODO Auto-generated method stub
- 	
- 	for(CtConstructor constructor: constructors) {
- 		List<CtParameter> params = constructor.getParameters(); 
- 		
- 		for(CtParameter param: params) {
- 			String parameterClassID=null; 
- 			String formattedCons=constructor.getSignature().substring(0, constructor.getSignature().indexOf("("))+".-init-"+constructor.getSignature().substring(constructor.getSignature().indexOf("("), constructor.getSignature().length()); 
- 			System.out.println(constructor.getSignature()+" ======  "+param);
- 			 ResultSet rs= st.executeQuery("SELECT * from classes where classes.classname='"+param.getType().getQualifiedName()+"'"); 
- 			 while(rs.next()) {
- 				  parameterClassID= rs.getString("id"); 
- 				 
- 				 
- 			 }
- 			  rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+formattedCons+"'"); 
- 	       while(rs.next()) {
- 	    	   String classid = rs.getString("classid"); 
- 	    	   String classname =rs.getString("classname"); 
- 	    	   String methodID =rs.getString("id"); 
- 	    	   
- 	    	   System.out.println(classid);
- 	    	   String newparamList = param+","+parameterClassID+","+classid+","+methodID+","+0; 
- 	    	   if(parameterClassID!=null && classid!=null && methodID!=null && !mylist.contains(newparamList)) {
-// 		    	   if(parameterClassID!=null && classid!=null && methodID!=null ) {
+	// CONSTRUCTORS IN NESTED CLASSES  
+Set<CtType<?>> nested = clazz.getNestedTypes();
 
- 	    		   String mycons=""; 
- 	    		   try {
- 		    		    mycons= constructor.toString(); 
+	for(CtType<?> mynested: nested) {
 
- 	    		   }catch(Exception ex) {
- 	    			   
- 	    		   }
- 	    		   String constructor2 = mycons.replaceAll("'", ""); 
- 	    		   String statement8= "INSERT INTO `parameters`(`parametername`, `parametertype`,  `parameterclass`, `classid`,`classname`, `methodid`, `methodname`, `isreturn`, `sourcecode`) VALUES ('"+
- 	    		    	   param+"','" +param.getType().getQualifiedName()+"','"  +parameterClassID+"','" +classid+"','"+classname+"','"+methodID+"','"+formattedCons+"','"+0+"','"+constructor2+"')";
- 	    		    	   st2.executeUpdate(statement8); 
- 	    		    	   mylist.add(newparamList); 
- 	    	   }
- 	    	  
- 	       }
- 	       
- 	       
- 	
- 	       
- 	       
- 		
- 		
- 		}
- 	}
- 	}
+			constructors = mynested.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
+			retrieveConstructorParams(constructors, st, st2, mylist); 	
 
- ////////////////////////////////////////////////
- private void retrieveMethodParams(List<CtMethod> methods, Statement st, Statement st2, List<String> mylist) throws SQLException {
- 	// TODO Auto-generated method stub
- for(CtMethod method: methods) {
- 	List<CtParameter> params = method.getParameters(); 
- 	for(CtParameter param: params) {
- 		String parameterClassID=null; 
- 		System.out.println(method.getSignature()+" ======  "+param);
- 		 ResultSet rs= st.executeQuery("SELECT * from classes where classes.classname='"+param.getType().getQualifiedName()+"'"); 
- 		 while(rs.next()) {
- 			  parameterClassID= rs.getString("id"); 
- 			 
- 			 
- 		 }
- 		 String fullmethod = method.getDeclaringType().getQualifiedName()+"."+method.getSignature();
- 		 System.out.println(fullmethod);
- 		  rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+fullmethod+"'"); 
-        while(rs.next()) {
-     	   String classid = rs.getString("classid"); 
-     	   String classname =rs.getString("classname"); 
-     	   String methodID =rs.getString("id"); 
-     	   
-     	   System.out.println(classid);
-     	   String newparamList = param+","+parameterClassID+","+classid+","+methodID+","+0; 
-     	   String constructor2 = ""; 
-     	   if(parameterClassID!=null && classid!=null && methodID!=null && !mylist.contains(newparamList)) {
-//         	   if(parameterClassID!=null && classid!=null && methodID!=null ) {
-
-     		   try {
-         		    constructor2 = method.toString().replaceAll("'", ""); 
-
-     		   }
-     		   catch(Exception ex) {
-     			   
-     		   }
-     		   String statement8= "INSERT INTO `parameters`(`parametername`, `parametertype`,  `parameterclass`, `classid`,`classname`, `methodid`, `methodname`, `isreturn`, `sourcecode`) VALUES ('"+
-     		    	   param+"','" +param.getType().getQualifiedName()+"','"  +parameterClassID+"','" +classid+"','"+classname+"','"+methodID+"','"+fullmethod+"','"+0+"','"+constructor2+"')";
-     		    	   st2.executeUpdate(statement8); 
-     		    	   mylist.add(newparamList); 
-     	   }
-     	   
-     	   CtTypeReference returnType = method.getType(); 
-     	   String returnTypeclassID = null; 
-     	    rs= st.executeQuery("SELECT * from classes where classes.classname='"+returnType+"'"); 
-   		 while(rs.next()) {
-       	    newparamList = returnType.toString()+","+returnTypeclassID+","+classid+","+methodID+","+1; 
-
-       	   if(parameterClassID!=null && classid!=null && methodID!=null && !mylist.contains(newparamList)) {
-//       		   if(parameterClassID!=null && classid!=null && methodID!=null ) {
-   			returnTypeclassID= rs.getString("id"); 
-   			String method2=""; 
- 			try {
- 				method2=method.toString().replaceAll("'", "");
- 			}
- 			catch(Exception e) {
- 				
- 			}
-   			 String statement8= "INSERT INTO `parameters`(`parametername`, `parametertype`,  `parameterclass`, `classid`,`classname`, `methodid`, `methodname`, `isreturn`, `sourcecode`) VALUES ('"+
-   					returnType.toString()+"','" +returnType.toString()+"','"  +returnTypeclassID+"','" +classid+"','"+classname+"','"+methodID+"','"+fullmethod+"','"+1+"','"+method2+"')";
-   		    	   st2.executeUpdate(statement8); 
- 		    	   mylist.add(newparamList); 
-
-   			 
-   		 }
-   		 }
-        }
-        
-        
-
-        
-        
- 	
- 	
- 	}
- }
- }
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
-	private String replaceJDD(String string) {
-		// TODO Auto-generated method stub
-		string=string.replaceAll("Jjava", "long,java"); 
-		string=string.replaceAll("JDD", "long,double,double"); 
-		return string;
-	}
-
-	private String ShortenClass(String myclassname) {
-		// TODO Auto-generated method stub
-		myclassname=myclassname.substring(myclassname.lastIndexOf(".")+1, myclassname.length()); 
-		return myclassname;
-	}
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-
-	private String RemovePackage(String fullmeth) {
-		// TODO Auto-generated method stub
-		System.out.println(fullmeth);
-		String params= fullmeth.substring(fullmeth.indexOf("("), fullmeth.length()); 
-		System.out.println(params);
-		String rest=fullmeth.substring(0, fullmeth.indexOf("(")); 
-		System.out.println(rest);
-		rest=rest.substring(rest.lastIndexOf("."), rest.length());
-		System.out.println(rest);
-		fullmeth=fullmeth.substring(0, fullmeth.indexOf("(")); 
-		System.out.println(fullmeth);
-		fullmeth=fullmeth.substring(0, fullmeth.lastIndexOf(".")); 
-		System.out.println(fullmeth);
-		fullmeth=fullmeth.substring(fullmeth.lastIndexOf(".")+1, fullmeth.length()); 
-		System.out.println(fullmeth);
-		String result= fullmeth+rest+params; 
-		System.out.println(result);
-		
-		
-		return result;
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	public static String ReplaceLeduLjava(String text) {
-		text=text.replaceAll("clinit", "init"); 
-		 text=text.replaceAll("Ledu", "edu"); 
-		 text=text.replaceAll("Ljava", "java"); 
-		 return text; 
 	}
 	
+	//NON NESTED METHODS
+	List<CtMethod> methods = clazz.getElements(new TypeFilter<CtMethod>(CtMethod.class));
+	retrieveMethodParams(methods, st, st2, mylist); 	
+	
+		// METHODS  IN NESTED CLASSES 
+		for(CtType<?> mynested: nested) {
+	 
+				List<CtMethod> methodscalled = mynested.getElements(new TypeFilter<CtMethod>(CtMethod.class));
+				retrieveMethodParams(methods, st, st2, mylist); 	
+
+		}
+	
+	
+
+
+}
+}
+private void retrieveConstructorFields(List<CtFieldAccess> methodFields, CtConstructor myconstructor, CtType<?> clazz,
+Statement st, Statement st2, List<String> fieldMethods) throws SQLException {
+for(CtFieldAccess methodField : methodFields) {
+System.out.println(methodField.getShortRepresentation()+"   "+myconstructor.getSignature()+"  "+myconstructor.getDeclaringType().getQualifiedName());
+String methodID=null; 
+String ownerMethodName=null; 
+String formattedCons=myconstructor.getSignature().substring(0, myconstructor.getSignature().indexOf("("))+".-init-"+myconstructor.getSignature().substring(myconstructor.getSignature().indexOf("("), myconstructor.getSignature().length()); 
+System.out.println(formattedCons);
+ResultSet rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+formattedCons+"'"); 
+while(rs.next()) {
+	 methodID= rs.getString("id");
+	 ownerMethodName=rs.getString("fullmethod"); 
+}
+
+
+String ownerclassID=null; 
+rs= st.executeQuery("SELECT * from classes where classes.classname='"+clazz.getQualifiedName()+"'"); 
+while(rs.next()) {
+	  ownerclassID = rs.getString("id"); 
+}
+
+
+String fieldTypeclassid=null; 
+try {
+
+rs= st.executeQuery("SELECT * from classes where classes.classname='"+methodField.getType().getQualifiedName()+"'"); 
+while(rs.next()) {
+	 fieldTypeclassid = rs.getString("id"); 
+}
+}catch(Exception e) {
+	 
+}
+String s= methodField.getShortRepresentation()+","+methodID+","+ownerclassID; 
+if(ownerclassID!=null && methodID!=null && !fieldMethods.contains(s)) {
+	 String statement8= "INSERT INTO `fieldmethods`(`fieldaccess`, `fieldtypeclassid`,  `fieldtypeclassname`,"
+	 		+ " `ownerclassname`,`ownerclassid`,"
+	 		+ " `ownermethodname`, "
+	 		+ "`ownermethodid`"
+	 		+ ") VALUES"
+	 		+ " ('"+	 methodField+"','" +fieldTypeclassid+"','"  +methodField.getType().getQualifiedName()
+	 		+"','" +clazz.getQualifiedName()+"','"+ ownerclassID
+	 		+"','"+ownerMethodName+"','"+
+	 		methodID
+			 +"')";
+	   	   	 st2.executeUpdate(statement8); 
+	 
+	   	     fieldMethods.add(s); 
+}
+}
+
+
+
+// TODO Auto-generated method stub
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+private void retrieveMethodFields(List<CtFieldAccess> methodFields, CtMethod myMethod, CtType<?> clazz, Statement st, Statement st2,
+List<String> fieldMethods) throws SQLException {
+for(CtFieldAccess methodField : methodFields) {
+System.out.println(methodField+"   "+myMethod.getSignature()+"  "+myMethod.getDeclaringType().getQualifiedName());
+String methodID=null; 
+String ownerMethodName=null; 
+ResultSet rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+myMethod.getDeclaringType().getQualifiedName()+"."+myMethod.getSignature()+"'"); 
+while(rs.next()) {
+methodID= rs.getString("id");
+ownerMethodName=rs.getString("fullmethod"); 
+}
+
+
+String ownerclassID=null; 
+rs= st.executeQuery("SELECT * from classes where classes.classname='"+clazz.getQualifiedName()+"'"); 
+while(rs.next()) {
+ownerclassID = rs.getString("id"); 
+}
+
+
+String fieldTypeclassid=null; 
+try {
+rs= st.executeQuery("SELECT * from classes where classes.classname='"+methodField.getType().getQualifiedName()+"'"); 
+while(rs.next()) {
+	 fieldTypeclassid = rs.getString("id"); 
+}
+}catch(Exception e) {
+
+}
+
+String s= methodField.getShortRepresentation()+","+methodID+","+ownerclassID; 
+if(ownerclassID!=null && methodID!=null && !fieldMethods.contains(s)) {
+String statement8= "INSERT INTO `fieldmethods`(`fieldaccess`, `fieldtypeclassid`,  `fieldtypeclassname`,"
+		+ " `ownerclassname`,`ownerclassid`,"
+		+ " `ownermethodname`, "
+		+ "`ownermethodid`"
+		+ ") VALUES"
+		+ " ('"+	 methodField+"','" +fieldTypeclassid+"','"  +methodField.getType().getQualifiedName()
+		+"','" +clazz.getQualifiedName()+"','"+ ownerclassID
+		+"','"+ownerMethodName+"','"+
+		methodID
+		 +"')";
+ 	   	 st2.executeUpdate(statement8); 
+
+ 	     fieldMethods.add(s); 
+}
+}
+
+
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+private void retrieveFieldClasses(List<CtField> fields, Statement st, List<String> fieldClasses, Statement st2) throws SQLException { 
+for(CtField myField : fields) {
+System.out.println(myField.getSimpleName()+"   "+myField.getDeclaringType().getQualifiedName()+"  "+myField.getType().getQualifiedName());
+String fieldTypeClassID="0"; 
+ResultSet rs= st.executeQuery("SELECT * from classes where classes.classname='"+myField.getType().getQualifiedName()+"'"); 
+while(rs.next()) {
+fieldTypeClassID= rs.getString("id"); 
+}
+String declaringTypeClassID=null; 
+rs= st.executeQuery("SELECT * from classes where classes.classname='"+myField.getDeclaringType().getQualifiedName()+"'"); 
+while(rs.next()) {
+declaringTypeClassID= rs.getString("id"); 
+}
+
+String fieldClass= myField.getSimpleName()+","+fieldTypeClassID+","+declaringTypeClassID; 
+
+if(declaringTypeClassID!=null && myField.getSimpleName()!=null && !fieldClasses.contains(fieldClass)) {
+
+String statement8= "INSERT INTO `fieldclasses`(`fieldname`, `fieldtypeclassid`,  `fieldtype`, `ownerclassid`,`classname`) VALUES ('"+
+myField.getSimpleName()+"','" +fieldTypeClassID+"','"  +myField.getType().getQualifiedName()+"','" +declaringTypeClassID+"','"+myField.getDeclaringType().getQualifiedName()+"')";
+st2.executeUpdate(statement8); 
+fieldClasses.add(fieldClass); 
+
+
+
+}
+
+
+
+
+}}
+
+////////////////////////////////////////////////
+
+private void retrieveConstructorParams(List<CtConstructor> constructors, Statement st, Statement st2, List<String> mylist) throws SQLException {
+// TODO Auto-generated method stub
+
+for(CtConstructor constructor: constructors) {
+List<CtParameter> params = constructor.getParameters(); 
+
+for(CtParameter param: params) {
+String parameterClassID="0"; 
+String formattedCons=constructor.getSignature().substring(0, constructor.getSignature().indexOf("("))+".-init-"+constructor.getSignature().substring(constructor.getSignature().indexOf("("), constructor.getSignature().length()); 
+System.out.println(constructor.getSignature()+" ======  "+param);
+ResultSet rs= st.executeQuery("SELECT * from classes where classes.classname='"+param.getType().getQualifiedName()+"'"); 
+while(rs.next()) {
+	  parameterClassID= rs.getString("id"); 
+	 
+	 
+}
+rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+formattedCons+"'"); 
+while(rs.next()) {
+ String classid = rs.getString("classid"); 
+ String classname =rs.getString("classname"); 
+ String methodID =rs.getString("id"); 
+ 
+ System.out.println(classid);
+ String newparamList = param+","+parameterClassID+","+classid+","+methodID+","+0; 
+ if(classid!=null && methodID!=null && !mylist.contains(newparamList)) {
+//	   if(parameterClassID!=null && classid!=null && methodID!=null ) {
+
+	   String mycons=""; 
+	   try {
+		    mycons= constructor.toString(); 
+
+	   }catch(Exception ex) {
+		   
+	   }
+	   String constructor2 = mycons.replaceAll("'", ""); 
+	   String statement8= "INSERT INTO `parameters`(`parametername`, `parametertype`,  `parameterclass`, `classid`,`classname`, `methodid`, `methodname`, `isreturn`, `sourcecode`) VALUES ('"+
+	    	   param+"','" +param.getType().getQualifiedName()+"','"  +parameterClassID+"','" +classid+"','"+classname+"','"+methodID+"','"+formattedCons+"','"+0+"','"+constructor2+"')";
+	    	   st2.executeUpdate(statement8); 
+	    	   mylist.add(newparamList); 
+ }
+
+}
+
+
+
+
+
+
+
+}
+}
+}
+
+////////////////////////////////////////////////
+private void retrieveMethodParams(List<CtMethod> methods, Statement st, Statement st2, List<String> mylist) throws SQLException {
+// TODO Auto-generated method stub
+for(CtMethod method: methods) {
+List<CtParameter> params = method.getParameters(); 
+for(CtParameter param: params) {
+String parameterClassID="0"; 
+System.out.println(method.getSignature()+" ======  "+param);
+ResultSet rs= st.executeQuery("SELECT * from classes where classes.classname='"+param.getType().getQualifiedName()+"'"); 
+while(rs.next()) {
+parameterClassID= rs.getString("id"); 
+
+
+}
+String fullmethod = method.getDeclaringType().getQualifiedName()+"."+method.getSignature();
+System.out.println(fullmethod);
+rs= st.executeQuery("SELECT * from methods where methods.fullmethod='"+fullmethod+"'"); 
+while(rs.next()) {
+String classid = rs.getString("classid"); 
+String classname =rs.getString("classname"); 
+String methodID =rs.getString("id"); 
+
+System.out.println(classid);
+String newparamList = param+","+parameterClassID+","+classid+","+methodID+","+0; 
+String constructor2 = ""; 
+if( methodID!=null && !mylist.contains(newparamList)) {
+//if(parameterClassID!=null && classid!=null && methodID!=null ) {
+
+try {
+   constructor2 = method.toString().replaceAll("'", ""); 
+
+}
+catch(Exception ex) {
+  
+}
+String statement8= "INSERT INTO `parameters`(`parametername`, `parametertype`,  `parameterclass`, `classid`,`classname`, `methodid`, `methodname`, `isreturn`, `sourcecode`) VALUES ('"+
+	   param+"','" +param.getType().getQualifiedName()+"','"  +parameterClassID+"','" +classid+"','"+classname+"','"+methodID+"','"+fullmethod+"','"+0+"','"+constructor2+"')";
+	   st2.executeUpdate(statement8); 
+	   mylist.add(newparamList); 
+}
+
+CtTypeReference returnType = method.getType(); 
+String returnTypeclassID = null; 
+rs= st.executeQuery("SELECT * from classes where classes.classname='"+returnType+"'"); 
+while(rs.next()) {
+newparamList = returnType.toString()+","+returnTypeclassID+","+classid+","+methodID+","+1; 
+
+if(parameterClassID!=null && classid!=null && methodID!=null && !mylist.contains(newparamList)) {
+//if(parameterClassID!=null && classid!=null && methodID!=null ) {
+returnTypeclassID= rs.getString("id"); 
+String method2=""; 
+try {
+	method2=method.toString().replaceAll("'", "");
+}
+catch(Exception e) {
+	
+}
+String statement8= "INSERT INTO `parameters`(`parametername`, `parametertype`,  `parameterclass`, `classid`,`classname`, `methodid`, `methodname`, `isreturn`, `sourcecode`) VALUES ('"+
+		returnType.toString()+"','" +returnType.toString()+"','"  +returnTypeclassID+"','" +classid+"','"+classname+"','"+methodID+"','"+fullmethod+"','"+1+"','"+method2+"')";
+	   st2.executeUpdate(statement8); 
+	   mylist.add(newparamList); 
+
+
+}
+}
+}
+
+
+
+
+
+
+
+}
+}
+}
+///////////////*********************************************************************************************************************************************************************************/	
+/////////////*********************************************************************************************************************************************************************************/	
+/////////////*********************************************************************************************************************************************************************************/   
+private String WriteMethodIntoDatabase(CtMethod<?> constructor) {
+// TODO Auto-generated method stub
+List<CtComment> CommentList = constructor.getElements(new TypeFilter<CtComment>(CtComment.class));
+List<CtComment> NewCommentList= CommentList; 
+NewCommentList = constructor.getElements(new TypeFilter<CtComment>(CtComment.class));
+int size=NewCommentList.size(); 
+System.out.println(constructor);
+int  j=0; 
+if(CommentList!=null) {
+CtMethod newmethod=constructor; 
+
+
+while(j<size) {
+	
+	CtComment newcomment = NewCommentList.get(j); 
+	newmethod=newmethod.removeComment(newcomment); 
+	 size=NewCommentList.size(); 
+	 j++; 
+}
+
+constructor=newmethod; 
+}
+String methodString = constructor.toString().replaceAll("\\/\\/.*", ""); 
+methodString = methodString.toString().replaceAll("\'", ""); 
+
+String FullConstructorName=constructor.getSignature().toString(); 
+
+
+return methodString; 
+}
+
+public String WriteConstructorIntoDatabase(CtConstructor constructor) {
+// TODO Auto-generated method stub
+List<CtComment> CommentList = constructor.getElements(new TypeFilter<CtComment>(CtComment.class));
+List<CtComment> NewCommentList= CommentList; 
+NewCommentList = constructor.getElements(new TypeFilter<CtComment>(CtComment.class));
+int size=NewCommentList.size(); 
+System.out.println(constructor);
+int  j=0; 
+if(CommentList!=null) {
+	CtConstructor newmethod=constructor; 
+	
+	
+	while(j<size) {
+		
+		CtComment newcomment = NewCommentList.get(j); 
+		newmethod=newmethod.removeComment(newcomment); 
+		 size=NewCommentList.size(); 
+		 j++; 
+	}
+	
+	constructor=newmethod; 
+}
+String methodString = constructor.toString().replaceAll("\\/\\/.*", ""); 
+methodString = methodString.toString().replaceAll("\'", ""); 
+
+String FullConstructorName=constructor.getSignature().toString(); 
+
+
+return methodString; 
+}
+
+private String GetMethodNameAndParams(String method) {
+// TODO Auto-generated method stub
+System.out.println("METH BEFORE TRUNCATION"+method);
+String params=method.substring(method.indexOf("("), method.length()); 
+String BeforeParams=method.substring(0, method.indexOf("(")); 
+String methname=BeforeParams.substring(BeforeParams.lastIndexOf(".")+1, BeforeParams.length()); 
+String res= methname+params; 
+System.out.println("RES"+ res);
+return res;
+}
+
+
+
+
+
+public static String RewriteFullMethodCallExecutedRemoveDollarsTraces(String input) {
+
+String res=input; 
+StringBuilder buf = new StringBuilder();
+
+
+
+boolean flag=false; 
+char[] chars = res.toCharArray();
+int r = 0; 
+int pos=0; 
+
+int myindex= input.indexOf("$"); 
+char c= chars[myindex+1]; 
+if((Character.isDigit(c) && myindex+2==chars.length) || (Character.isDigit(c) && chars[myindex+2]=='(')) {
+	System.out.println("yeah");
+	while(r<chars.length) {
+		if(chars[r]=='$' ) {
+		 pos=r; 
+		// temp = chars[r+1]; 
+		StringBuilder sb = new StringBuilder();
+		sb.append(chars);
+		sb.deleteCharAt(r);
+		chars = sb.toString().toCharArray();
+		flag=true; 
+		}
+		int i=1; 
+		if(pos>0) {
+			while( flag==true) {
+				if(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos-1<chars.length ) {
+					System.out.println(chars[r]);
+					StringBuilder sb = new StringBuilder();
+					sb.append(chars);
+					sb.deleteCharAt(pos);
+					chars = sb.toString().toCharArray();
+					pos++; 
+					//r++; 
+					if(pos>chars.length) {
+						flag=false; 
+					}
+					if(chars[pos-1]=='(') {
+						flag=false; 
+					}
+				}
+			
+
+				}
+		}
+
+		
+			r++; 
+		
+		
+
+		}
+	
+}
+else if(Character.isDigit(c)) {
+	while(r<chars.length) {
+		if(chars[r]=='$' ) {
+		 pos=r; 
+		// temp = chars[r+1]; 
+		StringBuilder sb = new StringBuilder();
+		sb.append(chars);
+		sb.deleteCharAt(r);
+		chars = sb.toString().toCharArray();
+		flag=true; 
+		}
+		int i=1; 
+		if(pos>0) {
+			while( flag==true) {
+				if(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos-1<chars.length ) {
+					System.out.println(chars[r]);
+					StringBuilder sb = new StringBuilder();
+					sb.append(chars);
+					sb.deleteCharAt(pos);
+					chars = sb.toString().toCharArray();
+					pos++; 
+					//r++; 
+					if(chars[pos-1]=='.') {
+						flag=false; 
+					}
+				}
+			
+
+				}
+		}
+
+		
+			r++; 
+		
+		
+
+		}
+}
+else {
+	
+	while(r<chars.length) {
+		if(chars[r]=='$' ) {
+		 pos=r; 
+		// temp = chars[r+1]; 
+		StringBuilder sb = new StringBuilder();
+		sb.append(chars);
+		sb.deleteCharAt(r);
+		chars = sb.toString().toCharArray();
+		flag=true; 
+		}
+		int i=1; 
+		if(pos>0) {
+			while(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos<chars.length && flag==true) {
+				pos=r-i; 
+				System.out.println(chars[r]);
+				StringBuilder sb = new StringBuilder();
+				sb.append(chars);
+				sb.deleteCharAt(pos);
+				chars = sb.toString().toCharArray();
+		i++; 
+				//r++; 
+
+				}
+		}
+
+		
+			r++; 
+		
+		
+
+		}
+}
+
+
+res = String.valueOf(chars);
+System.out.println(res);
+return res; 
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-
 public static String RewriteFullMethodCallExecutedRemoveDollars(String input) {
 
 String res=input; 
@@ -2621,220 +2790,116 @@ int pos=0;
 int myindex= input.indexOf("$"); 
 char c= chars[myindex+1]; 
 if(Character.isDigit(c) && myindex+2==chars.length) {
-System.out.println("yeah");
-while(r<chars.length) {
-if(chars[r]=='$' ) {
-pos=r; 
-// temp = chars[r+1]; 
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(r);
-chars = sb.toString().toCharArray();
-flag=true; 
-}
-int i=1; 
-if(pos>0) {
-while( flag==true) {
-if(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos-1<chars.length ) {
-System.out.println(chars[r]);
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(pos);
-chars = sb.toString().toCharArray();
-pos++; 
-//r++; 
-if(pos>chars.length) {
-flag=false; 
-}
-}
+	System.out.println("yeah");
+	while(r<chars.length) {
+		if(chars[r]=='$' ) {
+		 pos=r; 
+		// temp = chars[r+1]; 
+		StringBuilder sb = new StringBuilder();
+		sb.append(chars);
+		sb.deleteCharAt(r);
+		chars = sb.toString().toCharArray();
+		flag=true; 
+		}
+		int i=1; 
+		if(pos>0) {
+			while( flag==true) {
+				if(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos-1<chars.length ) {
+					System.out.println(chars[r]);
+					StringBuilder sb = new StringBuilder();
+					sb.append(chars);
+					sb.deleteCharAt(pos);
+					chars = sb.toString().toCharArray();
+					pos++; 
+					//r++; 
+					if(pos>chars.length) {
+						flag=false; 
+					}
+				}
+			
 
+				}
+		}
 
-}
-}
+		
+			r++; 
+		
+		
 
-
-r++; 
-
-
-
-}
-
-}
-else if(Character.isDigit(c) && chars[myindex+2]=='$' && chars[myindex]=='$' ) {
-
-while(r<chars.length) {
-if(chars[r]=='$' ) {
-pos=r; 
-// temp = chars[r+1]; 
-StringBuilder sb = new StringBuilder();
-System.out.println(sb.toString());
-sb.append(chars);
-sb.deleteCharAt(r);
-chars = sb.toString().toCharArray();
-flag=true; 
-}
-int i=0; 
-if(pos>0) {
-while( flag==true) {
-if( chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos-1<chars.length ) {
-
-pos=r-i; 
-//	System.out.println(chars[r]);
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(pos);
-System.out.println(sb.toString());
-chars = sb.toString().toCharArray();
-
-i++; 
-if(chars[pos-1]=='.' && chars[pos]=='$') {
-sb.deleteCharAt(pos);
-chars = sb.toString().toCharArray();
-flag=false; 
-}else if(chars[pos-1]=='.') {
-flag=false; 
-}
-}
-
-
-}
-}
-
-
-r++; 
-
-
-
-}
-}
-else if(Character.isDigit(c) && chars.length-myindex-1<3) {
-
-
-while(r<chars.length) {
-if(chars[r]=='$' ) {
-pos=r; 
-// temp = chars[r+1]; 
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(r);
-System.out.println(sb.toString());
-chars = sb.toString().toCharArray();
-flag=true; 
-}
-int i=1; 
-if(pos>0) {
-while( flag==true) {
-
-//pos=r-i; 
-//	System.out.println(chars[r]);
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(r);
-System.out.println(sb.toString());
-chars = sb.toString().toCharArray();
-pos++; 
-//r++; 
-if(r==chars.length) {
-flag=false; 
-}
-
-
-
-}
-}
-
-
-r++; 
-
-
-
-}
-
+		}
+	
 }
 else if(Character.isDigit(c)) {
+	while(r<chars.length) {
+		if(chars[r]=='$' ) {
+		 pos=r; 
+		// temp = chars[r+1]; 
+		StringBuilder sb = new StringBuilder();
+		sb.append(chars);
+		sb.deleteCharAt(r);
+		chars = sb.toString().toCharArray();
+		flag=true; 
+		}
+		int i=1; 
+		if(pos>0) {
+			while( flag==true) {
+				if(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos-1<chars.length ) {
+					System.out.println(chars[r]);
+					StringBuilder sb = new StringBuilder();
+					sb.append(chars);
+					sb.deleteCharAt(pos);
+					chars = sb.toString().toCharArray();
+					pos++; 
+					//r++; 
+					if(chars[pos-1]=='.') {
+						flag=false; 
+					}
+				}
+			
 
+				}
+		}
 
-while(r<chars.length) {
-if(chars[r]=='$' ) {
-pos=r; 
-// temp = chars[r+1]; 
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(r);
-chars = sb.toString().toCharArray();
-flag=true; 
+		
+			r++; 
+		
+		
+
+		}
 }
-int i=1; 
-if(pos>0) {
-while( flag==true) {
-if(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos-1<chars.length ) {
-pos=r-i; 
-//System.out.println(chars[r]);
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(pos);
-System.out.println(sb.toString());
-chars = sb.toString().toCharArray();
-pos++; 
-//r++; 
-if(chars[pos-1]=='.') {
-flag=false; 
-}
-}
-
-
-}
-}
-
-
-r++; 
-
-
-
-}
-
-}
-
 else {
+	
+	while(r<chars.length) {
+		if(chars[r]=='$' ) {
+		 pos=r; 
+		// temp = chars[r+1]; 
+		StringBuilder sb = new StringBuilder();
+		sb.append(chars);
+		sb.deleteCharAt(r);
+		chars = sb.toString().toCharArray();
+		flag=true; 
+		}
+		int i=1; 
+		if(pos>0) {
+			while(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')' && pos<chars.length && flag==true) {
+				pos=r-i; 
+				System.out.println(chars[r]);
+				StringBuilder sb = new StringBuilder();
+				sb.append(chars);
+				sb.deleteCharAt(pos);
+				chars = sb.toString().toCharArray();
+		i++; 
+				//r++; 
 
-while(r<chars.length) {
-if(chars[r]=='$' ) {
-pos=r; 
-// temp = chars[r+1]; 
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(r);
-chars = sb.toString().toCharArray();
-flag=true; 
-}
-int i=1; 
-if(pos>0) {
-while( flag==true) {
-if(chars[pos-1]!='.'&& chars[pos-1]!='('&& chars[pos-1]!=')'&& pos<chars.length ) {
-pos=r-i; 
-//System.out.println(chars[r]);
-StringBuilder sb = new StringBuilder();
-sb.append(chars);
-sb.deleteCharAt(pos);
-System.out.println(sb.toString());
-chars = sb.toString().toCharArray();
-i++; 
-}
+				}
+		}
 
-if(chars[pos-1]=='.' || pos-1==0) {
-flag=false; 
-}
-//r++; 
+		
+			r++; 
+		
+		
 
-}
-}
-
-
-r++; 
-
-
-
-}
+		}
 }
 
 
@@ -2843,660 +2908,663 @@ System.out.println(res);
 return res; 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
+
 public String RewriteFullMethod(String input) {
-	
-
-	StringBuilder buf = new StringBuilder();
-	System.out.println("INPUT"+input);
-	String params= input.substring(input.indexOf("("), input.indexOf(")")+1); 
-	String methname= input.substring(0, input.indexOf("(") );
-	int i=0; 
-
-	while(i<params.length()-1) {
-
-	if(((params.charAt(i)=='L'|| params.charAt(i)=='Z'||params.charAt(i)=='B'||params.charAt(i)=='I'||params.charAt(i)=='J'||params.charAt(i)=='S'||params.charAt(i)=='C')
-	&& ((params.charAt(i+1)=='L'|| params.charAt(i+1)=='Z'||params.charAt(i+1)=='B'||params.charAt(i+1)=='I'||params.charAt(i+1)=='J'||params.charAt(i+1)=='S'||params.charAt(i+1)=='C')||
-	params.charAt(i+1)==')') && params.charAt(i-1)!='.') ||
-
-	((params.charAt(i)=='L'|| params.charAt(i)=='Z'||params.charAt(i)=='B'||params.charAt(i)=='I'||params.charAt(i)=='J'||params.charAt(i)=='S'||params.charAt(i)=='C')
-	&& ((params.charAt(i+2)=='L'|| params.charAt(i+2)=='Z'||params.charAt(i+2)=='B'||params.charAt(i+2)=='I'||params.charAt(i+2)=='J'||params.charAt(i+2)=='S'||params.charAt(i+2)=='C')||
-	params.charAt(i+1)==')') && params.charAt(i-1)!='.' ) ||
-
-	(params.charAt(i)=='[' && params.charAt(i-1)==',')||
-	(params.charAt(i)=='L'|| params.charAt(i)=='Z'||params.charAt(i)=='B'||params.charAt(i)=='I'||params.charAt(i)=='J'||params.charAt(i)=='S'||params.charAt(i)=='C')
-	&& ((params.charAt(i-1)=='['))) {
 
 
-	if(params.charAt(i+1)=='C') {
-	String params1 = params.substring(0, i); 
-	String params2 = params.substring(i+2, params.length()); 
-	params=params1+",char,"+params2; 
-	}	
+StringBuilder buf = new StringBuilder();
+String params= input.substring(input.indexOf("("), input.indexOf(")")+1); 
+String methname= input.substring(0, input.indexOf("(") );
+int i=0; 
 
-	if(params.charAt(i+1)=='S') {
-	String params1 = params.substring(0, i); 
-	String params2 = params.substring(i+2, params.length()); 
-	params=params1+",short,"+params2; 
-	}
-	if(params.charAt(i+1)=='V') {
-	String params1 = params.substring(0, i+1); 
-	String params2 = params.substring(i+2, params.length()); 
-	params=params1+",void,"+params2; 
-	}
-	if(params.charAt(i+1)=='Z') {
-	String params1 = params.substring(0, i+1); 
-	String params2 = params.substring(i+2, params.length()); 
-	params=params1+",boolean,"+params2; 
-	}
-	if(params.charAt(i+1)=='J') {
-	String params1 = params.substring(0, i+1); 
-	String params2 = params.substring(i+2, params.length()); 
-	params=params1+",long,"+params2; 
-	}
-	if(params.charAt(i+1)=='B') {
-	String params1 = params.substring(0, i+1); 
-	String params2 = params.substring(i+2, params.length()); 
-	params=params1+",byte,"+params2; 
-	}
+while(i<params.length()-1) {
+
+if(((params.charAt(i)=='L'|| params.charAt(i)=='Z'||params.charAt(i)=='B'||params.charAt(i)=='I'||params.charAt(i)=='J'||params.charAt(i)=='S'||params.charAt(i)=='C')
+&& ((params.charAt(i+1)=='L'|| params.charAt(i+1)=='Z'||params.charAt(i+1)=='B'||params.charAt(i+1)=='I'||params.charAt(i+1)=='J'||params.charAt(i+1)=='S'||params.charAt(i+1)=='C')||
+params.charAt(i+1)==')') && params.charAt(i-1)!='.') ||
+
+((params.charAt(i)=='L'|| params.charAt(i)=='Z'||params.charAt(i)=='B'||params.charAt(i)=='I'||params.charAt(i)=='J'||params.charAt(i)=='S'||params.charAt(i)=='C')
+&& ((params.charAt(i+2)=='L'|| params.charAt(i+2)=='Z'||params.charAt(i+2)=='B'||params.charAt(i+2)=='I'||params.charAt(i+2)=='J'||params.charAt(i+2)=='S'||params.charAt(i+2)=='C')||
+params.charAt(i+1)==')') && params.charAt(i-1)!='.' ) ||
+
+(params.charAt(i)=='[' && params.charAt(i-1)==',')||
+(params.charAt(i)=='L'|| params.charAt(i)=='Z'||params.charAt(i)=='B'||params.charAt(i)=='I'||params.charAt(i)=='J'||params.charAt(i)=='S'||params.charAt(i)=='C')
+&& ((params.charAt(i-1)=='['))) {
 
 
-	if(params.charAt(i+1)=='I') {
-	String params1 = params.substring(0, i+1); 
-	String params2 = params.substring(i+2, params.length()); 
-	params=params1+",int,"+params2; 
-	}
+if(params.charAt(i+1)=='C') {
+String params1 = params.substring(0, i); 
+String params2 = params.substring(i+2, params.length()); 
+params=params1+",char,"+params2; 
+}	
 
+if(params.charAt(i+1)=='S') {
+String params1 = params.substring(0, i); 
+String params2 = params.substring(i+2, params.length()); 
+params=params1+",short,"+params2; 
+}
+if(params.charAt(i+1)=='V') {
+String params1 = params.substring(0, i+1); 
+String params2 = params.substring(i+2, params.length()); 
+params=params1+",void,"+params2; 
+}
+if(params.charAt(i+1)=='Z') {
+String params1 = params.substring(0, i+1); 
+String params2 = params.substring(i+2, params.length()); 
+params=params1+",boolean,"+params2; 
+}
+if(params.charAt(i+1)=='J') {
+String params1 = params.substring(0, i+1); 
+String params2 = params.substring(i+2, params.length()); 
+params=params1+",long,"+params2; 
+}
+if(params.charAt(i+1)=='B') {
+String params1 = params.substring(0, i+1); 
+String params2 = params.substring(i+2, params.length()); 
+params=params1+",byte,"+params2; 
+}
+
+
+if(params.charAt(i+1)=='I') {
+String params1 = params.substring(0, i+1); 
+String params2 = params.substring(i+2, params.length()); 
+params=params1+",int,"+params2; 
+}
 
 
 
 
 
-	if(params.charAt(i)=='S') {
-	if(i==1) {
-	String params1 = params.substring(0, 1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+"short,"+params2; 
-	}
-	else {
-	if(params.charAt(i-1)=='[') {
 
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i-1, i); 
-	String params3 = params.substring(i+2, params.length()); 
-	params=params1+","+params2+"short,"+params3; 	
-	}
-	else {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",short,"+params2; 	
-	}
+if(params.charAt(i)=='S') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+"short,"+params2; 
+}
+else {
+if(params.charAt(i-1)=='[') {
 
-	}
-	}
-	if(params.charAt(i)=='C') {
-	if(i==1) {
-	String params1 = params.substring(0, 1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+"char,"+params2; 
-	}
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i-1, i); 
+String params3 = params.substring(i+2, params.length()); 
+params=params1+","+params2+"short,"+params3; 	
+}
+else {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",short,"+params2; 	
+}
 
-	else {
-	if(params.charAt(i-1)=='[') {
+}
+}
+if(params.charAt(i)=='C') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+"char,"+params2; 
+}
 
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i-1, i); 
-	String params3 = params.substring(i+1, params.length()); 
-	params=params1+","+params2+"char,"+params3; 	
-	}
-	else{
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",char,"+params2; 	
-	}
+else {
+if(params.charAt(i-1)=='[') {
 
-	}
-	}
-	if(params.charAt(i)=='V') {
-	if(i==1) {
-	String params1 = params.substring(0, 1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+"void,"+params2; 
-	}
-	else {
-	if(params.charAt(i-1)=='[') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i-1, i); 
+String params3 = params.substring(i+1, params.length()); 
+params=params1+","+params2+"char,"+params3; 	
+}
+else{
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",char,"+params2; 	
+}
 
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i-1, i); 
-	String params3 = params.substring(i+2, params.length()); 
-	params=params1+","+params2+"void,"+params3; 	
-	}else{
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",void,"+params2; 	
-	}
+}
+}
+if(params.charAt(i)=='V') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+"void,"+params2; 
+}
+else {
+if(params.charAt(i-1)=='[') {
 
-	}
-	}
-	if(params.charAt(i)=='Z') {
-	if(i==1) {
-	String params1 = params.substring(0, 1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+"boolean,"+params2; 
-	}
-	else{
-	if(params.charAt(i-1)=='[') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i-1, i); 
+String params3 = params.substring(i+2, params.length()); 
+params=params1+","+params2+"void,"+params3; 	
+}else{
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",void,"+params2; 	
+}
 
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i-1, i); 
-	String params3 = params.substring(i+2, params.length()); 
-	params=params1+","+params2+"boolean,"+params3; 	
-	}else{
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",boolean,"+params2; 	
-	}
-	}
+}
+}
+if(params.charAt(i)=='Z') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+"boolean,"+params2; 
+}
+else{
+if(params.charAt(i-1)=='[') {
 
-	}
-	if(params.charAt(i)=='J') {
-	if(i==1) {
-	String params1 = params.substring(0, 1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+"long,"+params2; 
-	}
-	else {
-	if(params.charAt(i-1)=='[') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i-1, i); 
+String params3 = params.substring(i+2, params.length()); 
+params=params1+","+params2+"boolean,"+params3; 	
+}else{
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",boolean,"+params2; 	
+}
+}
 
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i-1, i); 
-	String params3 = params.substring(i+2, params.length()); 
-	params=params1+","+params2+"long,"+params3; 	
-	}else{
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",long,"+params2; 	
-	}
-	}
+}
+if(params.charAt(i)=='J') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+"long,"+params2; 
+}
+else {
+if(params.charAt(i-1)=='[') {
 
-	}
-	if(params.charAt(i)=='B') {
-	if(i==1) {
-	String params1 = params.substring(0, 1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+"byte,"+params2; 
-	}
-	else{
-	if(params.charAt(i-1)=='[') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i-1, i); 
+String params3 = params.substring(i+2, params.length()); 
+params=params1+","+params2+"long,"+params3; 	
+}else{
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",long,"+params2; 	
+}
+}
 
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i-1, i); 
-	String params3 = params.substring(i+2, params.length()); 
-	params=params1+","+params2+"byte"+params3; 	
-	}else{
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",byte,"+params2; 	
-	}
-	}
+}
+if(params.charAt(i)=='B') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+"byte,"+params2; 
+}
+else{
+if(params.charAt(i-1)=='[') {
 
-	}
-	if(params.charAt(i)=='I') {
-	if(i==1) {
-	String params1 = params.substring(0, 1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+"int,"+params2; 
-	}
-	else{
-	if(params.charAt(i-1)=='[') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i-1, i); 
+String params3 = params.substring(i+2, params.length()); 
+params=params1+","+params2+"byte"+params3; 	
+}else{
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",byte,"+params2; 	
+}
+}
 
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i-1, i); 
-	String params3 = params.substring(i+1, params.length()); 
-	params=params1+","+params2+"int,"+params3; 	
-	}else{
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",int,"+params2; 	
-	}
-	}
-	}
+}
+if(params.charAt(i)=='I') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+"int,"+params2; 
+}
+else{
+if(params.charAt(i-1)=='[') {
 
-	System.out.println(params.charAt(i)); 
-	if(params.charAt(i-1)=='[') {
-		if(i==1) {
-		String params1 = params.substring(0, 1); 
-		String params2 = params.substring(i+1, params.length()); 
-		params=params1+","+params2; 
-		}
-		else{
-		if(params.charAt(i-2)==',') {
-			String[] parts = params.split(",");
-			String AppendedParts=""; 
-			for(String part: parts) {
-				if(part.charAt(0)=='[') {
-					part=part.substring(1, part.length()); 
-					part=part+"[]"; 
-				}
-				AppendedParts=AppendedParts+part+","; 
-				params=AppendedParts; 
-			}
-//		String params1 = params.substring(0, i-1); 
-//		String params2 = params.substring(i-1, i); 
-//		String params3 = params.substring(i+1, params.length()); 
-//		params=params1+","+params2+","+params3; 	
-		}else{
-		String params1 = params.substring(0, i-1); 
-		String params2 = params.substring(i+1, params.length()); 
-		params=params1+",,"+params2; 	
-		}
-		}
-		}
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i-1, i); 
+String params3 = params.substring(i+1, params.length()); 
+params=params1+","+params2+"int,"+params3; 	
+}else{
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",int,"+params2; 	
+}
+}
+}
 
-
-	if(params.charAt(i+1)==')' && params.charAt(i)=='I') {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",int,"+params2; 
+System.out.println(params.charAt(i)); 
+if(params.charAt(i-1)=='[') {
+if(i==1) {
+String params1 = params.substring(0, 1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+","+params2; 
+}
+else{
+if(params.charAt(i-2)==',') {
+String[] parts = params.split(",");
+String AppendedParts=""; 
+for(String part: parts) {
+	if(part.charAt(0)=='[') {
+		part=part.substring(1, part.length()); 
+		part=part+"[]"; 
 	}
-	if(params.charAt(i+1)==')' && params.charAt(i)=='S') {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",short,"+params2; 
-	}
-	if(params.charAt(i+1)==')' && params.charAt(i)=='J') {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",long,"+params2; 
-	}
-	if(params.charAt(i+1)==')' && params.charAt(i)=='B') {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",byte,"+params2; 
-	}
-	if(params.charAt(i+1)==')' && params.charAt(i)=='Z') {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",boolean,"+params2; 
-	}
-	if(params.charAt(i+1)==')' && params.charAt(i)=='V') {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",void,"+params2; 
-	}
-	if(params.charAt(i+1)==')' && params.charAt(i)=='C') {
-	String params1 = params.substring(0, i-1); 
-	String params2 = params.substring(i+1, params.length()); 
-	params=params1+",char,"+params2; 
-	}
-	}
-	i++; 
-	}
-	String res= methname+params; 
-
-	//System.out.println(res);
-	res=res.replaceAll("\\(,", "\\("); 
-	res=res.replaceAll(",\\)", "\\)"); 
-	res=res.replaceAll(",,", ","); 
-	res=res.replaceAll(";", ","); 
-	res=res.replaceAll(",,", ","); 
-	res=res.replaceAll(",\\[,", ",\\["); 
-	res=res.replaceAll(",\\)", "\\)"); 
-	//res=res.replaceAll("Ljava", "java"); 
-	//System.out.println("here  "+res);
+	AppendedParts=AppendedParts+part+","; 
+	params=AppendedParts; 
+}
+//String params1 = params.substring(0, i-1); 
+//String params2 = params.substring(i-1, i); 
+//String params3 = params.substring(i+1, params.length()); 
+//params=params1+","+params2+","+params3; 	
+}else{
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",,"+params2; 	
+}
+}
+}
 
 
+if(params.charAt(i+1)==')' && params.charAt(i)=='I') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",int,"+params2; 
+}
+if(params.charAt(i+1)==')' && params.charAt(i)=='S') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",short,"+params2; 
+}
+if(params.charAt(i+1)==')' && params.charAt(i)=='J') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",long,"+params2; 
+}
+if(params.charAt(i+1)==')' && params.charAt(i)=='B') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",byte,"+params2; 
+}
+if(params.charAt(i+1)==')' && params.charAt(i)=='Z') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",boolean,"+params2; 
+}
+if(params.charAt(i+1)==')' && params.charAt(i)=='V') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",void,"+params2; 
+}
+if(params.charAt(i+1)==')' && params.charAt(i)=='C') {
+String params1 = params.substring(0, i-1); 
+String params2 = params.substring(i+1, params.length()); 
+params=params1+",char,"+params2; 
+}
+}
+i++; 
+}
+String res= methname+params; 
 
-	boolean flag=false; 
-	char[] chars = res.toCharArray();
-	int r=0; 
-	int pos=10000000; 
-	char temp='\0'; 
-	while(r<chars.length) {
-	if(chars[r]=='[' ) {
-	pos=r; 
-	// temp = chars[r+1]; 
-	StringBuilder sb = new StringBuilder();
-	sb.append(chars);
-	sb.deleteCharAt(r);
-	chars = sb.toString().toCharArray();
-	flag=true; 
-	}
-	if(flag==true) {
-	pos=r; 
-	// temp = chars[r+1]; 
-	if(chars[r]==',' ) {
-	StringBuilder sb = new StringBuilder();
-	sb.append(chars);
-	sb.deleteCharAt(r);
-
-	sb.insert(r, "[],");
-	chars = sb.toString().toCharArray();
-	flag=false; 	 
-	}
-	else if(chars[r]==')' ) {
-	StringBuilder sb = new StringBuilder();
-	sb.append(chars);
-	sb.deleteCharAt(r);
-	sb.insert(r, "[])");
-	chars = sb.toString().toCharArray();
-	flag=false; 	 
-	}
+//System.out.println(res);
+res=res.replaceAll("\\(,", "\\("); 
+res=res.replaceAll(",\\)", "\\)"); 
+res=res.replaceAll(",,", ","); 
+res=res.replaceAll(";", ","); 
+res=res.replaceAll(",,", ","); 
+res=res.replaceAll(",\\[,", ",\\["); 
+res=res.replaceAll(",\\)", "\\)"); 
+//res=res.replaceAll("Ljava", "java"); 
+//System.out.println("here  "+res);
 
 
-	}
 
-	r++; 
-	}
+boolean flag=false; 
+char[] chars = res.toCharArray();
+int r=0; 
+int pos=10000000; 
+char temp='\0'; 
+while(r<chars.length) {
+if(chars[r]=='[' ) {
+pos=r; 
+// temp = chars[r+1]; 
+StringBuilder sb = new StringBuilder();
+sb.append(chars);
+sb.deleteCharAt(r);
+chars = sb.toString().toCharArray();
+flag=true; 
+}
+if(flag==true) {
+pos=r; 
+// temp = chars[r+1]; 
+if(chars[r]==',' ) {
+StringBuilder sb = new StringBuilder();
+sb.append(chars);
+sb.deleteCharAt(r);
+
+sb.insert(r, "[],");
+chars = sb.toString().toCharArray();
+flag=false; 	 
+}
+else if(chars[r]==')' ) {
+StringBuilder sb = new StringBuilder();
+sb.append(chars);
+sb.deleteCharAt(r);
+sb.insert(r, "[])");
+chars = sb.toString().toCharArray();
+flag=false; 	 
+}
 
 
-	flag=false; 
-	chars = res.toCharArray();
-	r=0; 
+}
+
+r++; 
+}
 
 
-	while(r<chars.length) {
-	if(chars[r]=='$' ) {
-	pos=r; 
-	// temp = chars[r+1]; 
-	StringBuilder sb = new StringBuilder();
-	sb.append(chars);
-	sb.deleteCharAt(r);
-	chars = sb.toString().toCharArray();
-	flag=true; 
-	}
-	while(chars[r]!='.'&& chars[r]!='('&& chars[r]!=')'&& flag==true) {
-	System.out.println(chars[r]);
-	StringBuilder sb = new StringBuilder();
-	sb.append(chars);
-	sb.deleteCharAt(r);
-	chars = sb.toString().toCharArray();
+flag=false; 
+chars = res.toCharArray();
+r=0; 
 
-	//r++; 
 
-	}
-	flag=false; 
+while(r<chars.length) {
+if(chars[r]=='$' ) {
+pos=r; 
+// temp = chars[r+1]; 
+StringBuilder sb = new StringBuilder();
+sb.append(chars);
+sb.deleteCharAt(r);
+chars = sb.toString().toCharArray();
+flag=true; 
+}
+while(chars[r]!='.'&& chars[r]!='('&& chars[r]!=')'&& flag==true) {
+System.out.println(chars[r]);
+StringBuilder sb = new StringBuilder();
+sb.append(chars);
+sb.deleteCharAt(r);
+chars = sb.toString().toCharArray();
 
-	r++; 
+//r++; 
 
-	}
-	res = String.valueOf(chars);
-	
-	System.out.println("final res : "+res);
-	return res;
-	
+}
+flag=false; 
 
-	
-	
+r++; 
+
+}
+res = String.valueOf(chars);
+System.out.println("final res : "+res);
+return res;
+
+
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 public String KeepOnlyMethodName(String constructor) {
-	String params= constructor.substring(constructor.indexOf("("), constructor.length()); 
-	constructor=constructor.substring(0, constructor.indexOf("(")); 
-	constructor=constructor.substring(constructor.lastIndexOf(".")+1, constructor.length()); 
-	constructor=constructor+params; 
+String params= constructor.substring(constructor.indexOf("("), constructor.length()); 
+constructor=constructor.substring(0, constructor.indexOf("(")); 
+constructor=constructor.substring(constructor.lastIndexOf(".")+1, constructor.length()); 
+constructor=constructor+params; 
 
 return constructor; 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 public String TransformConstructorIntoInit(String constructor) {
-	String params= constructor.substring(constructor.indexOf("("), constructor.length()); 
-	constructor= constructor.substring(0, constructor.indexOf("(")); 
-	
-	//String part2= constructor.substring(constructor.indexOf("("), constructor.length()); 
-	constructor=constructor+".-init-"+params; 
-	
-	return constructor; 
+String params= constructor.substring(constructor.indexOf("("), constructor.length()); 
+constructor= constructor.substring(0, constructor.indexOf("(")); 
+
+//String part2= constructor.substring(constructor.indexOf("("), constructor.length()); 
+constructor=constructor+".-init-"+params; 
+
+return constructor; 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 public String RemoveDollarConstructor(String text) {
 
-	
-	
-	String res=""; 
-	
-	boolean  flag=false; 
-	char[] chars = text.toCharArray();
-	 int r = 0; 
-	 int pos = text.indexOf("$"); 
-	//System.out.println("HERE IS THE TEXT "+text);
-	if(text.contains("$")) {
-		if(chars.length-pos>7 && chars[pos+2]!='(') {
-			
-		
-		while(r<chars.length ) {
-			if(chars[r]=='$' ) {
-				// pos = r; 
-				// temp = chars[r+1]; 
-				StringBuilder sb = new StringBuilder();
-				sb.append(chars);
-				sb.deleteCharAt(r);
-				chars = sb.toString().toCharArray();
-				flag=true; 
-				 pos--; 
-				
-				
-			}
-			
-			 while( flag==true ) {
-				 if(chars[pos]!='.'&& chars[pos]!='('&& chars[pos]!=')') {
-					 r--; 
-					 pos--; 
-				//	 System.out.println(chars[r]);
-					 StringBuilder sb = new StringBuilder();
-					 sb.append(chars);
-					
-					 sb.deleteCharAt(r);
-				//	 System.out.println(sb);
-					 chars = sb.toString().toCharArray();
-					 int length=chars.length; 
-//					 if(r==length) {
-//						 flag=false; 
-//					 }
-					
-					
-				 }
-				 else {
-					 flag=false; 
-				 }
-				
-				 //r++; 
-				 
-			 }
-			flag=false; 
-			 if(flag==true) {
-				 r--; 
-			 }else {
-				 r++;  
-			 }
-			 
-			
-		}
-		 res = String.valueOf(chars);
-	}else {
-		String part2=""; 
-		String part1=""; 
-		 res = String.valueOf(chars);
-		  part1=res.substring(0,res.indexOf("$")); 
-		 if(res.contains("(")) {
-			  part2=res.substring(res.indexOf("("),res.length()); 
-		 }
-		res=part1+part2; 
-	}
-		
-	}
-	else {
-		res=text; 
-	}
 
-	//System.out.println("RES====>"+res);
-	
 
+String res=""; 
+
+boolean  flag=false; 
+char[] chars = text.toCharArray();
+int r = 0; 
+int pos = text.indexOf("$"); 
+//System.out.println("HERE IS THE TEXT "+text);
+int count = StringUtils.countMatches("text", "$");
+if(count==1) {
+if(text.contains("$")) {
+if(chars.length-pos>7 && chars[pos+2]!='(') {
+
+
+while(r<chars.length ) {
+if(chars[r]=='$' ) {
+	// pos = r; 
+	// temp = chars[r+1]; 
+	StringBuilder sb = new StringBuilder();
+	sb.append(chars);
+	sb.deleteCharAt(r);
+	chars = sb.toString().toCharArray();
+	flag=true; 
+	 pos--; 
 	
-	return res; 
+	
+}
+
+while( flag==true ) {
+	 if(chars[pos]!='.'&& chars[pos]!='('&& chars[pos]!=')') {
+		 r--; 
+		 pos--; 
+	//	 System.out.println(chars[r]);
+		 StringBuilder sb = new StringBuilder();
+		 sb.append(chars);
+		
+		 sb.deleteCharAt(r);
+	//	 System.out.println(sb);
+		 chars = sb.toString().toCharArray();
+		 int length=chars.length; 
+//		 if(r==length) {
+//			 flag=false; 
+//		 }
+		
+		
+	 }
+	 else {
+		 flag=false; 
+	 }
+	
+	 //r++; 
+	 
+}
+flag=false; 
+if(flag==true) {
+	 r--; 
+}else {
+	 r++;  
+}
+
+
+}
+res = String.valueOf(chars);
+}else {
+String part2=""; 
+String part1=""; 
+res = String.valueOf(chars);
+part1=res.substring(0,res.indexOf("$")); 
+if(res.contains("(")) {
+part2=res.substring(res.indexOf("("),res.length()); 
+}
+res=part1+part2; 
+}
+
+}
+
+
+}else if(count==2) {
+String methodname=text.substring(0, text.indexOf("(")); 
+String parameters=text.substring(text.indexOf("("), text.length()); 
+
+methodname=methodname.substring(0, methodname.lastIndexOf("$")); 
+String part1meth=methodname.substring(0, methodname.lastIndexOf(".")); 
+String part2meth=methodname.substring(methodname.indexOf("$"), methodname.length()); 
+res=part1meth+part2meth+parameters; 
+}
+//System.out.println("RES====>"+res);
+else {
+res=text; 
+}
+
+
+return res; 
 
 
 }
 
 
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
-	public String RemoveDollar(String text) {	
-		
-		boolean  flag=false; 
-	char[] chars = text.toCharArray();
-	 int r = 0; 
-	 int pos = text.indexOf("$"); 
-	System.out.println("HERE IS THE TEXT "+text);
-	if(text.contains("$")) {
-		while(r<chars.length) {
-			if(chars[r]=='$' ) {
-				// pos = r; 
-				// temp = chars[r+1]; 
-				StringBuilder sb = new StringBuilder();
-				sb.append(chars);
-				sb.deleteCharAt(r);
-				chars = sb.toString().toCharArray();
-				flag=true; 
-				 pos--; 
-				
-				
-			}
-			
-			 while( flag==true ) {
-				 if(chars[pos]!='.'&& chars[pos]!='('&& chars[pos]!=')') {
-					 r--; 
-					 pos--; 
-				//	 System.out.println(chars[r]);
-					 StringBuilder sb = new StringBuilder();
-					 sb.append(chars);
-					
-					 sb.deleteCharAt(r);
-				//	 System.out.println(sb);
-					 chars = sb.toString().toCharArray();
-					 int length=chars.length; 
-//					 if(r==length) {
-//						 flag=false; 
-//					 }
-					
-					
-				 }
-				 else {
-					 flag=false; 
-				 }
-				
-				 //r++; 
-				 
-			 }
-			flag=false; 
-			 if(flag==true) {
-				 r--; 
-			 }else {
-				 r++;  
-			 }
-			 
-			
-		}
-		
-	}
-	String res = String.valueOf(chars);
-//	System.out.println("RES====>"+res);
-	return res; 
-	}
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
-	public String ParseLine(String line) {
-		System.out.println(line);
-		String[] linesplitted = line.split(","); 
-		String method = linesplitted[1]; 
-		String requirement = linesplitted[2]; 
-		String gold = linesplitted[4]; 
-		String subject = linesplitted[5]; 
-		System.out.println("HERE IS THIS SHORT METHOD========>"+ method); 
-		
-		String shortmethod=method.substring(0, method.indexOf("("));
-		String regex = "(.)*(\\d)(.)*";      
-		Pattern pattern = Pattern.compile(regex);
-		boolean containsNumber = pattern.matcher(shortmethod).matches();
-		String[] firstpart;
-		String FinalMethod = null;
-		shortmethod=shortmethod.replaceAll("clinit", "init"); 
-		if(shortmethod.contains("$") && shortmethod.matches(".*\\d+.*")) {
-			 firstpart = shortmethod.split("\\$");
-			String myfirstpart= firstpart[0]; 
-			FinalMethod=myfirstpart; 
-			if(StringUtils.isNumeric(firstpart[1])==false) {
-				String[] secondpart = firstpart[1].split("\\d"); 
-				System.out.println("my first part "+ myfirstpart+ "firstpart"+ firstpart[1]);
-				
-				String mysecondpart=secondpart[1]; 
-				
-				 FinalMethod=myfirstpart+mysecondpart; 
-				System.out.println("FINAL RESULT:    "+FinalMethod);
-			}
-			
-		}
-		
-		else if(shortmethod.contains("$") && containsNumber==false) {
-			 firstpart = shortmethod.split("\\$");
-			
-			System.out.println("FINAL STRING:   "+firstpart[0]);
-			firstpart[1]=firstpart[1].substring(firstpart[1].indexOf("."), firstpart[1].length()); 
-			System.out.println("FINAL STRING:   "+firstpart[1]);
-			 FinalMethod= firstpart[0]+firstpart[1]; 
-			System.out.println("FINAL STRING:   "+FinalMethod);
-		}
-		else {
-			FinalMethod=shortmethod; 
-		}
-		return FinalMethod; 
-	}
-	
-	
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	public String transformstring(String s) {
-		s=s.replace("/", "."); 
-		s=s.replace(";", ","); 
-		  int endIndex = s.lastIndexOf(",");
-		    if (endIndex != -1)  
-		    {
-		    	s = s.substring(0, endIndex); // not forgot to put check if(endIndex != -1)
-		    }
-		s=s.replace("Lde", "de"); 
-		s=s.replace("Ljava", "java"); 
-		return s; 
-	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+public String RemoveDollar(String text) {	
+
+boolean  flag=false; 
+char[] chars = text.toCharArray();
+int r = 0; 
+int pos = text.indexOf("$"); 
+//System.out.println("HERE IS THE TEXT "+text);
+if(text.contains("$")) {
+while(r<chars.length) {
+if(chars[r]=='$' ) {
+	// pos = r; 
+	// temp = chars[r+1]; 
+	StringBuilder sb = new StringBuilder();
+	sb.append(chars);
+	sb.deleteCharAt(r);
+	chars = sb.toString().toCharArray();
+	flag=true; 
+	 pos--; 
 	
-	public String[] ExtractParams(String method) {
-		String Paramlist=method.substring(method.indexOf("(")+1, method.indexOf(")")); 
-		 String[] data = Paramlist.split(",");
-		 return data; 
-	}
 	
+}
+
+while( flag==true ) {
+	 if(chars[pos]!='.'&& chars[pos]!='('&& chars[pos]!=')') {
+		 r--; 
+		 pos--; 
+	//	 System.out.println(chars[r]);
+		 StringBuilder sb = new StringBuilder();
+		 sb.append(chars);
+		
+		 sb.deleteCharAt(r);
+	//	 System.out.println(sb);
+		 chars = sb.toString().toCharArray();
+		 int length=chars.length; 
+//		 if(r==length) {
+//			 flag=false; 
+//		 }
+		
+		
+	 }
+	 else {
+		 flag=false; 
+	 }
 	
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-private String GetMethodNameAndParams(String method) {
-// TODO Auto-generated method stub
-System.out.println("METH BEFORE TRUNCATION"+method);
-String params=method.substring(method.indexOf("("), method.length()); 
-String BeforeParams=method.substring(0, method.indexOf("(")); 
-String methname=BeforeParams.substring(BeforeParams.lastIndexOf(".")+1, BeforeParams.length()); 
-String res= methname+params; 
-System.out.println("RES"+ res);
-return res;
+	 //r++; 
+	 
+}
+flag=false; 
+if(flag==true) {
+	 r--; 
+}else {
+	 r++;  
+}
+
+
+}
+
+}
+String res = String.valueOf(chars);
+//System.out.println("RES====>"+res);
+return res; 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+public String ParseLine(String line) {
+System.out.println(line);
+String[] linesplitted = line.split(","); 
+String method = linesplitted[1]; 
+String requirement = linesplitted[2]; 
+String gold = linesplitted[4]; 
+String subject = linesplitted[5]; 
+System.out.println("HERE IS THIS SHORT METHOD========>"+ method); 
+
+String shortmethod=method.substring(0, method.indexOf("("));
+String regex = "(.)*(\\d)(.)*";      
+Pattern pattern = Pattern.compile(regex);
+boolean containsNumber = pattern.matcher(shortmethod).matches();
+String[] firstpart;
+String FinalMethod = null;
+shortmethod=shortmethod.replaceAll("clinit", "init"); 
+if(shortmethod.contains("$") && shortmethod.matches(".*\\d+.*")) {
+firstpart = shortmethod.split("\\$");
+String myfirstpart= firstpart[0]; 
+FinalMethod=myfirstpart; 
+if(StringUtils.isNumeric(firstpart[1])==false) {
+	String[] secondpart = firstpart[1].split("\\d"); 
+	System.out.println("my first part "+ myfirstpart+ "firstpart"+ firstpart[1]);
 	
+	String mysecondpart=secondpart[1]; 
+	
+	 FinalMethod=myfirstpart+mysecondpart; 
+	System.out.println("FINAL RESULT:    "+FinalMethod);
+}
+
+}
+
+else if(shortmethod.contains("$") && containsNumber==false) {
+firstpart = shortmethod.split("\\$");
+
+System.out.println("FINAL STRING:   "+firstpart[0]);
+firstpart[1]=firstpart[1].substring(firstpart[1].indexOf("."), firstpart[1].length()); 
+System.out.println("FINAL STRING:   "+firstpart[1]);
+FinalMethod= firstpart[0]+firstpart[1]; 
+System.out.println("FINAL STRING:   "+FinalMethod);
+}
+else {
+FinalMethod=shortmethod; 
+}
+return FinalMethod; 
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+public String transformstring(String s) {
+s=s.replace("/", "."); 
+s=s.replace(";", ","); 
+int endIndex = s.lastIndexOf(",");
+if (endIndex != -1)  
+{
+	s = s.substring(0, endIndex); // not forgot to put check if(endIndex != -1)
+}
+s=s.replace("Lde", "de"); 
+s=s.replace("Ljava", "java"); 
+return s; 
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+public String[] ExtractParams(String method) {
+String Paramlist=method.substring(method.indexOf("(")+1, method.indexOf(")")); 
+String[] data = Paramlist.split(",");
+return data; 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+public String ExtractParams2(String method) {
+String Paramlist=method.substring(method.indexOf("(")+1, method.indexOf(")")); 
+
+return Paramlist; 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
 
 }
