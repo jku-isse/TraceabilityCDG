@@ -34,8 +34,8 @@ public class CSV {
     public static boolean Seeding=true; 
 
     CSV csv=new CSV();  
-    static double[] TSeeds = new double[]{0.5,1.0,1.5,2.0,2.5}; 
-    static double[] NSeeds = new double[]{5,10,15,20,25}; 
+    static double[] TSeeds = new double[]{5,10,15,20,25}; 
+    static double[] NSeeds = new double[]{0.5,1.0,1.5,2.0,2.5}; 
     static HashMap<String, List<MethodRTMCell>> mergedHashMap = new HashMap<>(); 
 
     static String headers="gold,Program,MethodType,"

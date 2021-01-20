@@ -38,7 +38,10 @@ public class DatabaseInput {
 		createMethodTraces(ProgramName);
 		createParametersHashMap(ProgramName);
 		createFieldClassesHashMap(ProgramName);
-		createFieldMethodsHashMap(ProgramName);
+		if(!ProgramName.equals("vod")) {
+			createFieldMethodsHashMap(ProgramName);
+
+		}
 
 		createAssignments(ProgramName); 
 //		addVSMTraces(ProgramName); 

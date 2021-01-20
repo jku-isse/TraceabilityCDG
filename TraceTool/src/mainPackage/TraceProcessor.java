@@ -12,6 +12,7 @@ import model.RTMCell;
 import model.RTMCell.TraceValue;
 import model.Requirement;
 import model.Variable;
+import model.VariableList;
 import traceRefiner.TraceRefiner;
 import traceRefiner.TraceRefinerPredictionPattern;
 import traceValidator.TraceValidator;
@@ -416,23 +417,26 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	private static void dataAnalysisVariables() {
 		HashMap<Integer, Integer> countHashmap = new HashMap<>(); 
 		HashMap<Integer, Integer> MethVarsHashmap = new HashMap<>(); 
+		System.out.println("METHODS USING CLASS FIELDS");
+		System.out.println("HOW MANY METHODS USING 0, 1, 2, ... CLASS FIELDS WITHOUT DUPLICATES");
 
 		for(String programName: Method.totalMethodsHashMap.keySet()) {
 			LinkedHashMap<String, Method> methodhashmap = Method.totalMethodsHashMap.get(programName); 
 			for( Method method: methodhashmap.values()) {
-				HashSet<Variable> vars = method.getMethodVars(); 
-				int size = vars.size(); 
-				
-				
+				HashSet<Variable> vars = method.getMethodVars(); 	
+				 VariableList params = method.getParameters(); 	
+				 vars.addAll(params); 
 				HashSet<Object> seen=new HashSet<>();
 				vars.removeIf(e->!seen.add(e.getId()));
 				
-				int size2=seen.size(); 
+				int numberOfVars=seen.size(); 
 				
-				if(MethVarsHashmap.get(size2)==null) MethVarsHashmap.put(size2, 1); 
+				if(MethVarsHashmap.get(numberOfVars)==null) {
+					MethVarsHashmap.put(numberOfVars, 1); 
+				}
 				else {
-					int newcount=MethVarsHashmap.get(size2)+1; 
-					MethVarsHashmap.put(size2, newcount); 
+					int numberOfMethods=MethVarsHashmap.get(numberOfVars)+1; 
+					MethVarsHashmap.put(numberOfVars, numberOfMethods); 
 				}
 				
 				
@@ -447,15 +451,16 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		
 		
 		System.out.println("---------------------");
-
+		System.out.println("HOW MANY METHODS USING 0, 1, 2, ... CLASS FIELDS");
 		for(String programName: Method.totalMethodsHashMap.keySet()) {
 		LinkedHashMap<String, Method> methodhashmap = Method.totalMethodsHashMap.get(programName); 
 		for( Method method: methodhashmap.values()) {
 			int size= method.getFieldMethods().size(); 
+			
 			if(countHashmap.get(size)==null) {
 				countHashmap.put(size,1); 
 			}
-			else {
+			else if(countHashmap.get(size)!=null) {
 				int amount=countHashmap.get(size); 
 				amount++; 
 				countHashmap.put(size, amount); 
@@ -464,9 +469,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		}
 		
 	}
-		for (Integer variableSize: countHashmap.keySet()){
-			Integer amount=countHashmap.get(variableSize); 
-            System.out.println(variableSize + " " + amount);  
+		for (Integer variablesSize: countHashmap.keySet()){
+			Integer NumberOfMethods=countHashmap.get(variablesSize); 
+            System.out.println(variablesSize + " " + NumberOfMethods);  
 	} 
 		/****************************/
 		for(  String programName: Variable.totalVariablesHashMap.keySet()) {
@@ -502,11 +507,12 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 						
 
 						
-						if(totalCount!=0)
-							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
+						if(totalCount!=0) {
+//							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
+						}
 					
-					}else if(var.getMethodList().isEmpty()){
-//						System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+0+","+0+","+0+","+0);
+					}
+					else if(var.getMethodList().isEmpty()){
 						empty++; 
 					}
 			
@@ -516,7 +522,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			
 //			System.out.println("=====>EMPTY  "+programName+ "  "+empty);
 		}
-//	System.out.println();
+	System.out.println();
 //	System.out.println("OVER");
 	}
 	public static double round(double value, int places) {
