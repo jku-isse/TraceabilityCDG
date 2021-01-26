@@ -475,7 +475,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	} 
 		/****************************/
 		for(  String programName: Variable.totalVariablesHashMap.keySet()) {
-			int empty=0; 
+			int empty=0;
 			LinkedHashMap<String, Variable> varHashMap = Variable.totalVariablesHashMap.get(programName); 	
 			for(  Variable var: varHashMap.values()) {
 				for(   Requirement req: Requirement.totalRequirementsHashMap.get(programName).values()) {
@@ -508,11 +508,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 						
 						if(totalCount!=0) {
-//							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
+							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
 						}
 					
 					}
-					else if(var.getMethodList().isEmpty()){
+					else {
 						empty++; 
 					}
 			

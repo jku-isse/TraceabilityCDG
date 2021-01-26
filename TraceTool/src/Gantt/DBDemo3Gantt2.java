@@ -1987,23 +1987,23 @@ public class DBDemo3Gantt2 {
     	   //  /////////////*********************************************************************************************************************************************************************************/	
         /////////////*********************************************************************************************************************************************************************************/	
         /////////////*********************************************************************************************************************************************************************************/ 
-    	// FIELD CLASSES 
-    		List<String> fieldClasses = new ArrayList<>(); 
-    		 for(CtType<?> clazz : classFactory.getAll()) {
-    	 			List<CtField> fields = clazz.getElements(new TypeFilter<CtField>(CtField.class));
-    	 		   retrieveFieldClasses(fields, st, fieldClasses, st2); 
-    	 		  Set<CtType<?>> nested = clazz.getNestedTypes();
-    		
-    	 		// FIELD CLASSES IN NESTED CLASSES  
-   				for(CtType<?> mynested: nested) {
-   					List<CtField> fields2 = mynested.getElements(new TypeFilter<CtField>(CtField.class));
-     	 		   retrieveFieldClasses(fields2, st, fieldClasses, st2); 
-   						
-  
-   				}
-    		 }
-	
-    	
+//    	// FIELD CLASSES 
+//    		List<String> fieldClasses = new ArrayList<>(); 
+//    		 for(CtType<?> clazz : classFactory.getAll()) {
+//    	 			List<CtField> fields = clazz.getElements(new TypeFilter<CtField>(CtField.class));
+//    	 		   retrieveFieldClasses(fields, st, fieldClasses, st2); 
+//    	 		  Set<CtType<?>> nested = clazz.getNestedTypes();
+//    		
+//    	 		// FIELD CLASSES IN NESTED CLASSES  
+//   				for(CtType<?> mynested: nested) {
+//   					List<CtField> fields2 = mynested.getElements(new TypeFilter<CtField>(CtField.class));
+//     	 		   retrieveFieldClasses(fields2, st, fieldClasses, st2); 
+//   						
+//  
+//   				}
+//    		 }
+//	
+//    	
     	/******************************************************************************************************************************************************/
     	/******************************************************************************************************************************************************/
     	/******************************************************************************************************************************************************/
@@ -2300,43 +2300,138 @@ public class DBDemo3Gantt2 {
 //  /////////////*********************************************************************************************************************************************************************************/	
     /////////////*********************************************************************************************************************************************************************************/	
     /////////////*********************************************************************************************************************************************************************************/   
-    			// PARAMETERS TABLE 
-    		 	List<String> mylist = new ArrayList<>(); 
-    				 for(CtType<?> clazz : classFactory.getAll()) {
-    		  		
+//    			// PARAMETERS TABLE 
+//    		 	List<String> mylist = new ArrayList<>(); 
+//    				 for(CtType<?> clazz : classFactory.getAll()) {
+//    		  		
+//
+//    		  		
+//    					//NON NESTED CONSTRUCTORS 
+//    					List<CtConstructor> constructors = clazz.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
+//    					retrieveConstructorParams(constructors, st, st2, mylist); 	
+//    					
+//    						// CONSTRUCTORS IN NESTED CLASSES  
+//    				    Set<CtType<?>> nested = clazz.getNestedTypes();
+//
+//    						for(CtType<?> mynested: nested) {
+//    					 
+//    								constructors = mynested.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
+//    								retrieveConstructorParams(constructors, st, st2, mylist); 	
+//
+//    						}
+//    						
+//    						//NON NESTED METHODS
+//    			 			List<CtMethod> methods = clazz.getElements(new TypeFilter<CtMethod>(CtMethod.class));
+//    						retrieveMethodParams(methods, st, st2, mylist); 	
+//    			 			
+//    			 				// METHODS  IN NESTED CLASSES 
+//    			 				for(CtType<?> mynested: nested) {
+//    						 
+//    			 						List<CtMethod> methodscalled = mynested.getElements(new TypeFilter<CtMethod>(CtMethod.class));
+//    			 		 				retrieveMethodParams(methods, st, st2, mylist); 	
+//
+//    			 				}
+//    			 			
+//    						
+//    			 
+//    			
+//    				 }
+    	
+    	readFields( st, classFactory); 
+	 }
+	private void readFields(Statement st, ClassFactory classFactory) throws SQLException {
+		// TODO Auto-generated method stub
+		List<String> mylist = new ArrayList<String>(); 
+		ResultSet rs= st.executeQuery("SELECT * from sootfieldmethods"); 
+		 while(rs.next()) {
+			 String fieldclassid = rs.getString("fieldclassid");
+			 String fieldname=rs.getString("fieldname");
+			 String ownerclassname=rs.getString("ownerclassname");
+			 String ownerclassid=rs.getString("ownerclassid");
+			 String ownermethodname=rs.getString("ownermethodname");
+			 String ownermethodid=rs.getString("ownermethodid");
+			 String read=rs.getString("read");
+			 String union=fieldclassid+"-"+fieldname+"-"+ownerclassname+"-"+ownerclassid+"-"+ownermethodname+"-"+ownermethodid+"-"+read; 
+			 if(!mylist.contains(union)) {
+				 mylist.add(union); 
+			 }
+			 
+		 }
+		 for(CtType<?> clazz : classFactory.getAll()) {
+			String ownerclassid=null; 
+			String methodid=null; 
+			 String fieldname=null; 
+			 String ownerclassname=null; 
+			 String fieldclassid=null; 
+			 
+			 String ownermethodname=null; 
+			 String ownermethodid=null; 
+			 String read="0"; 
 
-    		  		
-    					//NON NESTED CONSTRUCTORS 
-    					List<CtConstructor> constructors = clazz.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
-    					retrieveConstructorParams(constructors, st, st2, mylist); 	
-    					
-    						// CONSTRUCTORS IN NESTED CLASSES  
-    				    Set<CtType<?>> nested = clazz.getNestedTypes();
+			 System.out.println(clazz.getSimpleName());
+			  for(CtMethod<?> method :clazz.getMethods()) {
+					List<CtFieldAccess> fields = method.getElements(new TypeFilter<CtFieldAccess>(CtFieldAccess.class));
+					for(CtFieldAccess field: fields) {
+						ownermethodname=method.getSignature();
 
-    						for(CtType<?> mynested: nested) {
-    					 
-    								constructors = mynested.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
-    								retrieveConstructorParams(constructors, st, st2, mylist); 	
+						field.getType(); 
+						fieldname=field.toString();  
+						ownerclassname=clazz.getQualifiedName(); 
+						String union=null; 
+						String var=null; 
+						String classname=null; 
+						try {
+							rs= st.executeQuery("SELECT * from classes where classname='"+field.getVariable().getDeclaringType().toString()+"'"); 
 
-    						}
-    						
-    						//NON NESTED METHODS
-    			 			List<CtMethod> methods = clazz.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-    						retrieveMethodParams(methods, st, st2, mylist); 	
-    			 			
-    			 				// METHODS  IN NESTED CLASSES 
-    			 				for(CtType<?> mynested: nested) {
-    						 
-    			 						List<CtMethod> methodscalled = mynested.getElements(new TypeFilter<CtMethod>(CtMethod.class));
-    			 		 				retrieveMethodParams(methods, st, st2, mylist); 	
+						 while(rs.next()) {
+							 ownerclassid=rs.getString("id"); 
+							 
+							 }
+					
+						  var= field.getVariable().toString().substring(field.getVariable().toString().lastIndexOf(".") + 1).trim(); 
+						  classname= field.getVariable().getDeclaringType().toString(); 
+						 
+						 rs= st.executeQuery("SELECT * from fieldclasses where classname='"+field.getVariable().getDeclaringType().toString()+"'and fieldname='"+field.getVariable().toString().substring(field.getVariable().toString().lastIndexOf(".") + 1).trim()+"'"); 
+						 while(rs.next()) {
+							 fieldclassid=rs.getString("id"); 
+							 }
+						 rs= st.executeQuery("SELECT * from methods where classname='"+clazz.getQualifiedName()+"'and methodname='"+ownermethodname+"'"); 
+						 while(rs.next()) {
+							 ownermethodid=rs.getString("id"); 
+							 }
+						System.out.println();
+						
+						  union=fieldclassid+"-"+var+"-"+classname+"-"+ownerclassid+"-"+ownermethodname+"-"+ownermethodid+"-"+read; 
+						 System.out.println(union);
+						 System.out.println();
+						}catch(Exception e ) {
+							
+						}
+						if(union!=null)
+						 if(!mylist.contains(union) && fieldclassid!=null && !var.equals("out") && union!=null) {
+							 System.out.println("HERE");
+							 String statement8= "INSERT INTO `sootfieldmethods`(`fieldclassid`, `fieldname`,  `ownerclassname`,"
+								 		+ " `ownerclassid`,`ownermethodname`,"
+								 		+ " `ownermethodid`, "
+								 		+ "`read`"
+								 		+ ") VALUES"
+								 		+ " ('"+	 fieldclassid+"','" +var+"','"  +classname
+								 		+"','" +ownerclassid+"','"+ ownermethodname
+								 		+"','"+ownermethodid+"','"+
+								 		read
+										 +"')";
+								   	   	 st.executeUpdate(statement8); 
+										 mylist.add(union); 
 
-    			 				}
-    			 			
-    						
+						 }
+					}
+
+			  }
+			
+		 }		 
+		 
+	}
     			 
-    			
-    				 }
-    			 }
     			private void retrieveConstructorFields(List<CtFieldAccess> methodFields, CtConstructor myconstructor, CtType<?> clazz,
     					Statement st, Statement st2, List<String> fieldMethods) throws SQLException {
     				for(CtFieldAccess methodField : methodFields) {
