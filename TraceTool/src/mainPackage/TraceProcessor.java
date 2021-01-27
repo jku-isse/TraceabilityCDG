@@ -10,6 +10,7 @@ import model.MethodRTMCellList;
 import model.PredictionPattern;
 import model.RTMCell;
 import model.RTMCell.TraceValue;
+import model.RTMCellList;
 import model.Requirement;
 import model.Variable;
 import model.VariableList;
@@ -406,12 +407,45 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		
 		
 	/////////////////////////////////////			
-	dataAnalysisVariables(); 
+//	dataAnalysisVariables(); 
+	
+	dataVariablesPrint(); 
 	
 	/////////////////////////////////////	
 		
 		
 		
+	}
+
+	private static void dataVariablesPrint() {
+		// TODO Auto-generated method stub
+		System.out.println("gold,ProgramName,RequirementID,MethodID,DataTypeName,DataTypeID,FieldMethodOwnerClass,VariableName,fieldMethodID");
+		int i=0; 
+		for (String programName : MethodRTMCell.Totalmethodtraces2HashMap.keySet()) {
+			LinkedHashMap<String, MethodRTMCell> cellList = MethodRTMCell.Totalmethodtraces2HashMap.get(programName); 
+		
+			for(MethodRTMCell cell: cellList.values()) {
+				
+			
+			for(Variable fieldMethod: cell.getMethod().getFieldMethods()) {
+//				System.out.println(i);
+//				System.out.println(fieldMethod.dataType);
+//				System.out.println(fieldMethod.ownerclazz);
+//				System.out.println(fieldMethod.variableName);
+//				System.out.println(fieldMethod.getId());
+				if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
+					if(fieldMethod.dataType==null) 			{
+						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.type+","+fieldMethod.typeID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.variableName+","+fieldMethod.getId());
+					
+					}
+					else{
+						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.dataType.name+","+fieldMethod.dataType.ID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.variableName+","+fieldMethod.getId());
+					}
+				}
+				
+				i++; 
+			}
+		}}
 	}
 
 	private static void dataAnalysisVariables() {
@@ -508,7 +542,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 						
 						if(totalCount!=0) {
-							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
+//							System.out.println(programName+","+req.ID+","+var.variableName+","+var.ownerclazz.ID+","+var.ownerclazz.name+","+countT+","+countN+","+countU+","+totalCount+","+Tperc+","+Nperc+","+Uperc);
 						}
 					
 					}
@@ -525,6 +559,10 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	System.out.println();
 //	System.out.println("OVER");
 	}
+	
+	
+	
+	
 	public static double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();
 

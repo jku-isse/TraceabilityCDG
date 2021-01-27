@@ -8,12 +8,13 @@ import java.util.List;
 public class Variable {
 	public String id; 
 	
-
 	public Clazz ownerclazz; 
 	public String variableName; 
 	public Clazz dataType; 
+	public String type; 
+	public String typeID; 
 	public Method method;
-	
+	public Variable fieldClass; 
 	public static  LinkedHashMap<String, Variable> variablesHashMap = new LinkedHashMap<>(); 
 	public static  LinkedHashMap<String, LinkedHashMap<String, Variable>> totalVariablesHashMap = new LinkedHashMap<>(); 
 
@@ -29,6 +30,14 @@ public class Variable {
 	}
 	public  void setMethodList(List<Method> MethodList) {
 		methodList = MethodList;
+	}
+	public Variable(Clazz ownerclazz, String variableName, String type, String typeID, Method method) {
+		super();
+		this.ownerclazz = ownerclazz;
+		this.variableName = variableName;
+		this.type = type;
+		this.typeID = typeID;
+		this.method = method;
 	}
 	public Variable(Clazz ownerclazz, String variableName, Clazz dataType, Method method) {
 		super();
@@ -64,7 +73,12 @@ public class Variable {
 		}
 
 	
-	  
+		public Clazz getDataType() {
+			return dataType;
+		}
+		public void setDataType(Clazz dataType) {
+			this.dataType = dataType;
+		}
 	  
 	  
 }

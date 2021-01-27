@@ -22,8 +22,8 @@ public class DatabaseInput {
 		MethodRTMCell.methodtraces2HashMap.clear();
 		Requirement.requirementsHashMap.clear();
 		Variable.variablesHashMap.clear();
-		
-	
+		ClassField.classFieldHashMap.clear(); 
+		MethodField.methodFieldHashMap.clear();
 		
 		
 		
@@ -190,10 +190,14 @@ public class DatabaseInput {
 			
 			Variable var = new Variable( ownerClass, fieldname, fieldTypeDataType); 
 			var.setId(id);
+			var.type=fieldtype; 
+			var.typeID=fieldtypeclassid; 
 			Clazz.clazzesHashMap.get(ownerclassid).getFieldClasses().add(var); 
 			
 			Variable.variablesHashMap.put(id, var); 
+			ClassField.classFieldHashMap.put(id, var); 
 			variableHashMapLocal.put(id, var); 
+			
 //			System.out.println();
 
 			
@@ -203,6 +207,7 @@ public class DatabaseInput {
 
 	private static void createFieldMethodsHashMap(String programName) {
 		JSONArray fieldMethodList = parse("database/"+programName+"/sootfieldmethods.json");
+		int i=1; 
 		for (Object o : fieldMethodList)
 		{
 			JSONObject mymethod = (JSONObject) o;
@@ -214,21 +219,25 @@ public class DatabaseInput {
 			String ownermethodname = mymethod.get("ownermethodname").toString();
 			String ownermethodid = mymethod.get("ownermethodid").toString();
 			
+			Variable myclassField = ClassField.classFieldHashMap.get(classFieldid); 
+			
 			model.Clazz ownerClass= Clazz.clazzesHashMap.get(ownerclassid);
-			model.Clazz fieldTypeDataType= Clazz.clazzesHashMap.get(classFieldid);
+			model.Clazz fieldTypeDataType= Variable.variablesHashMap.get(classFieldid).getDataType();
 			model.Method method= Method.methodsHashMap.get(ownermethodid); 
 			
 			Variable var = new Variable(ownerClass, fieldName, fieldTypeDataType, method); 
 			var.setId(classFieldid); 
+			var.type=myclassField.type; 
+			var.typeID=myclassField.typeID; 
 			Method.methodsHashMap.get(method.ID).getFieldMethods().add(var); 
 			Method.methodsHashMap.get(method.ID).getMethodVars().add(var); 
 
 			var.getMethodList().add(method); 
 			Variable.variablesHashMap.get(classFieldid).getMethodList().add(method); 
 
-			
 			System.out.println();
 //			System.out.println();
+			i++; 
 
 			
 		}
