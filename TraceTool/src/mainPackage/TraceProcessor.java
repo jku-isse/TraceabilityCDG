@@ -346,7 +346,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			// validator tests - ghabi
 			TraceValidatorGhabiPredictionPattern.define();
 			Logger.logPatternsReset(TraceValidatorGhabiPredictionPattern.patterns);
-			Definitions.callerType = Definitions.CallerType.executed;
+			Definitions.callerType = Definitions.CallerType.extended;
 
 			for (String program : programs) {
 				DatabaseInput.read(program);
@@ -407,9 +407,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		
 		
 	/////////////////////////////////////			
-//	dataAnalysisVariables(); 
+	dataAnalysisVariables(); 
 	
-	dataVariablesPrint(); 
+//	dataVariablesPrint(); 
 	
 	/////////////////////////////////////	
 		
@@ -419,14 +419,14 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 	private static void dataVariablesPrint() {
 		// TODO Auto-generated method stub
-		System.out.println("gold,ProgramName,RequirementID,MethodID,DataTypeName,DataTypeID,FieldMethodOwnerClass,VariableName,fieldMethodID");
+		System.out.println("gold,ProgramName,RequirementID,MethodID,DataTypeName,DataTypeID,FieldMethodOwnerClassID,FieldMethodOwnerClassName,VariableName,fieldMethodID");
 		int i=0; 
 		for (String programName : MethodRTMCell.Totalmethodtraces2HashMap.keySet()) {
 			LinkedHashMap<String, MethodRTMCell> cellList = MethodRTMCell.Totalmethodtraces2HashMap.get(programName); 
 		
 			for(MethodRTMCell cell: cellList.values()) {
 				
-			
+		
 			for(Variable fieldMethod: cell.getMethod().getFieldMethods()) {
 //				System.out.println(i);
 //				System.out.println(fieldMethod.dataType);
@@ -435,13 +435,17 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 //				System.out.println(fieldMethod.getId());
 				if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
 					if(fieldMethod.dataType==null) 			{
-						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.type+","+fieldMethod.typeID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.variableName+","+fieldMethod.getId());
+						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.type+","+fieldMethod.typeID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.ownerclazz.name+","+fieldMethod.variableName+","+fieldMethod.getId());
 					
 					}
 					else{
-						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.dataType.name+","+fieldMethod.dataType.ID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.variableName+","+fieldMethod.getId());
+						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.dataType.name+","+fieldMethod.dataType.ID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.ownerclazz.name+","+fieldMethod.variableName+","+fieldMethod.getId());
 					}
+					
+					
+
 				}
+				
 				
 				i++; 
 			}
@@ -478,6 +482,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			
 		}
 		
+		
+		
+		
+		
+		
 		for (Integer numberOfVars: MethVarsHashmap.keySet()){
 			Integer numberOfMeth=MethVarsHashmap.get(numberOfVars); 
             System.out.println(numberOfVars + " " + numberOfMeth);  
@@ -507,6 +516,34 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			Integer NumberOfMethods=countHashmap.get(variablesSize); 
             System.out.println(variablesSize + " " + NumberOfMethods);  
 	} 
+		
+		HashMap<Integer, Integer> countHashMapNew= new HashMap<>(); 
+		for(Clazz myclass: Clazz.clazzesHashMap.values()) {
+			List<Variable> fields = myclass.getFieldClasses(); 
+			for(Variable field: fields) {
+				List<Method> methods = field.getMethodList(); 
+				if(countHashMapNew.get(methods.size())==null)
+					{
+					countHashMapNew.put(methods.size(), 1); 
+					}
+				else {
+					int count=countHashMapNew.get(methods.size()); 
+					count++; 
+					countHashMapNew.put(methods.size(), count); 
+				}
+				
+				if(methods.size()==0) {
+					System.out.println(field);
+					System.out.println("here");
+				}
+			}
+		}
+		
+		
+		for(int methodsSize: countHashMapNew.keySet()) {
+			System.out.println(methodsSize+"-"+countHashMapNew.get(methodsSize));
+			
+		}
 		/****************************/
 		for(  String programName: Variable.totalVariablesHashMap.keySet()) {
 			int empty=0;

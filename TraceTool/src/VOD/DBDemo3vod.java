@@ -39,7 +39,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import Chess.SubjectTSubjectNObject;
-import javafx.util.Pair;
 import model.Clazz;
 import spoon.Launcher;
 import spoon.SpoonAPI;

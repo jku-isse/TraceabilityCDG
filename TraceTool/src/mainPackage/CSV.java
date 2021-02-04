@@ -31,7 +31,7 @@ public class CSV {
 	public static boolean AtLeastOneInstance=true; 
 
     static File file = new File("log\\data.txt");
-    public static boolean Seeding=true; 
+    public static boolean Seeding=false; 
 
     CSV csv=new CSV();  
     static double[] TSeeds = new double[]{5,10,15,20,25}; 
@@ -57,7 +57,14 @@ public class CSV {
     		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
     		
     		; 
-    
+    static String headersAtLeastOneReqMethodInstance="gold,Program,MethodType,"
+    		+"RequirementID,MethodID,"
+    		+ "CallersT,CallersN,CallersU,"
+    		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
+    		+ "CalleesT,CalleesN,CalleesU,"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
+    		
+    		; 
     static String headersAtLeastOneInstanceNoProgram="gold,MethodType,"
 
     		+ "CallersT,CallersN,CallersU,"
@@ -80,7 +87,7 @@ public class CSV {
 		 if(!AtLeastOneInstance)
 			 writer.write(headers+"\n");
 		 else if(AtLeastOneInstance && !Seeding)
-			 writer.write(headersAtLeastOneInstance+"\n");
+			 writer.write(headersAtLeastOneReqMethodInstance+"\n");
 		 
 
 			programs.add("chess");
@@ -323,7 +330,8 @@ public class CSV {
 			 			
 		       		 	
 			 			
-			 			s=s+callers.amountT+","+callers.amountN+","+callers.amountU+","; 
+			 			s=s+methodtrace.getRequirement().ID+","+methodtrace.getMethod().ID+","+
+			 					callers.amountT+","+callers.amountN+","+callers.amountU+","; 
 	   		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
 			 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
 			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU; 
@@ -427,7 +435,6 @@ public class CSV {
             
             System.out.println(countNoCalleesUperc+","+countLowCalleesUperc+","+countMediumCalleesUperc+","+countHighCalleesUperc+","+countNoCallersUperc+","+countLowCallersUperc+","+countMediumCallersUperc+","+countHighCallersUperc+","+
 		 			NoCallersUAndNoCalleesUperc+","+LowCombinationperc+","+MediumCombinationperc+","+HighCombinationperc);
-            
             
 
 	}
