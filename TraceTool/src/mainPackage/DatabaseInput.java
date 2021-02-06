@@ -172,6 +172,9 @@ public class DatabaseInput {
 	private static void createFieldClassesHashMap(String programName) {
 		JSONArray fieldMethodList = parse("database/"+programName+"/fieldclasses.json");
 		LinkedHashMap<String, Variable> variableHashMapLocal = new  LinkedHashMap<>(); 
+		LinkedHashMap<String, Variable> variableTracesHashMapLocal = new  LinkedHashMap<>(); 
+
+		
 		for (Object o : fieldMethodList)
 		{
 			JSONObject mymethod = (JSONObject) o;
@@ -197,10 +200,12 @@ public class DatabaseInput {
 			ClassField.classFieldHashMap.put(id, var); 
 			variableHashMapLocal.put(id, var); 
 			
-//			System.out.println();
-
+			for(Requirement requirement: Requirement.requirementsHashMap.values()) {
+				variableTracesHashMapLocal.put(requirement.ID+"-"+var.getId(), var); 
+			}
 			
 		}
+		VariableRTMCell.totalVariableTracesHashMap.put(programName,variableTracesHashMapLocal); 
 		Variable.totalVariablesHashMap.put(programName, variableHashMapLocal); 
 	}
 

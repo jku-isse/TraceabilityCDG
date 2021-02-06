@@ -3,6 +3,7 @@ package mainPackage;
 import evaluation.Logger;
 import evaluation.Seeder;
 import model.Clazz;
+import model.ClazzRTMCellList;
 import model.Definitions;
 import model.Method;
 import model.MethodRTMCell;
@@ -14,6 +15,7 @@ import model.RTMCellList;
 import model.Requirement;
 import model.Variable;
 import model.VariableList;
+import model.VariableRTMCell;
 import traceRefiner.TraceRefiner;
 import traceRefiner.TraceRefinerPredictionPattern;
 import traceValidator.TraceValidator;
@@ -22,6 +24,7 @@ import traceValidatorGhabi.TraceValidatorGhabi;
 import traceValidatorGhabi.TraceValidatorGhabiPredictionPattern;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -47,14 +50,19 @@ public class TraceProcessor {
     private static long startTime = System.currentTimeMillis();
     public static Algorithm test = Algorithm.ValidatorSingle;
     public static List<JSONObject> jsonArray = new  ArrayList<JSONObject> (); 
-
+    public static LinkedHashMap<String, LinkedHashMap<String, String>> variableStorageTraces = new LinkedHashMap<String, LinkedHashMap<String, String>>();  
+    
 	static public void main(String[] args) throws Exception {
 //		 jsonfileWriter = new FileWriter("C:\\Users\\mouna\\git\\TraceProcessor\\log\\percentages\\IncompletenessT.json");
 		 //tests
 		//more validation patterns innner/outer Tt-x-n, also multiple callers (meaning that is one outer and one inner caller with T), single callers T*N-x-N (meaning are are more than one caller with T and a single N)
 		//validation with mutliple iterations
 		//validation with weak and strong traces - gray zone wiht likely/unlikely traces
-		//valiation with seeding
+		//validation with seeding
+		variableStorageTraces.put("chess", new LinkedHashMap<String, String>());
+		variableStorageTraces.put("gantt", new LinkedHashMap<String, String>());
+		variableStorageTraces.put("itrust", new LinkedHashMap<String, String>());
+		variableStorageTraces.put("jhotdraw", new LinkedHashMap<String, String>());
 
 		//*********************************
 		boolean runAllTests = false;
@@ -409,48 +417,168 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	/////////////////////////////////////			
 	dataAnalysisVariables(); 
 	
-//	dataVariablesPrint(); 
 	
+	dataVariablesTraceDefinition(); 
+
+	dataVariablesPrintforPythonInputFile(); 
+
 	/////////////////////////////////////	
 		
 		
 		
 	}
 
-	private static void dataVariablesPrint() {
+	private static void dataVariablesTraceDefinition() {
+		for(String programName: Variable.totalVariablesHashMap.keySet()) {
+			LinkedHashMap<String, Variable> variablesPerProgram = Variable.totalVariablesHashMap.get(programName); 
+			for(Variable variable: variablesPerProgram.values()) {
+				for(Requirement req: Requirement.totalRequirementsHashMap.get(programName).values()) {
+					List<Method> methods = variable.getMethodList(); 
+					int countT=0; int countN=0; int countU=0; 
+					for(Method method: methods) {
+						LinkedHashMap<String, MethodRTMCell> methodRTMCellList = MethodRTMCell.Totalmethodtraces2HashMap.get(programName); 
+						MethodRTMCell methodRTMCell = methodRTMCellList.get(req.ID+"-"+method.getID()); 
+						TraceValue goldTraceValue = methodRTMCell.getGoldTraceValue(); 
+						if(goldTraceValue.equals(TraceValue.Trace)) {
+							countT++; 
+						}
+						else if (goldTraceValue.equals(TraceValue.NoTrace)) {
+							countN++; 
+						}
+						else if (goldTraceValue.equals(TraceValue.UndefinedTrace)) {
+							countU++; 
+						}
+
+					}
+					
+					int totalCount = countT+countN+countU; 
+					double Tperc=(double)countT/totalCount*100; 
+					double Nperc=(double)countN/totalCount*100; 
+					double Uperc=(double)countU/totalCount*100; 
+					
+					if(totalCount!=0) {
+						Tperc=round(Tperc,2); 
+						Nperc=round(Nperc,2); 
+						Uperc=round(Uperc,2); 
+						//---------------------------------//
+					
+						assignTNUToVariableAlg(Tperc, Nperc, Uperc, req, variable, programName); 
+
+						
+						
+					}
+					
+				}
+			}
+		
+		
+		}
+		
+		
+		
+		///////////////////////////////////////////////////////////////////////////
+		for(String programName: VariableRTMCell.totalVariableTracesHashMap.keySet()) {
+			LinkedHashMap<String, Variable> variableTracesPerProgram = VariableRTMCell.totalVariableTracesHashMap.get(programName); 
+			for(String key: variableTracesPerProgram.keySet()) {
+//				System.out.println(variable.percT+"  "+variable.percN+"  "+variable.percU);
+//				System.out.println(key+" :::::::::::::::"+variableTracesPerProgram.get(key).getTraceValue());
+
+			}
+		}
+		System.out.println("over");
+		
+	}
+
+	private static void assignTNUToVariableAlg(double percT, double percN, double percU, Requirement req, Variable variable, String ProgramName) {
+		// TODO Auto-generated method stub
+		
+//		System.out.println(req.ID+"-"+variable.id);
+		if(percT>percN && percT>percU)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.Trace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "T"); 
+ 
+		}
+		else if(percN>percT && percN>percU)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.NoTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "N"); 
+
+		}
+		else if(percU>percT && percU>percN)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.UndefinedTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "U"); 
+
+		}
+		else {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.UndefinedTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "U"); 
+		}
+
+	}
+
+
+	private static void dataVariablesPrintforPythonInputFile() throws IOException {
 		// TODO Auto-generated method stub
 		System.out.println("gold,ProgramName,RequirementID,MethodID,DataTypeName,DataTypeID,FieldMethodOwnerClassID,FieldMethodOwnerClassName,VariableName,fieldMethodID");
 		int i=0; 
+	      FileWriter myWriter = new FileWriter("log//PythonInputDataVariables.txt");
+
 		for (String programName : MethodRTMCell.Totalmethodtraces2HashMap.keySet()) {
-			LinkedHashMap<String, MethodRTMCell> cellList = MethodRTMCell.Totalmethodtraces2HashMap.get(programName); 
+			LinkedHashMap<String, MethodRTMCell> methodTraces = MethodRTMCell.Totalmethodtraces2HashMap.get(programName); 
 		
-			for(MethodRTMCell cell: cellList.values()) {
+			for(MethodRTMCell cell: methodTraces.values()) {
 				
 		
-			for(Variable fieldMethod: cell.getMethod().getFieldMethods()) {
-//				System.out.println(i);
-//				System.out.println(fieldMethod.dataType);
-//				System.out.println(fieldMethod.ownerclazz);
-//				System.out.println(fieldMethod.variableName);
-//				System.out.println(fieldMethod.getId());
-				if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
-					if(fieldMethod.dataType==null) 			{
-						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.type+","+fieldMethod.typeID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.ownerclazz.name+","+fieldMethod.variableName+","+fieldMethod.getId());
-					
+			    HashSet<Variable> vars = cell.getMethod().getMethodVars(); 
+				int countT=0; int countN=0; int countU=0; 
+
+			    for(Variable var: vars) {
+					String traceValue=variableStorageTraces.get(programName).get(cell.getRequirement().ID+"-"+var.id); 
+					if(traceValue!=null) {
+						if(traceValue.equals("T")) {
+							countT++; 
+						}
+						else if(traceValue.equals("N")) {
+							countN++; 
+						}
+						else if(traceValue.equals("U")) {
+							countU++; 
+						}
+						else countU++; 
 					}
-					else{
-						System.out.println(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+fieldMethod.dataType.name+","+fieldMethod.dataType.ID+","+fieldMethod.ownerclazz.ID+","+fieldMethod.ownerclazz.name+","+fieldMethod.variableName+","+fieldMethod.getId());
-					}
-					
+			    }
+			
+						
 					
 
-				}
 				
-				
-				i++; 
+			
+			
+			int totalCount = countT+countN+countU; 
+			double Tperc=(double)countT/totalCount*100; 
+			double Nperc=(double)countN/totalCount*100; 
+			double Uperc=(double)countU/totalCount*100; 
+			
+			if(totalCount!=0) {
+				Tperc=round(Tperc,2); 
+				Nperc=round(Nperc,2); 
+				Uperc=round(Uperc,2); 
 			}
-		}}
-	}
+			String val=""; 
+			if(Tperc>Nperc && Tperc>Uperc) val="T";
+			else if(Nperc> Tperc && Nperc>Uperc)val="N";
+			else if(Uperc> Tperc && Uperc>Nperc) val="U";
+
+//			if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
+				
+					myWriter.write(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+val+"\n");
+								
+					
+				i++; 
+//			}
+		}
+			
+		}
+		myWriter.close();}
 
 	private static void dataAnalysisVariables() {
 		HashMap<Integer, Integer> countHashmap = new HashMap<>(); 

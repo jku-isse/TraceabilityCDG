@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import model.RTMCell.TraceValue;
+
 public class Variable {
 	public String id; 
 	
@@ -18,13 +20,21 @@ public class Variable {
 	public static  LinkedHashMap<String, Variable> variablesHashMap = new LinkedHashMap<>(); 
 	public static  LinkedHashMap<String, LinkedHashMap<String, Variable>> totalVariablesHashMap = new LinkedHashMap<>(); 
 
-	
+	 TraceValue traceValue; 
+
+	public TraceValue getTraceValue() {
+		return traceValue;
+	}
+	public void setTraceValue(TraceValue traceValue) {
+		this.traceValue = traceValue;
+	}
 	public static  LinkedHashMap<String, VariableList> variablesReadHashMap = new LinkedHashMap<>(); 
 	public static  LinkedHashMap<String, VariableList> variablesWrittenHashMap = new LinkedHashMap<>(); 
 
 	public   List<Method> methodList = new ArrayList<>(); 
 
 	
+
 	public  List<Method> getMethodList() {
 		return methodList;
 	}

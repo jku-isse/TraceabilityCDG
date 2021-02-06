@@ -23,6 +23,17 @@ public class MethodRTMCell extends RTMCell {
 
 	private Method method = null;
 	private Requirement requirement = null;
+	public TraceValue VariabletraceValue = null;
+
+	
+
+	public TraceValue getVariabletraceValue() {
+		return VariabletraceValue;
+	}
+
+	public void setVariabletraceValue(TraceValue variabletraceValue) {
+		VariabletraceValue = variabletraceValue;
+	}
 
 	public MethodRTMCell(model.Requirement requirement, model.Method method) {
 		this.requirement = requirement;
