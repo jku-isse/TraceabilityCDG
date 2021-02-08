@@ -462,9 +462,10 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 						Uperc=round(Uperc,2); 
 						//---------------------------------//
 					
-						assignTNUToVariableAlg(Tperc, Nperc, Uperc, req, variable, programName); 
+//						assignTNUToVariableMajorityAlg(Tperc, Nperc, Uperc, req, variable, programName); 
+						assignTNUToVariableAtleast2Alg(Tperc, Nperc, Uperc, req, variable, programName);
+//						assignTNUToVariableAllAlg(Tperc, Nperc, Uperc, req, variable, programName);
 
-						
 						
 					}
 					
@@ -489,7 +490,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		
 	}
 
-	private static void assignTNUToVariableAlg(double percT, double percN, double percU, Requirement req, Variable variable, String ProgramName) {
+	private static void assignTNUToVariableMajorityAlg(double percT, double percN, double percU, Requirement req, Variable variable, String ProgramName) {
 		// TODO Auto-generated method stub
 		
 //		System.out.println(req.ID+"-"+variable.id);
@@ -514,20 +515,73 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		}
 
 	}
+	
+	
+	
+	private static void assignTNUToVariableAllAlg(double percT, double percN, double percU, Requirement req, Variable variable, String ProgramName) {
+		// TODO Auto-generated method stub
+		
+//		System.out.println(req.ID+"-"+variable.id);
+		if(percT>0 && percN==0 && percU==0)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.Trace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "T"); 
+ 
+		}
+		else if(percN>0 && percT==0 && percU==0)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.NoTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "N"); 
 
+		}
+		else if(percU>0 && percN==0 && percT==0)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.UndefinedTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "U"); 
+
+		}
+		else {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.UndefinedTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "U"); 
+		}
+
+	}
+	
+	private static void assignTNUToVariableAtleast2Alg(double percT, double percN, double percU, Requirement req, Variable variable, String ProgramName) {
+		// TODO Auto-generated method stub
+		
+//		System.out.println(req.ID+"-"+variable.id);
+		if(percT>2)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.Trace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "T"); 
+ 
+		}
+		else if(percN>2)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.NoTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "N"); 
+
+		}
+		else if(percU>2)  {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.UndefinedTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "U"); 
+
+		}
+		else {
+			VariableRTMCell.totalVariableTracesHashMap.get(ProgramName).get(req.ID+"-"+variable.id).setTraceValue(TraceValue.UndefinedTrace);
+			variableStorageTraces.get(ProgramName).put(req.ID+"-"+variable.id, "U"); 
+		}
+
+	}
 
 	private static void dataVariablesPrintforPythonInputFile() throws IOException {
 		// TODO Auto-generated method stub
-		System.out.println("gold,ProgramName,RequirementID,MethodID,DataTypeName,DataTypeID,FieldMethodOwnerClassID,FieldMethodOwnerClassName,VariableName,fieldMethodID");
 		int i=0; 
 	      FileWriter myWriter = new FileWriter("log//PythonInputDataVariables.txt");
+			myWriter.write("gold,ProgramName,RequirementID,MethodID,VariableTrace\n");
 
 		for (String programName : MethodRTMCell.Totalmethodtraces2HashMap.keySet()) {
 			LinkedHashMap<String, MethodRTMCell> methodTraces = MethodRTMCell.Totalmethodtraces2HashMap.get(programName); 
 		
 			for(MethodRTMCell cell: methodTraces.values()) {
 				
-		
+		if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
 			    HashSet<Variable> vars = cell.getMethod().getMethodVars(); 
 				int countT=0; int countN=0; int countU=0; 
 
@@ -552,22 +606,28 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 				
 			
-			
 			int totalCount = countT+countN+countU; 
-			double Tperc=(double)countT/totalCount*100; 
-			double Nperc=(double)countN/totalCount*100; 
-			double Uperc=(double)countU/totalCount*100; 
+			double percT=(double)countT/totalCount*100; 
+			double percN=(double)countN/totalCount*100; 
+			double percU=(double)countU/totalCount*100; 
 			
 			if(totalCount!=0) {
-				Tperc=round(Tperc,2); 
-				Nperc=round(Nperc,2); 
-				Uperc=round(Uperc,2); 
+				percT=round(percT,2); 
+				percN=round(percN,2); 
+				percU=round(percU,2); 
 			}
-			String val=""; 
-			if(Tperc>Nperc && Tperc>Uperc) val="T";
-			else if(Nperc> Tperc && Nperc>Uperc)val="N";
-			else if(Uperc> Tperc && Uperc>Nperc) val="U";
+			
+			
+			//ALG 1:
+//			String val=AlgMajority(percT, percN, percU); 
+			//ALG 2:
+			String val=AlgGreaterThan2(percT, percN, percU); 
+			//ALG 3:
+//			String val=AlgAll(percT, percN, percU); 
 
+			
+			
+			
 //			if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
 				
 					myWriter.write(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+val+"\n");
@@ -575,10 +635,39 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 					
 				i++; 
 //			}
+			}
 		}
 			
 		}
 		myWriter.close();}
+
+	private static String AlgAll(double percT, double percN, double percU) {
+		// TODO Auto-generated method stub
+		String val=""; 
+		if(percT>0 && percN==0 && percU==0) val="T"; 
+		else if (percN>0 && percT==0 && percU==0) val="N"; 
+		else if(percU>0 && percT==0 && percN==0) val="U"; 
+		
+		return val;
+	}
+
+	private static String AlgGreaterThan2(double percT, double percN, double percU) {
+		// TODO Auto-generated method stub
+		String val=""; 
+		if(percT>2) val="T";
+		else if(percN> 2 )val="N";
+		else if(percU>2) val="U";
+		return val;
+	}
+
+	private static String AlgMajority(double percT, double percN, double percU) {
+		// TODO Auto-generated method stub
+		String val=""; 
+		if(percT>percN && percT>percU) val="T";
+		else if(percN> percT && percN>percU)val="N";
+		else if(percU> percT && percU>percN) val="U";
+		return val;
+	}
 
 	private static void dataAnalysisVariables() {
 		HashMap<Integer, Integer> countHashmap = new HashMap<>(); 
