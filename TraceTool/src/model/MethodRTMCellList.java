@@ -51,6 +51,7 @@ public class MethodRTMCellList extends RTMCellList {
     public MethodRTMCellList getCallers() {
         MethodRTMCellList list = new MethodRTMCellList();
         for (RTMCell cell : this)
+        	if(cell!=null)
             list.addAll(((MethodRTMCell) cell).getCallers());
         return list;
     }
@@ -72,6 +73,7 @@ public class MethodRTMCellList extends RTMCellList {
     public MethodRTMCellList getCallees() {
         MethodRTMCellList list = new MethodRTMCellList();
         for (RTMCell cell : this)
+        	if(cell!=null)
             list.addAll(((MethodRTMCell) cell).getCallees());
         return list;
     }

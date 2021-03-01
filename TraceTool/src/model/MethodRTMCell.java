@@ -23,15 +23,15 @@ public class MethodRTMCell extends RTMCell {
 
 	private Method method = null;
 	private Requirement requirement = null;
-	public TraceValue VariabletraceValue = null;
+	public String VariabletraceValue = null;
 
 	
 
-	public TraceValue getVariabletraceValue() {
+	public String getVariabletraceValue() {
 		return VariabletraceValue;
 	}
 
-	public void setVariabletraceValue(TraceValue variabletraceValue) {
+	public void setVariabletraceValue(String variabletraceValue) {
 		VariabletraceValue = variabletraceValue;
 	}
 

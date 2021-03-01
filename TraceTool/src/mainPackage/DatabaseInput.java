@@ -1,6 +1,8 @@
 package mainPackage;
 
 import model.*;
+import model.RTMCell.TraceValue;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class DatabaseInput {
@@ -449,7 +452,6 @@ public class DatabaseInput {
 			Clazz clazz = Clazz.clazzesHashMap.get(classid);
 
 			ClazzRTMCell myclasstrace= new ClazzRTMCell(requirement, clazz);
-
 			String value = traceClass.get("goldfinal").toString();
 			String SubjectGold = traceClass.get("SubjectGold").toString();
 			if (value.equals("T")) {
@@ -460,12 +462,25 @@ public class DatabaseInput {
 				clazz.setTcount(String.valueOf(Tcount));
 //				Clazz.clazzesHashMap.put(classid, clazz); 
 			}
+			
+			
 			if (value.equals("N")) myclasstrace.setGoldTraceValue(RTMCell.TraceValue.NoTrace);
 			if (value.equals("E")) myclasstrace.setGoldTraceValue(RTMCell.TraceValue.UndefinedTrace);
 			
 			if (SubjectGold.equals("T")) myclasstrace.setSubjectTraceValue(RTMCell.TraceValue.Trace);
 			if (SubjectGold.equals("N")) myclasstrace.setSubjectTraceValue(RTMCell.TraceValue.NoTrace);
 			if (SubjectGold.equals("E")) myclasstrace.setSubjectTraceValue(RTMCell.TraceValue.UndefinedTrace);
+			
+			
+			if(ClazzRTMCell.clazzTracesByProgramNameHashMap.get(ProgramName) ==null) {
+				ClazzRTMCell.clazzTracesByProgramNameHashMap.put(ProgramName, new HashMap<String, TraceValue>()); 
+			}else {
+				HashMap<String, TraceValue> myHashmap = ClazzRTMCell.clazzTracesByProgramNameHashMap.get(ProgramName); 
+				myHashmap.put(requirementid+"-"+clazz.ID, myclasstrace.getGoldTraceValue()); 
+			}
+			
+			ClazzRTMCell.clazzTraces2HashMap.put(requirement.ID+"-"+clazz.ID, myclasstrace); 
+
 		 }
 	}
 
@@ -488,7 +503,7 @@ public class DatabaseInput {
 			if (value.equals("T")) methodTrace.setGoldTraceValue(RTMCell.TraceValue.Trace);
 			if (value.equals("N")) methodTrace.setGoldTraceValue(RTMCell.TraceValue.NoTrace);
 			if (value.equals("E")) methodTrace.setGoldTraceValue(RTMCell.TraceValue.UndefinedTrace);
-
+			
 			if (method.getName().equals("setPublicHolidays(java.net.URL,net.sourceforge.ganttproject.GanttProject)") && requirement.getName().equals("16: Add/Remove Holidays and Vacation Days"))
 				traceMethod.toString();
 

@@ -109,7 +109,7 @@ import tables.methods;
  * 
  * java.net.ConnectException: Connection refused
  */
-public class DBDemo3Chess2 {
+public class DatabaseChess {
 
 	/** The name of the MySQL account to use (or empty for anonymous) */
 	private final String userName = "root";
@@ -432,12 +432,12 @@ public class DBDemo3Chess2 {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		DBDemo3Chess2 app = new DBDemo3Chess2();
+		DatabaseChess app = new DatabaseChess();
 		app.run();
 	}
 	
 	public void Spoon() throws SQLException, IOException {
-		DBDemo3Chess2 dao = new DBDemo3Chess2();
+		DatabaseChess dao = new DatabaseChess();
 	Connection conn=getConnection();
 	Statement st= conn.createStatement();
 	
@@ -2355,8 +2355,90 @@ public class DBDemo3Chess2 {
 //	
 //		 }
     	
-    	readFields( st, classFactory); 
+//    	readFields( st, classFactory); 
+    	readparams(st,classFactory, methodFactory); 
 	 }
+	private void readparams(Statement st, ClassFactory classFactory, MethodFactory methodFactory) throws SQLException {
+		// TODO Auto-generated method stub
+		ResultSet rs= st.executeQuery("SELECT * from parameters"); 
+		List<String> mylist = new ArrayList<String>(); 
+		
+		 while(rs.next()) {
+			 String elem=""; 
+			 String parametername = rs.getString("parametername");
+			 String parametertype = rs.getString("parametertype");
+
+			 String parameterclass = rs.getString("parameterclass");
+
+			 String classid = rs.getString("classid");
+
+			 String classname = rs.getString("classname");
+			 String methodid = rs.getString("methodid");
+			 String methodname = rs.getString("methodname");
+			 String isreturn = rs.getString("isreturn");
+			 String sourcecode = rs.getString("sourcecode");
+			 elem=parametername+","+parametertype+","+parameterclass+","+classid+","+classname+","+methodid+","+methodname+","+isreturn+","+sourcecode; 
+
+		 }
+		
+		 for(CtType<?> clazz : classFactory.getAll(true)) {
+		 		Set<CtMethod<?>> methods = clazz.getMethods(); 
+		 		String classname=clazz.getQualifiedName(); 
+		 		ResultSet rs2= st.executeQuery("SELECT * from classes where classname='"+clazz.getQualifiedName()+"'"); 
+		 		 String classid =null; 
+				 while(rs2.next()) {
+					  classid = rs2.getString("id");
+					 
+				 }
+		 		
+		 		for(CtMethod method: methods) {
+					List<CtReturn> returnStatements = method.getElements(new TypeFilter<CtReturn>(CtReturn.class));
+					System.out.println(method.getSignature()+ "           "+returnStatements);
+					for(CtReturn returnStatement: returnStatements) {
+						if(!returnStatement.getReferencedTypes().isEmpty()) {
+							rs2= st.executeQuery("SELECT * from classes where classname='"+returnStatement.getReferencedTypes().iterator().next()+"'"); 
+					 		 String parameterClassID ="0"; 
+							 while(rs2.next()) {
+								 parameterClassID = rs2.getString("id");
+								 
+							 }
+							
+							String fullmethod=clazz.getQualifiedName()+"."+method.getSignature(); 
+							 ResultSet rs3 = st.executeQuery("SELECT * from methods where fullmethod='"+fullmethod+"'"); 
+							String methodID=null; 
+							 while(rs3.next()) {
+								 methodID = rs3.getString("id");
+								 
+							 }
+					 		String methodString=method.toString().replaceAll("\\'", ""); 
+							  String statement8= "INSERT INTO `parameters`(`parametername`, `parametertype`,  `parameterclass`, `classid`,`classname`, `methodid`, `methodname`, `isreturn`, `sourcecode`) VALUES ('"+
+									  returnStatement+"','" +returnStatement.getReferencedTypes().iterator().next()
+									  +"','"  +parameterClassID+"','" +classid+"','"+classname+"','"+methodID+"','"+fullmethod+"','"+1+"','"+methodString+"')";
+					 		  String row=returnStatement+"','" +returnStatement.getReferencedTypes().iterator().next()
+									  +"','"  +parameterClassID+"','" +classid+"','"+classname+"','"+methodID+"','"+fullmethod+"','"+1+"','"+methodString;   	   
+							  
+					 		  
+					 		  if(!mylist.contains(row))
+					 			  st.executeUpdate(statement8); 
+//					 		    mylist.add(newparamList); 
+
+							System.out.println("hey");
+						}
+						
+					
+					}
+					
+		 		}
+		 }
+		 System.out.println("8888888888888888888888888888888");
+			
+	 
+		 
+		 
+		 
+		 
+	}
+
 	private void readFields(Statement st, ClassFactory classFactory) throws SQLException {
 		// TODO Auto-generated method stub
 		List<String> mylist = new ArrayList<String>(); 

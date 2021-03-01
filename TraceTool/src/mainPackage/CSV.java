@@ -17,6 +17,7 @@ import javax.annotation.Generated;
 
 import BoxPlots.counts;
 import evaluation.Seeder;
+import model.ClazzRTMCell;
 import model.MethodRTMCell;
 import model.MethodRTMCellList;
 import model.PredictionPattern;
@@ -31,7 +32,7 @@ public class CSV {
 	public static boolean AtLeastOneInstance=true; 
 
     static File file = new File("log\\data.txt");
-    public static boolean Seeding=false; 
+    public static boolean Seeding=true; 
 
     CSV csv=new CSV();  
     static double[] TSeeds = new double[]{5,10,15,20,25}; 
@@ -43,7 +44,8 @@ public class CSV {
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
     		+ "CalleesT,CalleesN,CalleesU,"
-    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,CompleteCallersCallees,"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,"
+    		+ "CompleteCallersCallees,"
     		+ "classGold"
     		
     		
@@ -54,7 +56,7 @@ public class CSV {
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
     		+ "CalleesT,CalleesN,CalleesU,"
-    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold,VariableTraceValue"
     		
     		; 
     static String headersAtLeastOneReqMethodInstance="gold,Program,MethodType,"
@@ -62,7 +64,7 @@ public class CSV {
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
     		+ "CalleesT,CalleesN,CalleesU,"
-    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold,VariableTraceValue"
     		
     		; 
     static String headersAtLeastOneInstanceNoProgram="gold,MethodType,"
@@ -70,7 +72,7 @@ public class CSV {
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
     		+ "CalleesT,CalleesN,CalleesU,"
-    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold,VariableTraceValue"
     		
     		; 
 	public static void main (String [] args) throws Exception {
@@ -94,7 +96,7 @@ public class CSV {
 			programs.add("gantt");
 			programs.add("itrust");
 			programs.add("jhotdraw");
-			programs.add("vod"); 
+//			programs.add("vod"); 
 			
 //			programs.add("vod");
 			System.out.println("countNoCalleesU,countLowCalleesU,countMediumCalleesU,countHighCalleesU,countNoCallersU,countLowCallersU,countMediumCallersU,"
@@ -235,11 +237,32 @@ public class CSV {
 	 * @throws IOException *****************************************************************************************************/
 	public static void generateFile(List<MethodRTMCell> tsNs, String fileName) throws IOException {
 		 File myFile = new File("log\\"+fileName+".txt");
+		 counts callers = new counts(); 
+			counts callersCallers= new counts(); 
+			counts callees= new counts(); 
+			counts calleesCallees= new counts(); 
+			ArrayList<String> programs = new ArrayList<String>();
+			TraceProcessor.variableStorageTraces.put("chess", new LinkedHashMap<String, String>());
+			TraceProcessor.variableStorageTraces.put("gantt", new LinkedHashMap<String, String>());
+			TraceProcessor.variableStorageTraces.put("itrust", new LinkedHashMap<String, String>());
+			TraceProcessor.variableStorageTraces.put("jhotdraw", new LinkedHashMap<String, String>());
+	
+			int i=1; 
+			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
+			int countNoCallersU=0; int countLowCallersU=0; int countMediumCallersU=0; int countHighCallersU=0; 
+			int countNoCalleesU=0; int countLowCalleesU=0; int countMediumCalleesU=0; int countHighCalleesU=0; 
+			int NoCallersUAndNoCalleesU=0; int LowCombination=0; int MediumCombination=0;int HighCombination=0;
+			int size=0; 
+			int k=0; 
+			TraceProcessor.dataVariablesTraceDefinition(); 
+			TraceProcessor.dataVariablesPrintforPythonInputFile(); 
 		 System.out.println(fileName);
 		 FileWriter writer = new FileWriter(myFile);
 		 writer.write(headersAtLeastOneInstanceNoProgram+"\n");
 		 if(AtLeastOneInstance) {
 	 			for(MethodRTMCell methodtrace: tsNs) {
+	            	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
+
 	 				String s=""; 
 	 				String programName= methodtrace.ProgramName; 
 	 				s=s+methodtrace.logGoldTraceValueString()+","; 
@@ -255,22 +278,31 @@ public class CSV {
 				 
 	 				String reqMethod= methodtrace.getRequirement().getID()+"-"+methodtrace.getMethodID();
 //	 				System.out.println(reqMethod);
-			 		 counts callers = generateCountsTNUAtLeastOneInstance(methodtrace.getCallers(programName));
-		 			 counts callersCallers = generateCountsTNUAtLeastOneInstance(methodtrace.getCallers(programName).getCallers(programName));
-		 			 counts callees = generateCountsTNUAtLeastOneInstance(methodtrace.getCallees(programName));
-		 			 counts calleesCallees = generateCountsTNUAtLeastOneInstance(methodtrace.getCallees(programName).getCallees(programName));
+			 		  callers = generateCountsTNUAtLeastOneInstance(methodtrace.getCallers(programName));
+		 			  callersCallers = generateCountsTNUAtLeastOneInstance(methodtrace.getCallers(programName).getCallers(programName));
+		 			  callees = generateCountsTNUAtLeastOneInstance(methodtrace.getCallees(programName));
+		 			  calleesCallees = generateCountsTNUAtLeastOneInstance(methodtrace.getCallees(programName).getCallees(programName));
 		 		
-	 			
+	 			System.out.println(programName);
+	   		 	System.out.println(methodtrace.getRequirement().ID+"-"+methodtrace.getClazzRTMCell());
 	   		 	
-	 			
+	   		 	if(ClazzRTMCell.clazzTracesByProgramNameHashMap.get(programName).get(methodtrace.getRequirement().ID+"-"+methodtrace.getMethod().getClazz().ID)==null) {
+	   		 		System.out.println("here"+ClazzRTMCell.clazzTracesByProgramNameHashMap.get(programName).get(methodtrace.getRequirement().ID+"-"+methodtrace.getMethod().getClazz().ID));
+	   		 	}
+	   		 	
+	 			System.out.println("broke");
 	 				s=s+callers.amountT+","+callers.amountN+","+callers.amountU+","; 
 		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
 		 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
-		 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU; 
+		 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU+","+
+							ClazzRTMCell.clazzTracesByProgramNameHashMap.get(programName).get(methodtrace.getRequirement().ID+"-"+methodtrace.getMethod().getClazz().ID)
+							+","+methodtrace.getVariabletraceValue();
+		 					; 
 		 			
 		 			writer.write(s+"\n");
+		 			System.out.println(s);
 	 			}
-					
+	 			}
 	 			
 		 }
 		 writer.close();
@@ -284,7 +316,10 @@ public class CSV {
 			counts callees= new counts(); 
 			counts calleesCallees= new counts(); 
 			ArrayList<String> programs = new ArrayList<String>();
-
+			TraceProcessor.variableStorageTraces.put("chess", new LinkedHashMap<String, String>());
+			TraceProcessor.variableStorageTraces.put("gantt", new LinkedHashMap<String, String>());
+			TraceProcessor.variableStorageTraces.put("itrust", new LinkedHashMap<String, String>());
+			TraceProcessor.variableStorageTraces.put("jhotdraw", new LinkedHashMap<String, String>());
 	
 			int i=1; 
 			Seeder.seedInputClazzTraceValuesWithDeveloperGold();
@@ -293,7 +328,10 @@ public class CSV {
 			int NoCallersUAndNoCalleesU=0; int LowCombination=0; int MediumCombination=0;int HighCombination=0;
 			int size=0; 
 			int k=0; 
-            for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
+			TraceProcessor.dataVariablesTraceDefinition(); 
+			TraceProcessor.dataVariablesPrintforPythonInputFile(); 
+            
+			for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
             		String ProgramName=methodtrace.ProgramName; 
        		 		String s= methodtrace.logGoldTraceValueString()+","; 
@@ -334,7 +372,10 @@ public class CSV {
 			 					callers.amountT+","+callers.amountN+","+callers.amountU+","; 
 	   		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
 			 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
-			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU; 
+			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU
+			 					+","+
+								ClazzRTMCell.clazzTraces2HashMap.get(methodtrace.getRequirement().ID+"-"+methodtrace.getClazzRTMCell().getClazz().ID).getGoldTraceValue()
+								+","+methodtrace.getVariabletraceValue(); 
 			 			
 //			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1") && !AtLeastOneInstance) {
 //			 				s=s+"1,"; 

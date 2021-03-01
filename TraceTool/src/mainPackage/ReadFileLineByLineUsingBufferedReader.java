@@ -13,6 +13,8 @@ public class ReadFileLineByLineUsingBufferedReader {
 	public static void main(String[] args) {
 	    try {
 	        List<String> list = Files.readAllLines(Paths.get("C:\\Users\\mouna\\ownCloud\\Mouna Hammoudi\\dumps\\Python\\dataMachineLearning.txt"));
+
+	        
 	        int last = 0;
 	        for(String myLine : list) {
 	            String[] array = myLine.split(",");

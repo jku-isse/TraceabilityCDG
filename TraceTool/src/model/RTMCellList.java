@@ -27,11 +27,37 @@ public class RTMCellList extends ArrayList<RTMCell>{
 
 	public boolean atLeast1GoldT() {
 		for (RTMCell cell : this) {
-			if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.Trace)) return true;
+			if(cell!=null) {
+				if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.Trace)) return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	public boolean atLeast2GoldT() {
+		int i=0; 
+		for (RTMCell cell : this) {
+			if(cell!=null) {
+				if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.Trace)) i++;
+				if(i>2) return true; 
+			}
 		}
 		return false;
 	}
 
+	
+	
+	public boolean atLeast2GoldN() {
+		int i=0; 
+		for (RTMCell cell : this) {
+			if(cell!=null) {
+				if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.NoTrace)) i++;
+				if(i>2) return true; 
+			}
+		}
+		return false;
+	}
 	public boolean atLeast1PredictedT() {
 		if (size()==0) return false;
 		for (RTMCell cell : this) {
@@ -50,8 +76,9 @@ public class RTMCellList extends ArrayList<RTMCell>{
 
 	public boolean atLeast1GoldN() {
 		for (RTMCell cell : this) {
+			if(cell!=null) {
 			if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.NoTrace)) return true;
-		}
+		}}
 		return false;
 	}
 
@@ -73,8 +100,9 @@ public class RTMCellList extends ArrayList<RTMCell>{
 
 	public boolean atLeast1GoldU() {
 		for (RTMCell cell : this) {
+			if(cell!=null) {
 			if (cell.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) return true;
-		}
+		}}
 		return false;
 	}
 	
@@ -96,6 +124,7 @@ public class RTMCellList extends ArrayList<RTMCell>{
 	public boolean allTs() {
 		if (size()==0) return false;
 		for (RTMCell cell : this) {
+			if(cell!=null)
 			if (!cell.getTraceValue().equals(RTMCell.TraceValue.Trace)) return false;
 		}
 		return true;
@@ -103,6 +132,8 @@ public class RTMCellList extends ArrayList<RTMCell>{
 	public boolean allGoldT() {
 		if (size()==0) return false;
 		for (RTMCell cell : this) {
+			if(cell!=null)
+
 			if (!cell.getGoldTraceValue().equals(RTMCell.TraceValue.Trace)) return false;
 		}
 		return true;
@@ -134,6 +165,7 @@ public class RTMCellList extends ArrayList<RTMCell>{
 	public boolean allNs() {
 		if (size()==0) return false;
 		for (RTMCell cell : this) {
+			if(cell!=null)
 			if (!cell.getTraceValue().equals(RTMCell.TraceValue.NoTrace)) return false;
 		}
 		return true;

@@ -3,6 +3,7 @@ package mainPackage;
 import evaluation.Logger;
 import evaluation.Seeder;
 import model.Clazz;
+import model.ClazzRTMCell;
 import model.ClazzRTMCellList;
 import model.Definitions;
 import model.Method;
@@ -428,7 +429,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		
 	}
 
-	private static void dataVariablesTraceDefinition() {
+	public static void dataVariablesTraceDefinition() {
 		for(String programName: Variable.totalVariablesHashMap.keySet()) {
 			LinkedHashMap<String, Variable> variablesPerProgram = Variable.totalVariablesHashMap.get(programName); 
 			for(Variable variable: variablesPerProgram.values()) {
@@ -570,11 +571,16 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 	}
 
-	private static void dataVariablesPrintforPythonInputFile() throws IOException {
+	public static void dataVariablesPrintforPythonInputFile() throws IOException {
 		// TODO Auto-generated method stub
 		int i=0; 
 	      FileWriter myWriter = new FileWriter("log//PythonInputDataVariables.txt");
-			myWriter.write("gold,ProgramName,RequirementID,MethodID,VariableTrace\n");
+			myWriter.write("gold,ProgramName,RequirementID,MethodID"
+					+ ",VariableTrace"
+					+ ",MethodType"
+					+ ",CallersT,CallersN,CallersU"
+					+ ",CallersCallersT,CallersCallersN,CallersCallersU,CalleesT,CalleesN,CalleesU,CalleesCalleesT,CalleesCalleesN,CalleesCalleesU"
+					+ "\n");
 
 		for (String programName : MethodRTMCell.Totalmethodtraces2HashMap.keySet()) {
 			LinkedHashMap<String, MethodRTMCell> methodTraces = MethodRTMCell.Totalmethodtraces2HashMap.get(programName); 
@@ -619,18 +625,90 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 			
 			
 			//ALG 1:
-//			String val=AlgMajority(percT, percN, percU); 
+//			String variableTraceValue=AlgMajority(percT, percN, percU); 
 			//ALG 2:
-			String val=AlgGreaterThan2(percT, percN, percU); 
+			String variableTraceValue=AlgGreaterThan2(percT, percN, percU); 
 			//ALG 3:
-//			String val=AlgAll(percT, percN, percU); 
+//			String variableTraceValue=AlgAll(percT, percN, percU); 
 
 			
-			
+			cell.setVariabletraceValue(variableTraceValue);
 			
 //			if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
+				String methodType=""; String callersT="0"; String callersN="0"; String callersU="0"; 
+				String callerscallersT="0"; String callerscallersN="0"; String callerscallersU="0"; 
+				String calleesT="0"; String calleesN="0"; String calleesU="0"; 
+				String calleescalleesT="0"; String calleescalleesN="0"; String calleescalleesU="0"; 
+				if(!cell.getCallers().isEmpty() && !cell.getCallees().isEmpty()) {
+					methodType="Inner"; 
+				}else if(!cell.getCallers().isEmpty() && cell.getCallees().isEmpty()) {
+					methodType="Leaf"; 
+				}else if(cell.getCallers().isEmpty() && cell.getCallees().isEmpty()) {
+					methodType="Root"; 
+				}
+				/****************************************************/
+				if(cell.getCallers().allTs()) callersT="High"; 
+				else if(cell.getCallers().atLeast2GoldT()) callersT="Medium"; 
+				else if(cell.getCallers().atLeast1GoldT()) callersT="Low"; 
+					
 				
-					myWriter.write(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+val+"\n");
+				if(cell.getCallees().allTs()) calleesT="High"; 
+				else if(cell.getCallees().atLeast2GoldT()) calleesT="Medium"; 
+				else if(cell.getCallees().atLeast1GoldT()) calleesT="Low"; 
+				
+				if(cell.getCallers().getCallers().allTs()) callerscallersT="High"; 
+				else if(cell.getCallers().atLeast2GoldT()) callerscallersT="Medium"; 
+				else if(cell.getCallers().atLeast1GoldT()) callerscallersT="Low"; 
+				
+				
+				if(cell.getCallees().getCallees().allTs()) calleescalleesT="High"; 
+				else if(cell.getCallees().atLeast2GoldT()) calleescalleesT="Medium"; 
+				else if(cell.getCallees().atLeast1GoldT()) calleescalleesT="Low"; 
+				/*******************************************************************/
+				if(cell.getCallers().allNs()) callersN="High"; 
+				else if(cell.getCallers().atLeast2GoldN()) callersN="Medium"; 
+				else if(cell.getCallers().atLeast1GoldN()) callersN="Low"; 
+					
+				
+				if(cell.getCallees().allNs()) calleesN="High"; 
+				else if(cell.getCallees().atLeast2GoldN()) calleesN="Medium"; 
+				else if(cell.getCallees().atLeast1GoldN()) calleesN="Low"; 
+				
+				if(cell.getCallers().getCallers().allNs()) callerscallersN="High"; 
+				else if(cell.getCallers().atLeast2GoldN()) callerscallersN="Medium"; 
+				else if(cell.getCallers().atLeast1GoldN()) callerscallersN="Low"; 
+				
+				
+				if(cell.getCallees().getCallees().allNs()) calleescalleesN="High"; 
+				else if(cell.getCallees().atLeast2GoldN()) calleescalleesN="Medium"; 
+				else if(cell.getCallees().atLeast1GoldN()) calleescalleesN="Low"; 
+				
+//				if(cell.getCallers().atLeast1GoldT()) callersT="1"; 
+//				else if (cell.getCallers().atLeast1GoldN()) callersN="1"; 
+//				else if(cell.getCallers().atLeast1GoldU()) callersU="1"; 
+//				
+//				if(cell.getCallers().getCallers().atLeast1GoldT()) callerscallersT="1"; 
+//				else if (cell.getCallers().getCallers().atLeast1GoldN()) callerscallersN="1"; 
+//				else if(cell.getCallers().getCallers().atLeast1GoldU()) callerscallersU="1"; 
+//				
+//				
+//				
+//				if(cell.getCallees().atLeast1GoldT()) calleesT="1"; 
+//				else if (cell.getCallees().atLeast1GoldN()) calleesN="1"; 
+//				else if(cell.getCallees().atLeast1GoldU()) calleesU="1"; 
+//				
+//				if(cell.getCallees().getCallees().atLeast1GoldT()) calleescalleesT="1"; 
+//				else if (cell.getCallees().getCallees().atLeast1GoldN()) calleescalleesN="1"; 
+//				else if(cell.getCallees().getCallees().atLeast1GoldU()) calleescalleesU="1"; 
+				
+					myWriter.write(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+
+					variableTraceValue+","+
+							methodType
+							+","+callersT+","+callersN+","+callersU
+							+","+callerscallersT+","+callerscallersN+","+callerscallersU
+							+","+calleesT+","+calleesN+","+calleesU
+							+","+calleescalleesT+","+calleescalleesN+","+calleescalleesU+","
+							+"\n");
 								
 					
 				i++; 
@@ -653,7 +731,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 	private static String AlgGreaterThan2(double percT, double percN, double percU) {
 		// TODO Auto-generated method stub
-		String val=""; 
+		String val="U"; 
 		if(percT>2) val="T";
 		else if(percN> 2 )val="N";
 		else if(percU>2) val="U";

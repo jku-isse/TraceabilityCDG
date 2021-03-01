@@ -14,6 +14,7 @@ public class ClazzRTMCell extends RTMCell {
 		return clazzTraces2HashMap.get(requirement.ID + "-" + clazz.ID);
 	}
 	static public HashMap<String, ClazzRTMCell> clazzTraces2HashMap = new HashMap<String, ClazzRTMCell>();
+	static public HashMap<String, HashMap<String, TraceValue>> clazzTracesByProgramNameHashMap = new HashMap<String,HashMap<String, TraceValue >>(); 
 
 
 	//////////////////////////////////////////////////////////////////////////
