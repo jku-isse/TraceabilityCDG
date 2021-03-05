@@ -914,6 +914,84 @@ public class DBChessFixed {
                 	 
                 	 
                  }
+                 //METHODS CALLING CONSTRUCTORS 
+				 List<CtConstructorCall> constructorCalls2 = caller.getElements(new TypeFilter<CtConstructorCall>(CtConstructorCall.class));
+				 for(CtConstructorCall consCall: constructorCalls2) {
+					 String fullcalleeCons = consCall.getExecutable().toString(); 
+            		 System.out.println(fullcalleeCons);
+            		 String consWithoutParams = fullcalleeCons.substring(0, fullcalleeCons.indexOf("(")); 
+            		 String params =  fullcalleeCons.substring(fullcalleeCons.indexOf("("), fullcalleeCons.length());
+            		 System.out.println("over");
+            		 String fullconstructor= consWithoutParams+".-init-"+params; 
+            		 
+            		 
+            		 ResultSet methodsreferenced = st.executeQuery("SELECT methods.* from methods where fullmethod='"+fullconstructor+"'");  
+           		 String calleeID=null; 
+           		 String calleeownerclassID=null; 
+           		 String calleeownerclassName=null; 
+           		 String calleemethodName=null; 
+					if(methodsreferenced.next()){
+						
+						 calleeID=methodsreferenced.getString("id"); 
+						 calleeownerclassID= methodsreferenced.getString("ownerclassid"); 
+						 calleeownerclassName= methodsreferenced.getString("ownerclassname"); 
+						 calleemethodName= methodsreferenced.getString("name"); 
+
+						
+					
+					}else if(consCall.toString().contains("super")){
+						String mySuperCallee= consCall.getExecutable().getSignature(); 
+						String mysupercalleewithoutparentheses = mySuperCallee.substring(0, mySuperCallee.indexOf("(")); 
+						 params = mySuperCallee.substring( mySuperCallee.indexOf("("), mySuperCallee.length()); 
+
+						String changedName = mysupercalleewithoutparentheses+".-init-"+params; 
+						System.out.println(changedName);
+						System.out.println("yes");
+						
+						  ResultSet resultset = st2.executeQuery("SELECT methods.* from methods where fullmethod='"+changedName+"'");  
+		            	  calleeID=null;
+		            	  calleeownerclassID=null; 
+		            	  calleeownerclassName=null; 
+		            	  calleemethodName=null; 
+							if(resultset.next()){
+								
+								 calleeID=resultset.getString("id"); 
+								 calleeownerclassID= resultset.getString("ownerclassid"); 
+								 calleeownerclassName= resultset.getString("ownerclassname"); 
+								 calleemethodName= resultset.getString("name"); 
+
+								
+							
+							}
+						
+					}
+					
+					if(callerID!=null && calleeID!=null && !methodcallsList.contains(callerID+"-"+calleeID)) {
+						st.executeUpdate("INSERT INTO `new_databasechess`.`methodcalls` (`callermethodid`, `callermethodname`, `callerclassname`, `callerclassid`, `fullcaller`, `calleemethodid`, `calleemethodname`, `calleeclassname`, `calleeclassid`, `fullcallee`) VALUES ('"+callerID+"','"+callermethodName+"','"+callerownerclassName+"','"+callerownerclassID+"','"+fullcaller+"','"+
+		    					calleeID+"','"+calleemethodName+"','"+calleeownerclassName+"','"+calleeownerclassID+"','"+fullconstructor+"')"); 
+						methodcallsList.add(callerID+"-"+calleeID); 
+
+					}
+				 }
+            		 
+            		 
+             
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+
+
+                 
+                 
+                 
+                 
+                 
+                 
              }
              //CONSTRUCTORS CALLING METHODS 
              List<CtConstructor> constructors = clazz.getElements(new TypeFilter<CtConstructor>(CtConstructor.class));
@@ -943,7 +1021,22 @@ public class DBChessFixed {
 					}
 		             List<CtInvocation> invokedmethods = cons.getElements(new TypeFilter<CtInvocation>(CtInvocation.class));
 		             for(CtInvocation invoked: invokedmethods) {
-		            	String  fullcallee= invoked.getExecutable().getDeclaringType()+"."+invoked.getExecutable().getSignature(); 
+		            	String fullcallee=""; 
+		            	 if(invoked.getExecutable().getDeclaringType()!=null) {
+		            		 String invokedMeth = invoked.getExecutable().getDeclaringType().toString(); 
+			            	 if(invokedMeth.contains("GameStatus")) {
+			            		 String invokedMeth2 = invokedMeth.substring(0, invokedMeth.lastIndexOf('.'))+"$"+invokedMeth.substring(invokedMeth.lastIndexOf('.')+1);
+					               fullcallee= invokedMeth2+"."+invoked.getExecutable().getSignature(); 
+
+			            	 } else {
+					              fullcallee= invoked.getExecutable().getDeclaringType()+"."+invoked.getExecutable().getSignature(); 
+
+			            	 }
+		            	 }
+		            	
+
+//		            	String  fullcallee= invoked.getExecutable().getDeclaringType()+"."+invoked.getExecutable().getSignature(); 
+		            	if(invoked.getExecutable().toString().contains("GameStatus"))   fullcallee= invoked.getExecutable().getDeclaringType()+"."+invoked.getExecutable().getSignature();
 		            	 ResultSet callees = st2.executeQuery("SELECT methods.* from methods where fullmethod='"+fullcallee+"'");  
 		            	 String calleeID=null;
 		            	 String calleeownerclassID=null; 
@@ -995,6 +1088,7 @@ public class DBChessFixed {
         					}
 							 //CONSTRUCTORS CALLING OTHER CONSTRUCTORS
 				             List<CtConstructorCall> consCalls = cons.getElements(new TypeFilter<CtConstructorCall>(CtConstructorCall.class));
+				             System.out.println(cons);
 				             for(CtConstructorCall consCall: consCalls) {
 				            	 String constructor2 = consCall.getExecutable().toString(); 
 				            	 String consNameWithoutParams2 = constructor2.substring(0, constructor2.indexOf("(")); 
@@ -2233,6 +2327,12 @@ for(CtMethod method: methods) {
 		    	   mylist.add(newparamList); 
 
 			 
+		 }
+   	   else if( !mylist.contains(newparamList)){
+			 String statement8= "INSERT INTO `parameters`(`name`, `typeclassname`,  `typeclassid`, `ownerclassid`,`ownerclassname`, `ownermethodid`, `ownermethodname`, `isreturn`) VALUES ('"+
+						returnType.toString()+"','" +"null"+"','"  +returnTypeclassID+"','" +classid+"','"+classname+"','"+methodID+"','"+fullmethod+"','"+1+"')";
+			    	   st2.executeUpdate(statement8); 
+			    	   mylist.add(newparamList); 
 		 }
 		 }
     }
