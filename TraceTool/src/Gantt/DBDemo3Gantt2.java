@@ -30,8 +30,7 @@ import org.apache.log4j.pattern.FullLocationPatternConverter;
 
 import Chess.CountTNE;
 import Chess.SubjectTSubjectNObject;
-
-
+import model.PredictionPattern;
 import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.SpoonException;
@@ -71,6 +70,7 @@ import spoon.reflect.visitor.Query;
 import spoon.reflect.visitor.filter.FieldAccessFilter;
 import spoon.reflect.visitor.filter.TypeFilter;
 import tables.methods;
+import tables.tracesmethods;
 
 /**
  * This class demonstrates how to connect to MySQL and run some basic commands.
@@ -1720,131 +1720,133 @@ public class DBDemo3Gantt2 {
 //////
 //////////////////CREATE TRACES TABLE 
 //////////////
-//
-//    	
-//		List<String> TraceList= new ArrayList<String>(); 
-//		int c=0; 
-//    	HashMap<String, SubjectTSubjectNObject> myhashmap= new HashMap<String, SubjectTSubjectNObject>() ; 
-//
-//    	try {
-//    		File file = new File("C:\\Users\\mouna\\new_workspace\\TracePredictor\\src\\GanttFiles\\gantt_meth_votestrianglebracket.txt");
-//    		FileReader fileReader = new FileReader(file);
-//    		BufferedReader bufferedReader = new BufferedReader(fileReader);
-//    		StringBuffer stringBuffer = new StringBuffer();
-//    		String line;
-//    		line = bufferedReader.readLine(); 
-//    		while ((line = bufferedReader.readLine()) != null) {
-//    			String[] splittedline = line.split(","); 
-//    			stringBuffer.append(line);
-//    			stringBuffer.append("\n");
-//    			   counter = 1; 
-//    			for(int j=1; j<splittedline.length; j+=2) {
-//    				SubjectTSubjectNObject SubjectTSubjectNObj = new SubjectTSubjectNObject(); 
-//    				String methodname2= splittedline[0]; 
-//    				methodname2=methodname2.replaceAll("::", "."); 
-//    				methodname2=methodname2.replaceAll("constructor", "-init-"); 
+
+    	
+		List<String> TraceList= new ArrayList<String>(); 
+		int c=0; 
+    	HashMap<String, SubjectTSubjectNObject> myhashmap= new HashMap<String, SubjectTSubjectNObject>() ; 
+
+    	try {
+    		File file = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\GanttFiles\\gantt_meth_votestrianglebracket.txt");
+    		FileReader fileReader = new FileReader(file);
+    		BufferedReader bufferedReader = new BufferedReader(fileReader);
+    		StringBuffer stringBuffer = new StringBuffer();
+    		String line;
+    		line = bufferedReader.readLine(); 
+    		int count=0; 
+    		while ((line = bufferedReader.readLine()) != null) {
+    			String[] splittedline = line.split(","); 
+    			stringBuffer.append(line);
+    			stringBuffer.append("\n");
+    			 int  counter = 1; 
+    			for(int j=1; j<splittedline.length; j+=2) {
+    				SubjectTSubjectNObject SubjectTSubjectNObj = new SubjectTSubjectNObject(); 
+    				String methodname2= splittedline[0]; 
+    				methodname2=methodname2.replaceAll("::", "."); 
+    				methodname2=methodname2.replaceAll("constructor", "-init-"); 
 //    				methodname2=PredictionPattern.compile("[{}<>]").matcher(methodname2).replaceAll("");
-//    				methodname2="net.sourceforge.ganttproject."+methodname2; 
-//    				String RequirementID= ""+counter;
-//    				String SubjectT= splittedline[j];
-//    				String SubjectN= splittedline[j+1]; 
-//    				SubjectTSubjectNObj.setName(methodname2);
-//    				SubjectTSubjectNObj.setRequirementID(RequirementID);
-//    				SubjectTSubjectNObj.setSubjectT(SubjectT);
-//    				SubjectTSubjectNObj.setSubjectN(SubjectN);
-//    				counter++; 
-//    				String reqMethod=RequirementID+"-"+methodname2; 
-//    				TraceList.add(reqMethod); 
-//    				myhashmap.put(reqMethod,SubjectTSubjectNObj); 
-//    			}
-//    		
-//    		}
-//    		fileReader.close();
-//    		int count=1;
-//    		System.out.println(TraceList.size());
-//
-////    		System.out.println(stringBuffer.toString());
-//    	} catch (IOException e) {
-//    		e.printStackTrace();
-//    	}
-//    	
-//    	
-//HashMap<String, String> RequirementIDNameHashMap=new HashMap<String, String> (); 
-//RequirementIDNameHashMap.put("1", "01: Create Tasks"); 
-//RequirementIDNameHashMap.put("2", "02: Delete Tasks"); 
-//RequirementIDNameHashMap.put("3", "03: Maintain Task Properties"); 
-//RequirementIDNameHashMap.put("4", "04: Add/Remove Tasks as Subtasks"); 
-//RequirementIDNameHashMap.put("5", "05: Handle Milestones"); 
-//RequirementIDNameHashMap.put("6", "06: Create Resources (person)"); 
-//RequirementIDNameHashMap.put("7", "07: Delete Resources (person)"); 
-//RequirementIDNameHashMap.put("8", "08: Maintain Resource Properties"); 
-//RequirementIDNameHashMap.put("9", "09: Add/Remove Task Links"); 
-//RequirementIDNameHashMap.put("10", "10: Add/Remove Resources to Tasks Dependencies"); 
-//RequirementIDNameHashMap.put("11", "11: Change Task Begin/End Times manually with user changes"); 
-//RequirementIDNameHashMap.put("12", "12: Change Task Begin/End Times automatically with dependency changes"); 
-//RequirementIDNameHashMap.put("13", "13: Change Task Begin/End Times automatically with subtask changes"); 
-//RequirementIDNameHashMap.put("14", "14: Prevent Circular Dependencies"); 
-//RequirementIDNameHashMap.put("15", "15: Show Critical Path"); 
-//RequirementIDNameHashMap.put("16", "16: Add/Remove Holidays and Vacation Days"); 
-//RequirementIDNameHashMap.put("17", "17: Show Resource Utilization (underused or overused person)"); 
-//RequirementIDNameHashMap.put("18", "XXX: General Purpose Code"); 
-//
-//ResultSet mymeths = st2.executeQuery("SELECT methods.* from methods"); 
-//while(mymeths.next()){
-//String methodid = mymeths.getString("id"); 
-//String method = mymeths.getString("methodabbreviation"); 
-//String methodname = mymeths.getString("methodname"); 
-//String fullmethod = mymeths.getString("fullmethod"); 
-//
-//String classname = mymeths.getString("classname"); 
-//String classid = mymeths.getString("classid"); 
-//
-//// TODO Auto-generated method stub
-//
-//
-//
-//
-//
-//
-////st.executeUpdate("SELECT * FROM `traces` where method LIKE `% %`"); 
-//
-//
-//
-//for(String key: RequirementIDNameHashMap.keySet()) {
-//tracesmethods tr= new tracesmethods(key, methodid,  classid); 
-//SubjectTSubjectNObject entry = myhashmap.get(tr.getRequirementid()+"-"+method); 
-////System.out.println(tr.getRequirementid());
-////System.out.println(method);
-//
-//if(entry!=null) {
-//String	subjectGold= PredictGoldUnionFinal(Integer.parseInt(entry.SubjectT), Integer.parseInt(entry.SubjectN));
-//
-//
-//	String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`,`subjectGold`,`SubjectT`,`SubjectN`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid
-//			+"','" +subjectGold+"','"+entry.SubjectT +"','" +entry.SubjectN+"')";
-//			st.executeUpdate(statement);	
-//			TraceList.remove(tr.getRequirementid()+"-"+method); 
-//			c++; 
-//}
-//else {
-//	String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`,`subjectGold`,`SubjectT`,`SubjectN`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid
-//			+"','" + "E" +"','"+ "0"  +"','" + "0"+"')";		
-//			st.executeUpdate(statement);	
-//}
-//
-//
-//}
-//
-//
-//}
-//
-//System.out.println(c);
-//for(String entry: TraceList) {
-//	System.out.println(entry);
-//}
-//System.out.println("OVER");
-//
-//
+    				methodname2="net.sourceforge.ganttproject."+methodname2; 
+    				String RequirementID= ""+counter;
+    				String SubjectT= splittedline[j];
+    				String SubjectN= splittedline[j+1]; 
+    				SubjectTSubjectNObj.setMethodName(methodname2);
+    				SubjectTSubjectNObj.setRequirementID(RequirementID);
+    				SubjectTSubjectNObj.setSubjectT(SubjectT);
+    				SubjectTSubjectNObj.setSubjectN(SubjectN);
+    				counter++; 
+    				String reqMethod=RequirementID+"-"+methodname2; 
+    				TraceList.add(reqMethod); 
+    				myhashmap.put(reqMethod,SubjectTSubjectNObj); 
+    			}
+    			System.out.println(count);
+    		count++; 
+    		}
+    		fileReader.close();
+    		 count=1;
+    		System.out.println(TraceList.size());
+
+//    		System.out.println(stringBuffer.toString());
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	
+    	
+HashMap<String, String> RequirementIDNameHashMap=new HashMap<String, String> (); 
+RequirementIDNameHashMap.put("1", "01: Create Tasks"); 
+RequirementIDNameHashMap.put("2", "02: Delete Tasks"); 
+RequirementIDNameHashMap.put("3", "03: Maintain Task Properties"); 
+RequirementIDNameHashMap.put("4", "04: Add/Remove Tasks as Subtasks"); 
+RequirementIDNameHashMap.put("5", "05: Handle Milestones"); 
+RequirementIDNameHashMap.put("6", "06: Create Resources (person)"); 
+RequirementIDNameHashMap.put("7", "07: Delete Resources (person)"); 
+RequirementIDNameHashMap.put("8", "08: Maintain Resource Properties"); 
+RequirementIDNameHashMap.put("9", "09: Add/Remove Task Links"); 
+RequirementIDNameHashMap.put("10", "10: Add/Remove Resources to Tasks Dependencies"); 
+RequirementIDNameHashMap.put("11", "11: Change Task Begin/End Times manually with user changes"); 
+RequirementIDNameHashMap.put("12", "12: Change Task Begin/End Times automatically with dependency changes"); 
+RequirementIDNameHashMap.put("13", "13: Change Task Begin/End Times automatically with subtask changes"); 
+RequirementIDNameHashMap.put("14", "14: Prevent Circular Dependencies"); 
+RequirementIDNameHashMap.put("15", "15: Show Critical Path"); 
+RequirementIDNameHashMap.put("16", "16: Add/Remove Holidays and Vacation Days"); 
+RequirementIDNameHashMap.put("17", "17: Show Resource Utilization (underused or overused person)"); 
+RequirementIDNameHashMap.put("18", "XXX: General Purpose Code"); 
+
+ResultSet mymeths = st2.executeQuery("SELECT methods.* from methods"); 
+while(mymeths.next()){
+String methodid = mymeths.getString("id"); 
+String method = mymeths.getString("methodabbreviation"); 
+String methodname = mymeths.getString("methodname"); 
+String fullmethod = mymeths.getString("fullmethod"); 
+
+String classname = mymeths.getString("classname"); 
+String classid = mymeths.getString("classid"); 
+
+// TODO Auto-generated method stub
+
+
+
+
+
+
+//st.executeUpdate("SELECT * FROM `traces` where method LIKE `% %`"); 
+
+
+
+for(String key: RequirementIDNameHashMap.keySet()) {
+tracesmethods tr= new tracesmethods(key, methodid,  classid); 
+SubjectTSubjectNObject entry = myhashmap.get(tr.getRequirementid()+"-"+method); 
+//System.out.println(tr.getRequirementid());
+//System.out.println(method);
+
+if(entry!=null) {
+String	subjectGold= AddSubjectTSubjectNGoldfinalGanttTRACES_NEW.PredictGoldUnionFinal(Integer.parseInt(entry.SubjectT), Integer.parseInt(entry.SubjectN));
+
+
+	String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`,`goldfinal`,`SubjectT`,`SubjectN`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid
+			+"','" +subjectGold+"','"+entry.SubjectT +"','" +entry.SubjectN+"')";
+			st.executeUpdate(statement);	
+			TraceList.remove(tr.getRequirementid()+"-"+method); 
+			c++; 
+}
+else {
+	String statement = "INSERT INTO `traces`(`requirement`, `requirementid`, `method`, `methodname`, `fullmethod`,  `methodid`,`classname`, `classid`,`goldfinal`,`SubjectT`,`SubjectN`) VALUES ('"+RequirementIDNameHashMap.get(tr.getRequirementid())+"','" +tr.getRequirementid()+"','" +method+"','" +methodname+"','" +fullmethod+"','" +methodid+"','"+classname +"','" +classid
+			+"','" + "E" +"','"+ "0"  +"','" + "0"+"')";		
+			st.executeUpdate(statement);	
+}
+
+
+}
+
+
+}
+
+System.out.println(c);
+for(String entry: TraceList) {
+	System.out.println(entry);
+}
+System.out.println("OVER");
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 /////////////////*********************************************************************************************************************************************************************************/   
 ////
@@ -2337,7 +2339,7 @@ public class DBDemo3Gantt2 {
 //    			
 //    				 }
     	
-    	readFields( st, classFactory); 
+//    	readFields( st, classFactory); 
 	 }
 	private void readFields(Statement st, ClassFactory classFactory) throws SQLException {
 		// TODO Auto-generated method stub

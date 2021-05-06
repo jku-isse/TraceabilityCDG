@@ -49,7 +49,7 @@ public class TraceProcessor {
 	public static enum Algorithm {ValidatorSingle, ValidatorCallTypes, ValidatorIterations, GhabiValidator, Refiner, 
 		IncompletenessSeederT, IncompletenessSeederN, IncompletenessSeederTN, ErrorSeederT, ErrorSeederN, ErrorSeederTN, seedingTest1, seedingTest2, VSM,LSI};
     private static long startTime = System.currentTimeMillis();
-    public static Algorithm test = Algorithm.ValidatorSingle;
+    public static Algorithm test = Algorithm.GhabiValidator;
     public static List<JSONObject> jsonArray = new  ArrayList<JSONObject> (); 
     public static LinkedHashMap<String, LinkedHashMap<String, String>> variableStorageTraces = new LinkedHashMap<String, LinkedHashMap<String, String>>();  
     
@@ -463,8 +463,8 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 						Uperc=round(Uperc,2); 
 						//---------------------------------//
 					
-//						assignTNUToVariableMajorityAlg(Tperc, Nperc, Uperc, req, variable, programName); 
-						assignTNUToVariableAtleast2Alg(Tperc, Nperc, Uperc, req, variable, programName);
+						assignTNUToVariableMajorityAlg(Tperc, Nperc, Uperc, req, variable, programName); 
+//						assignTNUToVariableAtleast2Alg(Tperc, Nperc, Uperc, req, variable, programName);
 //						assignTNUToVariableAllAlg(Tperc, Nperc, Uperc, req, variable, programName);
 
 						
@@ -590,49 +590,53 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
 			    HashSet<Variable> vars = cell.getMethod().getMethodVars(); 
 				int countT=0; int countN=0; int countU=0; 
-
-			    for(Variable var: vars) {
-					String traceValue=variableStorageTraces.get(programName).get(cell.getRequirement().ID+"-"+var.id); 
-					if(traceValue!=null) {
-						if(traceValue.equals("T")) {
-							countT++; 
+				if(vars.size()>0) {
+				    for(Variable var: vars) {
+						String traceValue=variableStorageTraces.get(programName).get(cell.getRequirement().ID+"-"+var.id); 
+						if(traceValue!=null) {
+							if(traceValue.equals("T")) {
+								countT++; 
+							}
+							else if(traceValue.equals("N")) {
+								countN++; 
+							}
+							else if(traceValue.equals("U")) {
+								countU++; 
+							}
+							else countU++; 
 						}
-						else if(traceValue.equals("N")) {
-							countN++; 
-						}
-						else if(traceValue.equals("U")) {
-							countU++; 
-						}
-						else countU++; 
-					}
-			    }
-			
+				    }
+				
+							
 						
+
 					
+				
+				int totalCount = countT+countN+countU; 
+				double percT=(double)countT/totalCount*100; 
+				double percN=(double)countN/totalCount*100; 
+				double percU=(double)countU/totalCount*100; 
+				
+				if(totalCount!=0) {
+					percT=round(percT,2); 
+					percN=round(percN,2); 
+					percU=round(percU,2); 
+				}
+				
+				
+				//ALG 1:
+				String variableTraceValue=AlgMajority(percT, percN, percU); 
+				//ALG 2:
+//				String variableTraceValue=AlgGreaterThan2(percT, percN, percU); 
+				//ALG 3:
+//				String variableTraceValue=AlgAll(percT, percN, percU); 
 
 				
-			
-			int totalCount = countT+countN+countU; 
-			double percT=(double)countT/totalCount*100; 
-			double percN=(double)countN/totalCount*100; 
-			double percU=(double)countU/totalCount*100; 
-			
-			if(totalCount!=0) {
-				percT=round(percT,2); 
-				percN=round(percN,2); 
-				percU=round(percU,2); 
-			}
-			
-			
-			//ALG 1:
-//			String variableTraceValue=AlgMajority(percT, percN, percU); 
-			//ALG 2:
-			String variableTraceValue=AlgGreaterThan2(percT, percN, percU); 
-			//ALG 3:
-//			String variableTraceValue=AlgAll(percT, percN, percU); 
-
-			
-			cell.setVariabletraceValue(variableTraceValue);
+				cell.setVariabletraceValue(variableTraceValue);
+				}else {
+					cell.setVariabletraceValue("x");
+				}
+	
 			
 //			if(!cell.getGoldTraceValue().equals(TraceValue.UndefinedTrace)) {
 				String methodType=""; String callersT="0"; String callersN="0"; String callersU="0"; 
@@ -702,7 +706,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 //				else if(cell.getCallees().getCallees().atLeast1GoldU()) calleescalleesU="1"; 
 				
 					myWriter.write(cell.getGoldTraceValue()+","+programName+","+cell.getRequirement().ID+","+cell.getMethodID()+","+
-					variableTraceValue+","+
+					cell.getVariabletraceValue()+","+
 							methodType
 							+","+callersT+","+callersN+","+callersU
 							+","+callerscallersT+","+callerscallersN+","+callerscallersU
@@ -721,7 +725,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 	private static String AlgAll(double percT, double percN, double percU) {
 		// TODO Auto-generated method stub
-		String val=""; 
+		String val="U"; 
 		if(percT>0 && percN==0 && percU==0) val="T"; 
 		else if (percN>0 && percT==0 && percU==0) val="N"; 
 		else if(percU>0 && percT==0 && percN==0) val="U"; 
@@ -740,7 +744,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 	private static String AlgMajority(double percT, double percN, double percU) {
 		// TODO Auto-generated method stub
-		String val=""; 
+		String val="U"; 
 		if(percT>percN && percT>percU) val="T";
 		else if(percN> percT && percN>percU)val="N";
 		else if(percU> percT && percU>percN) val="U";
