@@ -40,6 +40,9 @@ import java.util.TreeSet;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import BoxPlots.counts;
+
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
@@ -49,7 +52,7 @@ public class TraceProcessor {
 	public static enum Algorithm {ValidatorSingle, ValidatorCallTypes, ValidatorIterations, GhabiValidator, Refiner, 
 		IncompletenessSeederT, IncompletenessSeederN, IncompletenessSeederTN, ErrorSeederT, ErrorSeederN, ErrorSeederTN, seedingTest1, seedingTest2, VSM,LSI};
     private static long startTime = System.currentTimeMillis();
-    public static Algorithm test = Algorithm.GhabiValidator;
+    public static Algorithm test = Algorithm.Refiner;
     public static List<JSONObject> jsonArray = new  ArrayList<JSONObject> (); 
     public static LinkedHashMap<String, LinkedHashMap<String, String>> variableStorageTraces = new LinkedHashMap<String, LinkedHashMap<String, String>>();  
     
@@ -382,15 +385,19 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 //			for(Clazz clazz: Clazz.clazzesHashMap.values()) {
 //				System.out.println(clazz.ID+"   "+clazz.getTcount());
 //			}
-			
+			FileWriter myWriter = new FileWriter("log//step2Data.txt");
+			myWriter.write("gold,Program,MethodType,RequirementID,MethodID,PredictedTraceValue,CallersT,CallersN,CallersU,CallersCallersT,CallersCallersN,CallersCallersU"
+					+ ",CalleesT,CalleesN,CalleesU,CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold\n");
 			for (String program : programs) {
 
 				DatabaseInput.read(program);
 				Seeder.seedInputClazzTraceValuesWithDeveloperGold();
 				Seeder.seedPredictedMethodTraceValuesWithUndefinedTraces();
-				refine(program, "ref", patterns);
+				
+				refine(program, "ref", patterns, myWriter);
 
 			}
+			myWriter.close();
 			Logger.logPatterns("all", patterns, "ref");
 			
 			 long endTime = System.currentTimeMillis();
@@ -926,7 +933,8 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	}
 
 
-	static public void refine(String programName, String logParameter, ArrayList patterns) throws Exception {
+	static public void refine(String programName, String logParameter, ArrayList patterns, FileWriter myWriter) throws Exception {
+		 
 		PredictionPattern.reset();
 
 		Seeder.seedInputClazzTraceValuesWithDeveloperGold();
@@ -937,6 +945,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		TraceRefiner.step2_propagateMethodNs(1);
 		RTMCell.logTPTNFPFN2(programName, "step 2");
 
+	
+		printPredictedValues(programName, myWriter); 
+		
+		
+		
 		TraceRefiner.step3_classTs2MethodTs();
 		RTMCell.logTPTNFPFN2(programName, "step 3");
 
@@ -981,6 +994,46 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	
 	
 	
+	}
+
+	private static void printPredictedValues(String programName, FileWriter myWriter) throws IOException {
+		for(MethodRTMCell methodRTMCell: MethodRTMCell.methodtraces2HashMap.values()) {
+			
+			MethodRTMCellList Callers= methodRTMCell.getCallers(programName); 
+			MethodRTMCellList Callees = methodRTMCell.getCallees(programName); 
+			MethodRTMCellList CallersCallers=methodRTMCell.getCallers(programName).getCallers(programName); 
+			MethodRTMCellList CalleesCallees=methodRTMCell.getCallees(programName).getCallees(programName); 
+			counts countsCallers = CSV.generateCountsTNUAtLeastOneInstance(Callers); 
+			counts countsCallees = CSV.generateCountsTNUAtLeastOneInstance(Callees); 
+			counts countsCallersCallers = CSV.generateCountsTNUAtLeastOneInstance(CallersCallers); 
+			counts countsCalleesCallees = CSV.generateCountsTNUAtLeastOneInstance(CalleesCallees); 
+			String methodType=""; 
+			if(!methodRTMCell.getCallers(programName).isEmpty() && !methodRTMCell.getCallees(programName).isEmpty()) {
+				methodType="Inner"; 
+			}else if( methodRTMCell.getCallees(programName).isEmpty()) {
+				methodType="Leaf"; 
+			}else if(methodRTMCell.getCallers(programName).isEmpty() ) {
+				methodType="Root"; 
+			}else {
+				methodType="Isolated"; 
+
+			}
+			if(!methodRTMCell.logGoldTraceValueString().equals("U")) {
+				myWriter.write(methodRTMCell.logGoldTraceValueString()+","+programName+","+methodType+","+methodRTMCell.getRequirement().ID+","+methodRTMCell.getMethod().ID+","+methodRTMCell.getPredictedTraceValue()
+				+","+countsCallers.amountT+","+countsCallers.amountN+","+countsCallers.amountU
+				+","+countsCallersCallers.amountT+","+countsCallersCallers.amountN+","+countsCallersCallers.amountU
+				+","+countsCallees.amountT+","+countsCallees.amountN+","+countsCallees.amountU			
+				+","+countsCalleesCallees.amountT+","+countsCalleesCallees.amountN+","+countsCalleesCallees.amountU+","+					
+				ClazzRTMCell.clazzTracesByProgramNameHashMap.get(programName).get(methodRTMCell.getRequirement().ID+"-"+methodRTMCell.getMethod().getClazz().ID)
+
+				
+				+"\n"); 	
+			}
+		
+			
+			
+		}
+		
 	}
 
 

@@ -32,8 +32,8 @@ public class CSV {
 	public static boolean AtLeastOneInstance=true; 
 
     static File file = new File("log\\data.txt");
-    public static boolean Seeding=true; 
-
+    public static boolean Seeding=false; 
+    public static boolean step2=true; 
     CSV csv=new CSV();  
     static double[] TSeeds = new double[]{5,10,15,20,25,50,75}; 
     static double[] NSeeds = new double[]{0.5,1.0,1.5,2.0,2.5,5,10}; 
@@ -64,7 +64,14 @@ public class CSV {
     		+ "CallersT,CallersN,CallersU,"
     		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
     		+ "CalleesT,CalleesN,CalleesU,"
-    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold,VariableTraceValue"
+    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold,VariableTraceValue"; 
+    		
+     static String headersStep2="gold,Program,MethodType,"
+    		    		+"RequirementID,MethodID,PredictedTraceValue,"
+    		    		+ "CallersT,CallersN,CallersU,"
+    		    		+ "CallersCallersT,CallersCallersN,CallersCallersU,"
+    		    		+ "CalleesT,CalleesN,CalleesU,"
+    		    		+ "CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold"
     		
     		; 
     static String headersAtLeastOneInstanceNoProgram="gold,MethodType,"
@@ -88,9 +95,10 @@ public class CSV {
 		 FileWriter writer = new FileWriter(file,true);
 		 if(!AtLeastOneInstance)
 			 writer.write(headers+"\n");
-		 else if(AtLeastOneInstance && !Seeding)
+		 else if(AtLeastOneInstance && !Seeding && !step2)
 			 writer.write(headersAtLeastOneReqMethodInstance+"\n");
-		 
+		 else if(AtLeastOneInstance && !Seeding && step2)
+			 writer.write(headersStep2+"\n");
 
 			programs.add("chess");
 			programs.add("gantt");
@@ -397,15 +405,17 @@ public class CSV {
        		 		}
 			 			
 		       		 	
+			 			if(!step2) {
+			 				s=s+methodtrace.getRequirement().ID+","+methodtrace.getMethod().ID+","+
+				 					callers.amountT+","+callers.amountN+","+callers.amountU+","; 
+		   		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
+				 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
+				 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU
+				 					+","+
+									ClazzRTMCell.clazzTraces2HashMap.get(methodtrace.getRequirement().ID+"-"+methodtrace.getClazzRTMCell().getClazz().ID).getGoldTraceValue()
+									+","+methodtrace.getVariabletraceValue(); 
+			 			}
 			 			
-			 			s=s+methodtrace.getRequirement().ID+","+methodtrace.getMethod().ID+","+
-			 					callers.amountT+","+callers.amountN+","+callers.amountU+","; 
-	   		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
-			 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
-			 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU
-			 					+","+
-								ClazzRTMCell.clazzTraces2HashMap.get(methodtrace.getRequirement().ID+"-"+methodtrace.getClazzRTMCell().getClazz().ID).getGoldTraceValue()
-								+","+methodtrace.getVariabletraceValue(); 
 			 			
 //			 			if(callers.amountU.equals("-1") && callees.amountU.equals("-1") && !AtLeastOneInstance) {
 //			 				s=s+"1,"; 
@@ -414,7 +424,16 @@ public class CSV {
 //			 			}
 //			 			if(!AtLeastOneInstance)
 //			 				s=s+","+methodtrace.getClazzRTMCell().getTraceValue(); 
-			 			
+			 			else if(step2) {
+			 				s=s+methodtrace.getRequirement().ID+","+methodtrace.getMethod().ID+","+""+","+
+				 					callers.amountT+","+callers.amountN+","+callers.amountU+","; 
+		   		 			s=s+callersCallers.amountT+","+callersCallers.amountN+","+callersCallers.amountU+","; 
+				 			s=s+callees.amountT+","+callees.amountN+","+callees.amountU+","; 
+				 			s=s+calleesCallees.amountT+","+calleesCallees.amountN+","+calleesCallees.amountU
+				 					+","+
+									ClazzRTMCell.clazzTraces2HashMap.get(methodtrace.getRequirement().ID+"-"+methodtrace.getClazzRTMCell().getClazz().ID).getGoldTraceValue(); 
+				 			}
+			 				
 			 			s=s+"\n"; 
 						writer.write(s);
 			 			
@@ -513,7 +532,7 @@ public class CSV {
 	/*****************************************************************************************************/
 
 
-	private static counts generateCountsTNUAtLeastOneInstance(MethodRTMCellList callees) {
+	public static counts generateCountsTNUAtLeastOneInstance(MethodRTMCellList callees) {
 		// TODO Auto-generated method stub
 			
 		counts c = counts.countMethods(callees); 
