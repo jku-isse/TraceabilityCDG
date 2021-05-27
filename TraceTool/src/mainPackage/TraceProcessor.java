@@ -24,11 +24,13 @@ import traceValidator.TraceValidatorPredictionPattern;
 import traceValidatorGhabi.TraceValidatorGhabi;
 import traceValidatorGhabi.TraceValidatorGhabiPredictionPattern;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,7 +48,15 @@ import BoxPlots.counts;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
-
+import weka.*;
+import weka.classifiers.Classifier;
+import weka.classifiers.meta.FilteredClassifier;
+import weka.classifiers.trees.J48;
+import weka.classifiers.trees.RandomForest;
+import weka.core.Instances;
+import weka.core.SerializationHelper;
+import weka.core.converters.ArffLoader;
+import weka.filters.unsupervised.attribute.Remove; 
 public class TraceProcessor {
 
 	public static enum Algorithm {ValidatorSingle, ValidatorCallTypes, ValidatorIterations, GhabiValidator, Refiner, 
@@ -386,8 +396,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 //				System.out.println(clazz.ID+"   "+clazz.getTcount());
 //			}
 			FileWriter myWriter = new FileWriter("log//step2Data.txt");
-			myWriter.write("gold,Program,MethodType,RequirementID,MethodID,PredictedTraceValue,CallersT,CallersN,CallersU,CallersCallersT,CallersCallersN,CallersCallersU"
-					+ ",CalleesT,CalleesN,CalleesU,CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold\n");
+//			myWriter.write("gold,Program,MethodType,RequirementID,MethodID,PredictedTraceValue,CallersT,CallersN,CallersU,CallersCallersT,CallersCallersN,CallersCallersU"
+//					+ ",CalleesT,CalleesN,CalleesU,CalleesCalleesT,CalleesCalleesN,CalleesCalleesU,classGold\n");
+			
+			
+		
 			for (String program : programs) {
 
 				DatabaseInput.read(program);
@@ -397,6 +410,8 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 				refine(program, "ref", patterns, myWriter);
 
 			}
+			randomForest(myWriter); 
+
 			myWriter.close();
 			Logger.logPatterns("all", patterns, "ref");
 			
@@ -946,15 +961,14 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		RTMCell.logTPTNFPFN2(programName, "step 2");
 
 	
-		printPredictedValues(programName, myWriter); 
 		
 		
 		
-		TraceRefiner.step3_classTs2MethodTs();
-		RTMCell.logTPTNFPFN2(programName, "step 3");
-
-		TraceRefiner.step4_propagateMethodTs(1);
-		RTMCell.logTPTNFPFN2(programName, "step 4");
+//		TraceRefiner.step3_classTs2MethodTs();
+//		RTMCell.logTPTNFPFN2(programName, "step 3");
+//
+//		TraceRefiner.step4_propagateMethodTs(1);
+//		RTMCell.logTPTNFPFN2(programName, "step 4");
 
 		TraceRefiner.checkGoldPred(programName); 
 		
@@ -996,8 +1010,157 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	
 	}
 
-	private static void printPredictedValues(String programName, FileWriter myWriter) throws IOException {
-		for(MethodRTMCell methodRTMCell: MethodRTMCell.methodtraces2HashMap.values()) {
+	private static void randomForest(FileWriter myWriter) throws Exception {
+		// TODO Auto-generated method stub
+		RandomForest m_classifier  = new RandomForest();
+		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\DataAfterStep2.arff");//Training corpus file  
+        ArffLoader atf = new ArffLoader();   
+        atf.setFile(inputFile);  
+        Instances instancesTrain = atf.getDataSet(); // Read in training documents      
+        double[] thresholds_T = new double[] {0.65,0.60,0.55,0.50,0.45,0.40,0.35,0.30,0.25,0.20,0.15,0.10,0.05}; 
+        double[] thresholds_N = new double[] {0.95,0.90,0.85,0.80,0.75,0.70,0.65,0.60,0.55,0.50,0.45,0.40,0.35}; 
+
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\GoldDataAfterSeedingUs.arff");//Test corpus file  
+        atf.setFile(inputFile);            
+        Instances instancesTest = atf.getDataSet(); // Read in the test file  
+        instancesTest.setClassIndex(0); //Setting the line number of the categorized attribute (No. 0 of the first action), instancesTest.numAttributes() can get the total number of attributes.  
+        double sum = instancesTest.numInstances();//Examples of test corpus  
+        
+        instancesTrain.setClassIndex(0);  
+        m_classifier.buildClassifier(instancesTrain); //train
+        System.out.println(m_classifier);
+        Classifier classifier8 =null; 
+        // Preservation model
+        SerializationHelper.write("LibSVM.model", m_classifier);//Parameter 1 saves the file for the model, and classifier 4 saves the model.
+        try {
+             classifier8 = (Classifier) weka.core.SerializationHelper.read("LibSVM.model"); 
+            System.out.println("over");
+        }catch (Exception e) {
+            e.printStackTrace();
+           
+        }
+        double TP_N = 0.0f;
+        double TP_T = 0.0f;  
+        double FP_N = 0.0f;
+        double FP_T = 0.0f; 
+        double FN_N = 0.0f;
+        double FN_T = 0.0f; 
+         boolean modified=true; 
+         int totalIts=0; 
+
+        while(modified) {
+            boolean entered=false; 
+        for(int  i = 0;i<sum;i++)//Test classification result 1
+        {  
+            double[] probs = classifier8.distributionForInstance(instancesTest.instance(i));
+//            System.out.println(Arrays.toString(probs));
+
+        	String reqMethod=(int)instancesTest.instance(i).toDoubleArray()[3]+"-"+(int)instancesTest.instance(i).toDoubleArray()[4]; 
+        	
+        	int program = (int)instancesTest.instance(i).toDoubleArray()[1]; 
+        	String programName=getProgName(program); 
+        	if(MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) {
+        		if(instancesTest.instance(i).classValue()==1.0 && probs[1]>0.7) {
+            		TP_N++;//Correct value plus 1       
+            		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.NoTrace);
+            		entered=true; 
+            	}
+            	else if(instancesTest.instance(i).classValue()==0.0 && probs[0]>0.7 ) {
+            		TP_T++;
+            		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.Trace);
+            		entered=true; 
+
+            	}
+           
+            	else if( probs[1]>0.7 && instancesTest.instance(i).classValue()==0.0) {
+            		FN_T++; 
+            		FP_N++;  
+            		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.NoTrace);
+            		entered=true; 
+
+            	}
+            	else if( probs[0]>0.7 && instancesTest.instance(i).classValue()==1.0) {
+            		FP_T++; 
+            		FN_N++; 
+            		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.Trace);
+            		entered=true; 
+
+            	}
+        	}
+            	
+
+            
+        } 
+        
+        
+        
+        RecomputeInputFileAfterStep2(myWriter); 
+        System.out.println(totalIts);
+
+        totalIts++; 
+        if(!entered) {
+        	modified=false; 
+        }
+        }
+       
+        System.out.println(TP_N);
+        System.out.println(sum);
+        System.out.println("N Precision:"+(TP_N/(TP_N+FP_N)));  
+        System.out.println("T Precision:"+(TP_T/(TP_T+FP_T)));  
+        System.out.println("N Recall:"+(TP_N/(TP_N+FN_N)));  
+        System.out.println("T Recall:"+(TP_T/(TP_T+FN_T)));  
+        System.out.println("OVER");
+	}
+
+	private static void RecomputeInputFileAfterStep2(FileWriter myWriter) throws IOException {
+		// TODO Auto-generated method stub
+		printPredictedValues(myWriter);
+	}
+
+	private static String getProgName(int program) {
+		String progName="";
+		// TODO Auto-generated method stub
+		if(program==0) progName="chess"; 
+		else if(program==1) progName="gantt"; 
+		else if(program==2) progName="itrust"; 
+		else if(program==3) progName="jhotdraw"; 
+		return progName; 
+
+	}
+
+	private static void printPredictedValues( FileWriter myWriter) throws IOException {
+		myWriter.write("@RELATION traces \r\n" + 
+				"\r\n" + 
+				"@ATTRIBUTE gold	{T,N,U}\r\n" + 
+				"@ATTRIBUTE program 	{chess, gantt, itrust, jhotdraw}\r\n" + 
+				"@ATTRIBUTE MethodType 	{Inner, Leaf, Root}\r\n" + 
+				"@ATTRIBUTE RequirementID	REAL\r\n" + 
+				"@ATTRIBUTE MethodID REAL \r\n" + 
+				"@ATTRIBUTE PredictedTraceValue {UndefinedTrace,NoTrace, Trace, NA}\r\n" + 
+				"@ATTRIBUTE CallersT REAL \r\n" + 
+				"@ATTRIBUTE CallersN REAL \r\n" + 
+				"@ATTRIBUTE CallersU REAL \r\n" + 
+				"@ATTRIBUTE CallersCallersT REAL \r\n" + 
+				"@ATTRIBUTE CallersCallersN REAL \r\n" + 
+				"@ATTRIBUTE CallersCallersU REAL \r\n" + 
+				"@ATTRIBUTE CalleesT REAL \r\n" + 
+				"@ATTRIBUTE CalleesN REAL \r\n" + 
+				"@ATTRIBUTE CalleesU REAL \r\n" + 
+				"@ATTRIBUTE CalleesCalleesT REAL \r\n" + 
+				"@ATTRIBUTE CalleesCalleesN REAL \r\n" + 
+				"@ATTRIBUTE CalleesCalleesU REAL \r\n" + 
+				"@ATTRIBUTE classGold {Trace,NoTrace,UndefinedTrace} \r\n" + 
+				"\r\n" + 
+				"@DATA\r\n" + 
+				"\r\n" + 
+				"\r\n" + 
+				"\r\n" + 
+				"");
+		
+		for(String programName: MethodRTMCell.Totalmethodtraces2HashMap.keySet()) {
+			LinkedHashMap<String, MethodRTMCell> methodTraces = MethodRTMCell.Totalmethodtraces2HashMap.get(programName);
+			for(MethodRTMCell methodRTMCell: methodTraces.values()) {
+				
 			
 			MethodRTMCellList Callers= methodRTMCell.getCallers(programName); 
 			MethodRTMCellList Callees = methodRTMCell.getCallees(programName); 
@@ -1019,7 +1182,16 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 			}
 			if(!methodRTMCell.logGoldTraceValueString().equals("U")) {
-				myWriter.write(methodRTMCell.logGoldTraceValueString()+","+programName+","+methodType+","+methodRTMCell.getRequirement().ID+","+methodRTMCell.getMethod().ID+","+methodRTMCell.getPredictedTraceValue()
+//				Random random = new Random();
+//				int rand = 0;
+//				rand = random.nextInt(11);
+				
+				String gold=methodRTMCell.logGoldTraceValueString(); 
+				
+//				if(gold.equals("T") && rand>=5) {
+//					gold="U"; 
+//				}
+				myWriter.write(gold+","+programName+","+methodType+","+methodRTMCell.getRequirement().ID+","+methodRTMCell.getMethod().ID+","+methodRTMCell.getPredictedTraceValue()
 				+","+countsCallers.amountT+","+countsCallers.amountN+","+countsCallers.amountU
 				+","+countsCallersCallers.amountT+","+countsCallersCallers.amountN+","+countsCallersCallers.amountU
 				+","+countsCallees.amountT+","+countsCallees.amountN+","+countsCallees.amountU			
@@ -1029,7 +1201,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 				
 				+"\n"); 	
 			}
-		
+			}
 			
 			
 		}

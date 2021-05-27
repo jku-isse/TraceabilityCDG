@@ -18,6 +18,7 @@ public class RTMCell {
 	private int subjectT;
 	private int subjectN;
 	private TraceValue predictedTraceValue = TraceValue.UndefinedTrace;
+	
 	private PredictionPattern predictionPattern = null;
 	private TraceValue LSITraceValue = TraceValue.UndefinedTrace; 
 
@@ -177,7 +178,10 @@ public class RTMCell {
 		predictionPattern = null;
 		predictedTraceValue = TraceValue.UndefinedTrace;
 	}
-
+	public void setPredictedTraceValue(TraceValue predictedTraceValue) {
+		modified=true;
+		this.predictedTraceValue = predictedTraceValue;
+	}
 
 	public String logTraceValueString() { return getTraceValue().toString().substring(0,1); }
 	public String logGoldTraceValueString() { return getGoldTraceValue().toString().substring(0,1); }

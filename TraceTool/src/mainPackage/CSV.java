@@ -371,8 +371,17 @@ public class CSV {
             
 			for ( MethodRTMCell methodtrace : MethodRTMCell.methodtraces2HashMap.values()) {
             	if(!methodtrace.getGoldTraceValue().equals(RTMCell.TraceValue.UndefinedTrace)) {
+            		
+            		Random random = new Random();
+    				int rand = 0;
+    				rand = random.nextInt(11);
+    				String gold= methodtrace.logGoldTraceValueString(); 
+    				if(gold.equals("T") && rand>=5 && step2 ) {
+    					gold="U"; 
+    				}
+    				
             		String ProgramName=methodtrace.ProgramName; 
-       		 		String s= methodtrace.logGoldTraceValueString()+","; 
+       		 		String s= gold+","; 
        		 		s=s+programName+","; 
        		 		
        		 		if(!methodtrace.getCallers().isEmpty() && !methodtrace.getCallees().isEmpty()) {
