@@ -27,6 +27,7 @@ import traceValidatorGhabi.TraceValidatorGhabiPredictionPattern;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -1129,6 +1130,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	}
 
 	private static void printPredictedValues( FileWriter myWriter) throws IOException {
+		PrintWriter myWriter2 = new PrintWriter("log//step2Data.txt"); 
+		myWriter2.print("");
+		myWriter2.close();
+		 myWriter = new FileWriter("log//step2Data.txt");
+		
 		myWriter.write("@RELATION traces \r\n" + 
 				"\r\n" + 
 				"@ATTRIBUTE gold	{T,N,U}\r\n" + 
@@ -1156,7 +1162,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 				"\r\n" + 
 				"\r\n" + 
 				"");
-		
+		int i=1; 
 		for(String programName: MethodRTMCell.Totalmethodtraces2HashMap.keySet()) {
 			LinkedHashMap<String, MethodRTMCell> methodTraces = MethodRTMCell.Totalmethodtraces2HashMap.get(programName);
 			for(MethodRTMCell methodRTMCell: methodTraces.values()) {
@@ -1191,21 +1197,38 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 //				if(gold.equals("T") && rand>=5) {
 //					gold="U"; 
 //				}
-				myWriter.write(gold+","+programName+","+methodType+","+methodRTMCell.getRequirement().ID+","+methodRTMCell.getMethod().ID+","+methodRTMCell.getPredictedTraceValue()
-				+","+countsCallers.amountT+","+countsCallers.amountN+","+countsCallers.amountU
-				+","+countsCallersCallers.amountT+","+countsCallersCallers.amountN+","+countsCallersCallers.amountU
-				+","+countsCallees.amountT+","+countsCallees.amountN+","+countsCallees.amountU			
-				+","+countsCalleesCallees.amountT+","+countsCalleesCallees.amountN+","+countsCalleesCallees.amountU+","+					
-				ClazzRTMCell.clazzTracesByProgramNameHashMap.get(programName).get(methodRTMCell.getRequirement().ID+"-"+methodRTMCell.getMethod().getClazz().ID)
+				
+				if(ClazzRTMCell.clazzTracesByProgramNameHashMap.get(programName).get(methodRTMCell.getRequirement().ID+"-"+methodRTMCell.getMethod().getClazz().ID)!=null ) {
+					myWriter.write(gold+","+programName+","+methodType+","+methodRTMCell.getRequirement().ID+","+methodRTMCell.getMethod().ID+","+methodRTMCell.getPredictedTraceValue()
+					+","+countsCallers.amountT+","+countsCallers.amountN+","+countsCallers.amountU
+					+","+countsCallersCallers.amountT+","+countsCallersCallers.amountN+","+countsCallersCallers.amountU
+					+","+countsCallees.amountT+","+countsCallees.amountN+","+countsCallees.amountU			
+					+","+countsCalleesCallees.amountT+","+countsCalleesCallees.amountN+","+countsCalleesCallees.amountU+","+					
+					ClazzRTMCell.clazzTracesByProgramNameHashMap.get(programName).get(methodRTMCell.getRequirement().ID+"-"+methodRTMCell.getMethod().getClazz().ID)
+					+"\n");
+				
 
 				
-				+"\n"); 	
-			}
+				 
+				i++; 
+			}}
 			}
 			
 			
 		}
 		
+		
+
+		
+		myWriter.close();
+		
+		
+		    File inputFile = new File("log//step2Data.txt");//Training corpus file  
+	        ArffLoader atf = new ArffLoader();   
+
+		    atf.setFile(inputFile);            
+	        Instances instancesTest = atf.getDataSet(); // Read in the test file  
+	        instancesTest.setClassIndex(0); //Setting the line number of the categorized attribute (No. 0 of the first action), instancesTest.numAttributes() can get the total number of attributes.  
 	}
 
 
