@@ -1013,14 +1013,14 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 	private static void randomForest(FileWriter myWriter) throws Exception {
 		// TODO Auto-generated method stub
 		RandomForest m_classifier  = new RandomForest();
-		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\DataAfterStep2.arff");//Training corpus file  
+		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\GoldDataAfterSeedingUs.arff");//Training corpus file  
         ArffLoader atf = new ArffLoader();   
         atf.setFile(inputFile);  
         Instances instancesTrain = atf.getDataSet(); // Read in training documents      
         double[] thresholds_T = new double[] {0.65,0.60,0.55,0.50,0.45,0.40,0.35,0.30,0.25,0.20,0.15,0.10,0.05}; 
         double[] thresholds_N = new double[] {0.95,0.90,0.85,0.80,0.75,0.70,0.65,0.60,0.55,0.50,0.45,0.40,0.35}; 
 
-        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\GoldDataAfterSeedingUs.arff");//Test corpus file  
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\DataAfterStep2.arff");//Test corpus file  
         atf.setFile(inputFile);            
         Instances instancesTest = atf.getDataSet(); // Read in the test file  
         instancesTest.setClassIndex(0); //Setting the line number of the categorized attribute (No. 0 of the first action), instancesTest.numAttributes() can get the total number of attributes.  
