@@ -57,6 +57,7 @@ import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ArffLoader;
+import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove; 
 public class TraceProcessor {
 
@@ -1013,18 +1014,29 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
 	private static void randomForest(FileWriter myWriter) throws Exception {
 		// TODO Auto-generated method stub
+		int [] indices = new int[] {0,2,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19}; 
+		Remove removeFilter = new Remove();
+		removeFilter.setAttributeIndicesArray(indices);
+		removeFilter.setInvertSelection(true);
+		
+		
 		RandomForest m_classifier  = new RandomForest();
 		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\GoldDataAfterSeedingUs.arff");//Training corpus file  
         ArffLoader atf = new ArffLoader();   
         atf.setFile(inputFile);  
         Instances instancesTrain = atf.getDataSet(); // Read in training documents      
+//        removeFilter.setInputFormat(instancesTrain);
+//        instancesTrain = Filter.useFilter(instancesTrain, removeFilter);
         double[] thresholds_T = new double[] {0.65,0.60,0.55,0.50,0.45,0.40,0.35,0.30,0.25,0.20,0.15,0.10,0.05}; 
         double[] thresholds_N = new double[] {0.95,0.90,0.85,0.80,0.75,0.70,0.65,0.60,0.55,0.50,0.45,0.40,0.35}; 
 
         inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\DataAfterStep2.arff");//Test corpus file  
         atf.setFile(inputFile);            
         Instances instancesTest = atf.getDataSet(); // Read in the test file  
+//        removeFilter.setInputFormat(instancesTest);
+//        instancesTest = Filter.useFilter(instancesTest, removeFilter);
         instancesTest.setClassIndex(0); //Setting the line number of the categorized attribute (No. 0 of the first action), instancesTest.numAttributes() can get the total number of attributes.  
+
         double sum = instancesTest.numInstances();//Examples of test corpus  
         
         instancesTrain.setClassIndex(0);  
@@ -1052,7 +1064,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         while(modified) {
             boolean entered=false; 
         for(int  i = 0;i<sum;i++)//Test classification result 1
-        {  
+        {  System.out.println(i);
             double[] probs = classifier8.distributionForInstance(instancesTest.instance(i));
 //            System.out.println(Arrays.toString(probs));
 
@@ -1061,26 +1073,31 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         	int program = (int)instancesTest.instance(i).toDoubleArray()[1]; 
         	String programName=getProgName(program); 
         	if(MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) {
-        		if(instancesTest.instance(i).classValue()==1.0 && probs[1]>0.7) {
+        		//PREDICTION IS N AND PROBA OF N GREATER THAN 0.95
+        		if(instancesTest.instance(i).classValue()==1.0 && probs[1]>thresholds_N[0]) {
             		TP_N++;//Correct value plus 1       
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.NoTrace);
             		entered=true; 
             	}
-            	else if(instancesTest.instance(i).classValue()==0.0 && probs[0]>0.7 ) {
+        		//PREDICTION IS T AND PROBA OF T IS GREATER THAN 0.65
+
+            	else if(instancesTest.instance(i).classValue()==0.0 && probs[0]>thresholds_T[0] ) {
             		TP_T++;
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.Trace);
             		entered=true; 
 
             	}
-           
-            	else if( probs[1]>0.7 && instancesTest.instance(i).classValue()==0.0) {
+        		//PREDICTION IS T AND PROBA OF N IS GREATER THAN 0.95
+
+            	else if( probs[1]>thresholds_N[0] && instancesTest.instance(i).classValue()==0.0) {
             		FN_T++; 
             		FP_N++;  
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.NoTrace);
             		entered=true; 
 
             	}
-            	else if( probs[0]>0.7 && instancesTest.instance(i).classValue()==1.0) {
+        		//PREDICTION IS N AND PROBA OF T IS GREATER THAN 0.65
+            	else if( probs[0]>thresholds_T[0] && instancesTest.instance(i).classValue()==1.0) {
             		FP_T++; 
             		FN_N++; 
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.Trace);
