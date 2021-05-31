@@ -1027,9 +1027,16 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         Instances instancesTrain = atf.getDataSet(); // Read in training documents      
 //        removeFilter.setInputFormat(instancesTrain);
 //        instancesTrain = Filter.useFilter(instancesTrain, removeFilter);
-        double[] thresholds_T = new double[] {0.65,0.60,0.55,0.50,0.45,0.40,0.35,0.30,0.25,0.20,0.15,0.10,0.05}; 
-        double[] thresholds_N = new double[] {0.95,0.90,0.85,0.80,0.75,0.70,0.65,0.60,0.55,0.50,0.45,0.40,0.35}; 
+        double[] thresholds_T = new double[] {0.65,0.60,0.55,0.50,0.45,0.40}; 
+        double[] thresholds_N = new double[] {0.95,0.90,0.85,0.80,0.75,0.70}; 
 
+        
+        
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ProgramReqMethod.arff");//Training corpus file  
+        atf = new ArffLoader();   
+        atf.setFile(inputFile);  
+        Instances ProgramReqMethod = atf.getDataSet(); // Read in training documents      
+        
         inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\DataAfterStep2.arff");//Test corpus file  
         atf.setFile(inputFile);            
         Instances instancesTest = atf.getDataSet(); // Read in the test file  
@@ -1068,20 +1075,20 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
             double[] probs = classifier8.distributionForInstance(instancesTest.instance(i));
 //            System.out.println(Arrays.toString(probs));
 
-        	String reqMethod=(int)instancesTest.instance(i).toDoubleArray()[3]+"-"+(int)instancesTest.instance(i).toDoubleArray()[4]; 
+        	String reqMethod=(int)ProgramReqMethod.instance(i).toDoubleArray()[1]+"-"+(int)ProgramReqMethod.instance(i).toDoubleArray()[2]; 
         	
-        	int program = (int)instancesTest.instance(i).toDoubleArray()[1]; 
+        	int program = (int)ProgramReqMethod.instance(i).toDoubleArray()[0]; 
         	String programName=getProgName(program); 
         	if(MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) {
         		//PREDICTION IS N AND PROBA OF N GREATER THAN 0.95
-        		if(instancesTest.instance(i).classValue()==1.0 && probs[1]>thresholds_N[0]) {
+        		if(instancesTest.instance(i).classValue()==1.0 && probs[1]>thresholds_N[1]) {
             		TP_N++;//Correct value plus 1       
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.NoTrace);
             		entered=true; 
             	}
         		//PREDICTION IS T AND PROBA OF T IS GREATER THAN 0.65
 
-            	else if(instancesTest.instance(i).classValue()==0.0 && probs[0]>thresholds_T[0] ) {
+            	else if(instancesTest.instance(i).classValue()==0.0 && probs[0]>thresholds_T[1] ) {
             		TP_T++;
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.Trace);
             		entered=true; 
@@ -1089,7 +1096,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
             	}
         		//PREDICTION IS T AND PROBA OF N IS GREATER THAN 0.95
 
-            	else if( probs[1]>thresholds_N[0] && instancesTest.instance(i).classValue()==0.0) {
+            	else if( probs[1]>thresholds_N[1] && instancesTest.instance(i).classValue()==0.0) {
             		FN_T++; 
             		FP_N++;  
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.NoTrace);
@@ -1097,7 +1104,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 
             	}
         		//PREDICTION IS N AND PROBA OF T IS GREATER THAN 0.65
-            	else if( probs[0]>thresholds_T[0] && instancesTest.instance(i).classValue()==1.0) {
+            	else if( probs[0]>thresholds_T[1] && instancesTest.instance(i).classValue()==1.0) {
             		FP_T++; 
             		FN_N++; 
             		MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).setPredictedTraceValue(TraceValue.Trace);
@@ -1113,7 +1120,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         
         
         RecomputeInputFileAfterStep2(myWriter); 
-        System.out.println(totalIts);
+        System.out.println("===> "+totalIts);
 
         totalIts++; 
         if(!entered) {
