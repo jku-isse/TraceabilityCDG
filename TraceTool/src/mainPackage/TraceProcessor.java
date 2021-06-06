@@ -1023,7 +1023,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		RandomForest m_classifier  = new RandomForest();
 //		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\GoldDataAfterSeedingUs.arff");//Training corpus file  
 
-		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttiTrustJHotTrain.arff");//Training corpus file  
+//		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttiTrustJHotTrain.arff");//Training corpus file  
+//		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessiTrustJHotTrain.arff");//Training corpus file  
+//		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ChessGanttJHotTrain.arff");//Training corpus file  
+		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ChessGanttiTrustTrain.arff");//Training corpus file  
+
         ArffLoader atf = new ArffLoader();   
         atf.setFile(inputFile);  
         Instances instancesTrain = atf.getDataSet(); // Read in training documents      
@@ -1035,14 +1039,20 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         
         
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ProgramReqMethod.arff");//Training corpus file  
-        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessProgramReqMethod.arff");//Training corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessProgramReqMethod.arff");//Training corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttProgramReqMethod.arff");//Training corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\iTrustProgramReqMethod.arff");//Training corpus file  
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\JHotDrawProgramReqMethod.arff");//Training corpus file  
 
         atf = new ArffLoader();   
         atf.setFile(inputFile);  
         Instances ProgramReqMethod = atf.getDataSet(); // Read in training documents      
         
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\DataAfterStep2.arff");//Test corpus file  
-        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessTest.arff");//Test corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessTest.arff");//Test corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttTest.arff");//Test corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\iTrustTest.arff");//Test corpus file  
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\JHotDrawTest.arff");//Test corpus file  
 
         atf.setFile(inputFile);            
         Instances instancesTest = atf.getDataSet(); // Read in the test file  
