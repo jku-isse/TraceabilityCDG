@@ -1035,7 +1035,7 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         
         
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ProgramReqMethod.arff");//Training corpus file  
-        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ProgramReqMethod.arff");//Training corpus file  
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessProgramReqMethod.arff");//Training corpus file  
 
         atf = new ArffLoader();   
         atf.setFile(inputFile);  
