@@ -966,11 +966,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		
 		
 		
-//		TraceRefiner.step3_classTs2MethodTs();
-//		RTMCell.logTPTNFPFN2(programName, "step 3");
-//
-//		TraceRefiner.step4_propagateMethodTs(1);
-//		RTMCell.logTPTNFPFN2(programName, "step 4");
+		TraceRefiner.step3_classTs2MethodTs();
+		RTMCell.logTPTNFPFN2(programName, "step 3");
+
+		TraceRefiner.step4_propagateMethodTs(1);
+		RTMCell.logTPTNFPFN2(programName, "step 4");
 
 		TraceRefiner.checkGoldPred(programName); 
 		
@@ -1024,9 +1024,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 //		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\GoldDataAfterSeedingUs.arff");//Training corpus file  
 
 //		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttiTrustJHotTrain.arff");//Training corpus file  
-//		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessiTrustJHotTrain.arff");//Training corpus file  
+		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessiTrustJHotTrain.arff");//Training corpus file  
 //		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ChessGanttJHotTrain.arff");//Training corpus file  
-		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ChessGanttiTrustTrain.arff");//Training corpus file  
+//		File inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ChessGanttiTrustTrain.arff");//Training corpus file  
 
         ArffLoader atf = new ArffLoader();   
         atf.setFile(inputFile);  
@@ -1040,9 +1040,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ProgramReqMethod.arff");//Training corpus file  
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessProgramReqMethod.arff");//Training corpus file  
-//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttProgramReqMethod.arff");//Training corpus file  
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttProgramReqMethod.arff");//Training corpus file  
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\iTrustProgramReqMethod.arff");//Training corpus file  
-        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\JHotDrawProgramReqMethod.arff");//Training corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\JHotDrawProgramReqMethod.arff");//Training corpus file  
 
         atf = new ArffLoader();   
         atf.setFile(inputFile);  
@@ -1050,9 +1050,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\DataAfterStep2.arff");//Test corpus file  
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\chessTest.arff");//Test corpus file  
-//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttTest.arff");//Test corpus file  
+        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\ganttTest.arff");//Test corpus file  
 //        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\iTrustTest.arff");//Test corpus file  
-        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\JHotDrawTest.arff");//Test corpus file  
+//        inputFile = new File("C:\\Users\\mouna\\git\\TraceTool\\TraceTool\\src\\mainPackage\\JHotDrawTest.arff");//Test corpus file  
 
         atf.setFile(inputFile);            
         Instances instancesTest = atf.getDataSet(); // Read in the test file  
@@ -1081,6 +1081,8 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         double FP_T = 0.0f; 
         double FN_N = 0.0f;
         double FN_T = 0.0f; 
+        double N=0.0f; 
+        double T=0.0f; 
          boolean modified=true; 
          int totalIts=0; 
 
@@ -1096,6 +1098,9 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         	int program = (int)ProgramReqMethod.instance(i).toDoubleArray()[0]; 
         	String programName=getProgName(program); 
         	if(MethodRTMCell.Totalmethodtraces2HashMap.get(programName).get(reqMethod).getPredictedTraceValue().equals(TraceValue.UndefinedTrace)) {
+        		if(instancesTest.instance(i).classValue()==1.0) N++; 
+        		else if(instancesTest.instance(i).classValue()==0.0) T++; 
+        		
         		//PREDICTION IS N AND PROBA OF N GREATER THAN 0.95
         		if(instancesTest.instance(i).classValue()==1.0 && probs[1]>thresholds_N[1]) {
             		TP_N++;//Correct value plus 1       
@@ -1150,6 +1155,11 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         System.out.println("T Precision:"+(TP_T/(TP_T+FP_T)));  
         System.out.println("N Recall:"+(TP_N/(TP_N+FN_N)));  
         System.out.println("T Recall:"+(TP_T/(TP_T+FN_T)));  
+        System.out.println("TP_T: "+TP_T+" FP_T: "+FP_T+"FN_T: "+FN_T);
+        System.out.println("TP_N: "+TP_N+" FP_N: "+FP_N+"FN_N: "+FN_N);
+        System.out.println("T: "+T);
+        System.out.println("N: "+N);
+
         System.out.println("OVER");
 	}
 
