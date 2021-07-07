@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -50,10 +51,17 @@ import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import weka.*;
+import weka.attributeSelection.ASEvaluation;
+import weka.attributeSelection.ASSearch;
+import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.GainRatioAttributeEval;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
+import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ArffLoader;
@@ -959,18 +967,18 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
 		TraceRefiner.step1_classNs2MethodNs();
 		RTMCell.logTPTNFPFN2(programName, "step 1");
 		
-		TraceRefiner.step2_propagateMethodNs(1);
-		RTMCell.logTPTNFPFN2(programName, "step 2");
-
-	
-		
-		
-		
-		TraceRefiner.step3_classTs2MethodTs();
-		RTMCell.logTPTNFPFN2(programName, "step 3");
-
-		TraceRefiner.step4_propagateMethodTs(1);
-		RTMCell.logTPTNFPFN2(programName, "step 4");
+//		TraceRefiner.step2_propagateMethodNs(1);
+//		RTMCell.logTPTNFPFN2(programName, "step 2");
+//
+//	
+//		
+//		
+//		
+//		TraceRefiner.step3_classTs2MethodTs();
+//		RTMCell.logTPTNFPFN2(programName, "step 3");
+//
+//		TraceRefiner.step4_propagateMethodTs(1);
+//		RTMCell.logTPTNFPFN2(programName, "step 4");
 
 		TraceRefiner.checkGoldPred(programName); 
 		
@@ -1148,8 +1156,39 @@ if (test==Algorithm.ErrorSeederT ||test==Algorithm.ErrorSeederN || test==Algorit
         	modified=false; 
         }
         }
-       
-        System.out.println(TP_N);
+        
+        Map<Integer, String> attributeMap= new HashMap<Integer, String>(); 
+        attributeMap.put(0, "gold"); 
+        attributeMap.put(1, "MethodType"); 
+        attributeMap.put(2, "PredictedTraceValue"); 
+        attributeMap.put(3, "CallersT"); 
+        attributeMap.put(4, "CallersN"); 
+        attributeMap.put(5, "CallersU"); 
+        attributeMap.put(6, "CallersCallersT"); 
+        attributeMap.put(7, "CallersCallersN"); 
+        attributeMap.put(8, "CallersCallersU"); 
+        attributeMap.put(9, "CalleesT"); 
+        attributeMap.put(10, "CalleesN"); 
+        attributeMap.put(11, "CalleesU"); 
+        attributeMap.put(12, "CalleesCalleesT"); 
+        attributeMap.put(13, "CalleesCalleesN"); 
+        attributeMap.put(14, "CalleesCalleesU"); 
+        attributeMap.put(15, "classGold"); 
+
+        AttributeSelection selector = new AttributeSelection();
+    	InfoGainAttributeEval evaluator = new InfoGainAttributeEval();
+    	Ranker ranker = new Ranker();
+    	ranker.setNumToSelect(Math.min(500, instancesTrain.numAttributes() - 1));
+    	selector.setEvaluator(evaluator);
+    	selector.setSearch(ranker);
+    	selector.SelectAttributes(instancesTrain);
+    	for(int i=0; i<selector.rankedAttributes().length;i++) {
+    		int index = (int)selector.rankedAttributes()[i][0]; 
+    		System.out.println(attributeMap.get(index));
+    	}
+
+
+    	System.out.println(TP_N);
         System.out.println(sum);
         System.out.println("N Precision:"+(TP_N/(TP_N+FP_N)));  
         System.out.println("T Precision:"+(TP_T/(TP_T+FP_T)));  
